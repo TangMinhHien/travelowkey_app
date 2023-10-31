@@ -25,7 +25,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/blue">
+                android:background="@color/main_blue">
                 <ImageView
                     android:id="@+id/logo_home"
                     android:layout_width="100dp"
@@ -41,7 +41,7 @@
                     android:layout_alignParentRight="true"
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp"
-                    android:src="@drawable/ic_notification_96"/>
+                    android:src="@drawable/ic_notification"/>
             </RelativeLayout>
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>

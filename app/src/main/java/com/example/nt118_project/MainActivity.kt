@@ -20,40 +20,33 @@ import com.example.nt118_project.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
-    internal var selectedFragment: Fragment? = null
+    private lateinit var binding : ActivityMainBinding
 
-    private val onNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
-        when (item.itemId) {
-            R.id.nav_home -> {
-                selectedFragment = HomeFragment()
-            }
-            R.id.nav_search -> {
-                selectedFragment = SearchFragment()
-            }
-            R.id.nav_bill -> {
-                selectedFragment = BillFragment()
-            }
-            R.id.nav_user -> {
-                selectedFragment = UserFragment()
-            }
-        }
-        if (selectedFragment!=null){
-            supportFragmentManager.beginTransaction().replace(
-                R.id.fragment_container,selectedFragment!!
-            ).commit()
-        }
-        false
-    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        replaceFragment(HomeFragment())
 
-        setContentView(R.layout.activity_main)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager
-                .LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+        binding.bottomNavigationView.setOnItemSelectedListener {
+
+            when(it.itemId){
+                R.id.home -> replaceFragment(HomeFragment())
+                R.id.search -> replaceFragment(SearchFragment())
+                R.id.bill -> replaceFragment(BillFragment())
+                R.id.user -> replaceFragment(UserFragment())
+                else ->{
+                }
+            }
+            true
         }
-        val navView: BottomNavigationView = findViewById(R.id.nav_view)
-        navView.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
+    }
+
+    private fun replaceFragment(fragment : Fragment){
+        val fragmentManager = supportFragmentManager
+        val fragmentTransaction = fragmentManager.beginTransaction()
+        fragmentTransaction.replace(R.id.frame_layout,fragment)
+        fragmentTransaction.commit()
 
 
     }
