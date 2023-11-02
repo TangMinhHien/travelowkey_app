@@ -13,20 +13,20 @@ tools:context=".MainActivity">
     app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent">
-
+    app:layout_constraintTop_toTopOf="parent"
+    android:scrollbars="vertical">
 </FrameLayout>
 
 <com.google.android.material.bottomnavigation.BottomNavigationView
     android:id="@+id/bottomNavigationView"
     android:layout_width="0dp"
-    android:layout_height="wrap_content"
+    android:layout_height="70dp"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:menu="@menu/bottom_nav"
     app:itemIconTint="@drawable/bottom_navigation_selector"
-    android:background="@color/bot_nav"
-    app:itemIconSize="30dp">
+    android:background="@drawable/bot_nav"
+    app:itemIconSize="40dp">
 </com.google.android.material.bottomnavigation.BottomNavigationView>
 </androidx.constraintlayout.widget.ConstraintLayout>
