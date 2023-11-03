@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "602734233515",
+    "project_id": "nt118-traveloka",
+    "storage_bucket": "nt118-traveloka.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:602734233515:android:30749564f7a3d61b9c34ee",
+        "android_client_info": {
+          "package_name": "com.example.nt118_project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDGAIMsGfK_P_dKWb6-TZT7WZdz7l7Z2wM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
