@@ -1,10 +1,16 @@
 package com.example.nt118_project.Fragments
 
+import android.app.Activity
+import android.app.Activity.RESULT_OK
+import android.content.ComponentName
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageView
 import com.example.nt118_project.R
 
 // TODO: Rename parameter arguments, choose names that match
@@ -31,6 +37,20 @@ class UserFragment : Fragment() {
     }
 
     override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        // Inflate the layout for this fragment
+        val view = inflater.inflate(R.layout.fragment_user, container, false)
+        val avatar = view.findViewById<ImageView>(R.id.avatar)
+        avatar.setOnClickListener {
+            val intent = Intent(activity, UserDetailFragment::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+        }
+        return view
+    }
+    fun onCreateView_(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {

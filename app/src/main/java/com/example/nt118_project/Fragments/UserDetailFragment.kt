@@ -1,15 +1,20 @@
 package com.example.nt118_project.Fragments
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import android.widget.FrameLayout
+import android.widget.ImageView
+import androidx.appcompat.app.AppCompatActivity
 import com.example.nt118_project.MainActivity
 import com.example.nt118_project.R
 import com.google.firebase.auth.FirebaseAuth
 
+
 class UserDetailFragment : AppCompatActivity() {
+    public val myActivity: Activity? = null
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,6 +25,13 @@ class UserDetailFragment : AppCompatActivity() {
         LogOutBtn.setOnClickListener {
             FirebaseAuth.getInstance().signOut()
             val intent = Intent(this@UserDetailFragment, LoginFragment::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+            finish()
+        }
+        val BackUser = findViewById<ImageView>(R.id.iVBack)
+        BackUser.setOnClickListener {
+            val intent = Intent(this@UserDetailFragment, MainActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
             finish()

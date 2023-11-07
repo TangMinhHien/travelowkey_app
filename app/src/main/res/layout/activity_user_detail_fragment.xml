@@ -19,6 +19,7 @@
             android:layout_height="match_parent">
 
             <ImageView
+                android:id="@+id/iVBack"
                 android:layout_width="30sp"
                 android:layout_height="30sp"
                 android:src="@drawable/ic_arrow_back"
