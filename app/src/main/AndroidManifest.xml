@@ -13,6 +13,9 @@
         android:theme="@style/Theme.NT118_Project"
         tools:targetApi="31">
         <activity
+            android:name=".Fragments.UserDetailFragment"
+            android:exported="false" />
+        <activity
             android:name=".Fragments.SignupFragment"
             android:exported="false" />
         <activity
@@ -23,13 +26,12 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-         </activity>
+        </activity>
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.NT118_Project.NoActionBar">
-        </activity>
+            android:theme="@style/Theme.NT118_Project.NoActionBar"></activity>
     </application>
 
 </manifest>

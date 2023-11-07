@@ -1,13 +1,14 @@
 {
   "project_info": {
-    "project_number": "602734233515",
-    "project_id": "nt118-traveloka",
-    "storage_bucket": "nt118-traveloka.appspot.com"
+    "project_number": "273328272924",
+    "firebase_url": "https://dbtraveloka-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "dbtraveloka",
+    "storage_bucket": "dbtraveloka.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:602734233515:android:30749564f7a3d61b9c34ee",
+        "mobilesdk_app_id": "1:273328272924:android:45f55fece6fe0b586211d9",
         "android_client_info": {
           "package_name": "com.example.nt118_project"
         }
@@ -15,7 +16,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDGAIMsGfK_P_dKWb6-TZT7WZdz7l7Z2wM"
+          "current_key": "AIzaSyBZDfGElksANsWU04lANyLDYk_CyPXEneY"
         }
       ],
       "services": {

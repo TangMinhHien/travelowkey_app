@@ -62,7 +62,7 @@ class SignupFragment : AppCompatActivity() {
 
     private fun saveInfoUser(email: String, phone: String, username: String, pw: String, progressDialog: ProgressDialog) {
         val currUserID = FirebaseAuth.getInstance().currentUser!!.uid
-        val usersRef: DatabaseReference = FirebaseDatabase.getInstance().reference.child("Users")
+        val usersRef: DatabaseReference = FirebaseDatabase.getInstance().reference.child("KhachHang")
 
         val usermap = HashMap<String, Any>()
         usermap["id"] = currUserID
@@ -70,6 +70,9 @@ class SignupFragment : AppCompatActivity() {
         usermap["phone_number"] = phone
         usermap["username"] = username
         usermap["pw"] = pw
+        usermap["address"] = "Chưa được cập nhật"
+        usermap["sex"] = "Chưa được cập nhật"
+        usermap["Name"] = "Chưa được cập nhật"
 
         usersRef.child(currUserID).setValue(usermap).addOnCompleteListener { task ->
             if(task.isSuccessful)
