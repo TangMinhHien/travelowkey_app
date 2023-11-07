@@ -1,14 +1,286 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragments.UserFragment">
-
-    <!-- TODO: Update blank fragment layout -->
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".Fragments.UserFragment"
+    android:background="@color/bot_nav">
+    <ImageView
+        android:id="@+id/avatar"
+        android:layout_width="145dp"
+        android:layout_height="145dp"
+        android:src="@drawable/ic_user"
+        android:background="@drawable/avatar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="30dp"/>
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:id="@+id/user_name"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:background="@drawable/rounded_username"
+        app:layout_constraintTop_toBottomOf="@id/avatar"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:text="User Name"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:textSize="18dp"
+        android:paddingHorizontal="10dp"/>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/card"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/user_name"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:background="@color/black"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="30dp">
+        <ImageView
+            android:id="@+id/img_card"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_card"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_margin="10dp"/>
+        <TextView
+            android:id="@+id/tv_card1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Thẻ của tôi"
+            android:textColor="@color/white"
+            app:layout_constraintLeft_toRightOf="@id/img_card"
+            app:layout_constraintTop_toTopOf="parent"
+            android:textStyle="bold"
+            android:textSize="16dp"
+            android:layout_margin="10dp"/>
+        <TextView
+            android:id="@+id/tv_card2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16dp"
+            android:text="Quản lí thẻ thanh toán"
+            android:textColor="@color/white"
+            app:layout_constraintLeft_toRightOf="@id/img_card"
+            app:layout_constraintTop_toBottomOf="@id/tv_card1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="10dp"/>
+        <ImageButton
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_detail"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:scaleType="fitCenter"
+            android:background="@color/black"/>
 
-</FrameLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/voucher"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/card"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:background="@color/black"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="30dp">
+        <ImageView
+            android:id="@+id/img_voucher"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_voucher"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_margin="10dp"/>
+        <TextView
+            android:id="@+id/tv_voucher1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mã giảm giá"
+            android:textColor="@color/white"
+            app:layout_constraintLeft_toRightOf="@id/img_voucher"
+            app:layout_constraintTop_toTopOf="parent"
+            android:textStyle="bold"
+            android:textSize="16dp"
+            android:layout_margin="10dp"/>
+        <TextView
+            android:id="@+id/tv_voucher2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16dp"
+            android:text="Xem danh sách mã giảm giá"
+            android:textColor="@color/white"
+            app:layout_constraintLeft_toRightOf="@id/img_voucher"
+            app:layout_constraintTop_toBottomOf="@id/tv_voucher1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="10dp"/>
+        <ImageButton
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_detail"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:scaleType="fitCenter"
+            android:background="@color/black"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/score"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/voucher"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:background="@color/black"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="30dp">
+        <ImageView
+            android:id="@+id/img_score"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_coin"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_margin="10dp"/>
+        <TextView
+            android:id="@+id/tv_score1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Điểm thưởng"
+            android:textColor="@color/white"
+            app:layout_constraintLeft_toRightOf="@id/img_score"
+            app:layout_constraintTop_toTopOf="parent"
+            android:textStyle="bold"
+            android:textSize="16dp"
+            android:layout_margin="10dp"/>
+        <TextView
+            android:id="@+id/tv_score2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16dp"
+            android:text="Tích điểm và nhận giảm giá"
+            android:textColor="@color/white"
+            app:layout_constraintLeft_toRightOf="@id/img_score"
+            app:layout_constraintTop_toBottomOf="@id/tv_score1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="10dp"/>
+        <ImageButton
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_detail"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:scaleType="fitCenter"
+            android:background="@color/black"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/setting"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/score"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:background="@color/black"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="30dp">
+        <ImageView
+            android:id="@+id/img_setting"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_setting"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_margin="10dp"/>
+        <TextView
+            android:id="@+id/tv_setting1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cài đặt"
+            android:textColor="@color/white"
+            app:layout_constraintLeft_toRightOf="@id/img_setting"
+            app:layout_constraintTop_toTopOf="parent"
+            android:textStyle="bold"
+            android:textSize="16dp"
+            android:layout_margin="10dp"/>
+        <TextView
+            android:id="@+id/tv_setting2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16dp"
+            android:text="Tùy chỉnh cài dặt cho tài khoản"
+            android:textColor="@color/white"
+            app:layout_constraintLeft_toRightOf="@id/img_setting"
+            app:layout_constraintTop_toBottomOf="@id/tv_setting1"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="10dp"/>
+        <ImageButton
+            android:id="@+id/ic_detail1"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_detail"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:scaleType="fitCenter"
+            android:background="@color/black"
+            android:layout_marginTop="10dp"/>
+
+        <ImageView
+            android:id="@+id/img_help"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_help"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/img_setting"
+            android:layout_margin="10dp"/>
+        <TextView
+            android:id="@+id/tv_help1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Trung tâm hỗ trợ"
+            android:textColor="@color/white"
+            app:layout_constraintLeft_toRightOf="@id/img_help"
+            app:layout_constraintTop_toBottomOf="@id/tv_setting2"
+            android:textStyle="bold"
+            android:textSize="16dp"
+            android:layout_margin="10dp"/>
+        <TextView
+            android:id="@+id/tv_help2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16dp"
+            android:text="Giải đáp thắc mắc"
+            android:textColor="@color/white"
+            app:layout_constraintLeft_toRightOf="@id/img_help"
+            app:layout_constraintTop_toBottomOf="@id/tv_help1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="10dp"/>
+        <ImageButton
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_detail"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ic_detail1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:scaleType="fitCenter"
+            android:background="@color/black"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
