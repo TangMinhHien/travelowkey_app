@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.example.nt118_project.Model.User
 import com.example.nt118_project.R
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DataSnapshot
@@ -81,7 +82,7 @@ class UserDetailFragment : AppCompatActivity() {
             finish()
         }
         val ChangeBtn = findViewById<TextView>(R.id.tVChangePersonalData)
-        val SaveBtn = findViewById<Button>(R.id.SaveBtn)
+        val SaveBtn = findViewById<TextView>(R.id.SaveBtn)
         ChangeBtn.setOnClickListener {
             userFullName.isEnabled = true
             userSex.isEnabled = true
@@ -108,13 +109,59 @@ class UserDetailFragment : AppCompatActivity() {
                 Toast.makeText(this, "Lưu thông tin thất bại", Toast.LENGTH_SHORT).show()
             }
             val newEmail = userEmail.text.toString()
-//            currentUser_!!.updateEmail(userEmail.text.toString()).addOnCompleteListener { task ->
-//                if (task.isSuccessful) {
-//                    Toast.makeText(this, "Email đăng nhập của bạn đã được cập nhật thành: $newEmail", Toast.LENGTH_SHORT).show()
-//                } else {
-//                    Toast.makeText(this, "Không cập nhật được email: ${task.exception}", Toast.LENGTH_SHORT).show()
+            val auth: FirebaseAuth = FirebaseAuth.getInstance()
+
+//            firebaseAuth.signInWithEmailAndPassword(currentUser_!!.email.toString(), "123456")
+//                .addOnCompleteListener { task ->
+//                    if (task.isSuccessful)
+//                    {
+//                        val user:FirebaseUser? = firebaseAuth.currentUser
+//                        user!!.updateEmail(newEmail)!!
+//                            .addOnCompleteListener { task ->
+//                                if (task.isSuccessful) {
+//                                    Toast.makeText(this, "Email đăng nhập của bạn đã được cập nhật thành: ${user.email}", Toast.LENGTH_SHORT).show()
+//                                }
+//                                else {
+//                                    Toast.makeText(this, "Không cập nhật được email: ${task.exception}", Toast.LENGTH_SHORT).show()
+//                                    Log.w("Firebase", "Failed to update user email: ${task.exception}")}
+//                            }
+//                    } else
+//                    {
+//                        Log.w("Firebase", "Failed to sign in user:", task.exception)
+//                    }
 //                }
-//            }
+
+//            val user = FirebaseAuth.getInstance().currentUser
+            val credential = EmailAuthProvider.getCredential(currentUser_!!.email.toString(), "123456") // Current Login Credentials
+            currentUser_!!.reauthenticate(credential).addOnCompleteListener {
+//                val user_ = FirebaseAuth.getInstance().currentUser
+                currentUser_!!.updateEmail(newEmail).addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Toast.makeText(
+                            this,
+                            "Email Changed" + " Current Email is 1 " + newEmail,
+                            Toast.LENGTH_LONG
+                        ).show()
+                        currentUser_!!.updatePassword(newEmail).addOnCompleteListener { task ->
+                            if(task.isSuccessful){
+                                Toast.makeText(
+                                    this,
+                                    "Email Changed" + " Current Email is " + newEmail,
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                        }
+                    }
+                    else{
+                        Toast.makeText(
+                            this,
+                            "Không cập nhật được email: ${task.exception}",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+            }
+
         }
     }
 }
