@@ -1,10 +1,13 @@
 package com.example.nt118_project.Fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.ListView
 import android.widget.RelativeLayout
 import android.widget.TextView
@@ -66,6 +69,13 @@ class HomeFragment : Fragment() {
                 tabLayout.selectTab(tabLayout.getTabAt(position))
             }
         })
+
+        val BusTicketBtn = view.findViewById<ImageButton>(R.id.img_bus)
+        BusTicketBtn.setOnClickListener {
+            val intent = Intent(activity, BookBusTicketsActivity::class.java)
+            val LAUNCH_SECOND_ACTIVITY:Int = 1
+            startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
+        }
     }
 
 }

@@ -13,6 +13,9 @@
         android:theme="@style/Theme.NT118_Project"
         tools:targetApi="31">
         <activity
+            android:name=".Fragments.BookBusTicketsActivity"
+            android:exported="false" />
+        <activity
             android:name=".Fragments.UserDetailFragment"
             android:exported="false" />
         <activity
@@ -31,7 +34,7 @@
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.NT118_Project.NoActionBar"></activity>
+            android:theme="@style/Theme.NT118_Project.NoActionBar" />
     </application>
 
 </manifest>
