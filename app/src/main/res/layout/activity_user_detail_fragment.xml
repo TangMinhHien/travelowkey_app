@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bot_nav"
+    tools:context=".Fragments.UserDetailFragment">
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:id="@+id/app_bar_layout_search"
+        android:background="@color/main_blue"
+        android:layout_alignParentStart="true"
+        tools:ignore="MissingConstraints">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/frame_app_bar_layout_search"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/iVBack"
+                android:layout_width="30sp"
+                android:layout_height="30sp"
+                android:src="@drawable/ic_arrow_back"
+                android:layout_marginLeft="16dp"
+                app:layout_constraintStart_toStartOf="@+id/frame_app_bar_layout_search"
+                app:layout_constraintTop_toTopOf="@+id/frame_app_bar_layout_search"
+                app:layout_constraintBottom_toBottomOf="@+id/frame_app_bar_layout_search"/>
+
+            <TextView
+                android:id="@+id/tv_search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/frame_app_bar_layout_search"
+                app:layout_constraintBottom_toBottomOf="@+id/frame_app_bar_layout_search"
+                android:layout_marginRight="10dp"
+                android:text="Thông tin tài khoản"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/app_bar_layout_search"
+        android:fadeScrollbars="false"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/app_bar_layout_search">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/PersonalData"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/rounded_edittext"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/scrollView"
+            tools:ignore="MissingConstraints">
+
+            <ImageView
+                android:id="@+id/avatar"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/avatar"
+                android:src="@drawable/ic_user"
+                app:layout_constraintStart_toStartOf="@+id/PersonalData"
+                app:layout_constraintTop_toTopOf="@+id/PersonalData" />
+
+            <TextView
+                android:id="@+id/user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_marginTop="44dp"
+                android:background="@drawable/rounded_username"
+                android:gravity="center"
+                android:paddingHorizontal="10dp"
+                android:text="User Name"
+                android:textSize="18dp"
+                android:textStyle="bold"
+                app:layout_constraintHorizontal_bias="0.461"
+                app:layout_constraintLeft_toRightOf="@id/avatar"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/PersonalData"
+                tools:ignore="MissingConstraints" />
+
+            <TextView
+                android:id="@+id/tVPersonalData"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
+                android:text="Dữ liệu cá nhân"
+                android:textColor="@color/white"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                app:layout_constraintRight_toRightOf="@+id/PersonalData"
+                app:layout_constraintStart_toStartOf="@+id/PersonalData"
+                app:layout_constraintTop_toBottomOf="@+id/avatar" />
+
+            <TextView
+                android:id="@+id/tVChangePersonalData"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="24dp"
+                android:text="Thay đổi"
+                android:textColor="@color/white"
+                android:textSize="15dp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@+id/PersonalData"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@+id/tVPersonalData"
+                app:layout_constraintTop_toBottomOf="@+id/avatar"
+                tools:ignore="TextSizeCheck" />
+
+            <TextView
+                android:id="@+id/SaveBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="16dp"
+                android:text="Lưu"
+                android:textColor="@color/white"
+                android:visibility="invisible"
+                android:textSize="15dp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/tVChangePersonalData"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@+id/tVPersonalData"
+                app:layout_constraintTop_toBottomOf="@+id/avatar"
+                tools:ignore="TextSizeCheck" />
+
+            <TextView
+                android:id="@+id/tVFullName"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
+                android:text="Tên đầy đủ"
+                android:textColor="@color/white"
+                app:layout_constraintRight_toRightOf="@+id/PersonalData"
+                app:layout_constraintStart_toStartOf="@+id/PersonalData"
+                app:layout_constraintTop_toBottomOf="@+id/tVPersonalData" />
+
+            <EditText
+                android:id="@+id/eTFullName"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="16dp"
+                android:enabled="false"
+                android:hint="Họ tên"
+                android:minHeight="48dp"
+                android:textColor="@color/white"
+                app:layout_constraintEnd_toEndOf="@+id/PersonalData"
+                app:layout_constraintTop_toBottomOf="@+id/tVPersonalData" />
+
+            <TextView
+                android:id="@+id/tVSex"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
+                android:text="Giới tính"
+                android:textColor="@color/white"
+                app:layout_constraintRight_toRightOf="@+id/PersonalData"
+                app:layout_constraintStart_toStartOf="@+id/PersonalData"
+                app:layout_constraintTop_toBottomOf="@+id/eTFullName" />
+
+            <EditText
+                android:id="@+id/eTSex"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="70dp"
+                android:layout_marginRight="16dp"
+                android:enabled="false"
+                android:hint="Giới tính"
+                android:minHeight="48dp"
+                android:textColor="@color/white"
+                app:layout_constraintEnd_toEndOf="@+id/PersonalData"
+                app:layout_constraintTop_toBottomOf="@+id/eTFullName" />
+
+            <TextView
+                android:id="@+id/tVBirthDay"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
+                android:text="Ngày Sinh"
+                android:textColor="@color/white"
+                app:layout_constraintRight_toRightOf="@+id/PersonalData"
+                app:layout_constraintStart_toStartOf="@+id/PersonalData"
+                app:layout_constraintTop_toBottomOf="@+id/eTSex" />
+
+            <EditText
+                android:id="@+id/eTBirthDay"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="70dp"
+                android:layout_marginRight="16dp"
+                android:enabled="false"
+                android:hint="Ngày sinh"
+                android:minHeight="48dp"
+                android:textColor="@color/white"
+                app:layout_constraintEnd_toEndOf="@+id/PersonalData"
+                app:layout_constraintTop_toBottomOf="@+id/eTSex" />
+
+            <TextView
+                android:id="@+id/tVPhoneNumber"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
+                android:text="SĐT"
+                android:textColor="@color/white"
+                app:layout_constraintRight_toRightOf="@+id/PersonalData"
+                app:layout_constraintStart_toStartOf="@+id/PersonalData"
+                app:layout_constraintTop_toBottomOf="@+id/eTBirthDay" />
+
+            <EditText
+                android:id="@+id/eTPhoneNumber"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="70dp"
+                android:layout_marginRight="16dp"
+                android:enabled="false"
+                android:hint="SĐT"
+                android:minHeight="48dp"
+                android:textColor="@color/white"
+                app:layout_constraintEnd_toEndOf="@+id/PersonalData"
+                app:layout_constraintTop_toBottomOf="@+id/eTBirthDay" />
+
+            <TextView
+                android:id="@+id/tVAddress"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
+                android:text="Địa chỉ"
+                android:textColor="@color/white"
+                app:layout_constraintRight_toRightOf="@+id/PersonalData"
+                app:layout_constraintStart_toStartOf="@+id/PersonalData"
+                app:layout_constraintTop_toBottomOf="@+id/eTPhoneNumber" />
+
+            <EditText
+                android:id="@+id/eTAddress"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="70dp"
+                android:layout_marginRight="16dp"
+                android:enabled="false"
+                android:hint="Address"
+                android:minHeight="48dp"
+                android:textColor="@color/white"
+                app:layout_constraintEnd_toEndOf="@+id/PersonalData"
+                app:layout_constraintTop_toBottomOf="@+id/eTPhoneNumber" />
+
+            <TextView
+                android:id="@+id/tVEmail"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
+                android:text="Email"
+                android:textColor="@color/white"
+                app:layout_constraintRight_toRightOf="@+id/PersonalData"
+                app:layout_constraintStart_toStartOf="@+id/PersonalData"
+                app:layout_constraintTop_toBottomOf="@+id/eTAddress" />
+
+            <EditText
+                android:id="@+id/eTEmail"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="70dp"
+                android:layout_marginRight="16dp"
+                android:enabled="false"
+                android:hint="Email"
+                android:minHeight="48dp"
+                android:textColor="@color/white"
+                app:layout_constraintEnd_toEndOf="@+id/PersonalData"
+                app:layout_constraintTop_toBottomOf="@+id/eTAddress" />
+
+            <TextView
+                android:id="@+id/tVNote_Email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:text="Note: Đây là địa chỉ email dùng để đăng nhập và nhận các thông báo"
+                android:textColor="@color/white"
+                app:layout_constraintRight_toRightOf="@+id/PersonalData"
+                app:layout_constraintStart_toStartOf="@+id/PersonalData"
+                app:layout_constraintTop_toBottomOf="@id/eTEmail" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+    <Button
+        android:id="@+id/LogOutBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Đăng xuất"
+        android:textColor="@color/white"
+        android:background="@color/main_blue"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bot_nav"
+    tools:context=".Fragments.BookBusTicketsActivity">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/app_bar_layout_search_ticketbus"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="@color/main_blue"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentLeft="true">
+        <ImageView
+            android:id="@+id/iVBack"
+            android:layout_width="30sp"
+            android:layout_height="30sp"
+            android:src="@drawable/ic_arrow_back"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintStart_toStartOf="@+id/app_bar_layout_search_ticketbus"
+            app:layout_constraintTop_toTopOf="@+id/app_bar_layout_search_ticketbus"
+            />
+        <TextView
+            android:id="@+id/tVNameActivity_BusTicket"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tìm xe buýt và xe trung chuyển"
+            android:textColor="@color/white"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginTop="25dp"
+            app:layout_constraintTop_toTopOf="@id/app_bar_layout_search_ticketbus"
+            app:layout_constraintRight_toRightOf="@id/app_bar_layout_search_ticketbus"
+            app:layout_constraintLeft_toLeftOf="@id/app_bar_layout_search_ticketbus"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/app_bar_layout_search_ticketbus"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="-25dp">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop = "true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@drawable/rounded_edittext">
+
+        <TextView
+            android:id="@+id/tVfrom"
+            android:layout_width="19dp"
+            android:layout_height="17dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="30dp"
+            android:gravity="top"
+            android:text="Từ"
+            android:textColor="@color/white" />
+
+        <ImageView
+            android:id="@+id/airplane_ta"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_below="@+id/tVfrom"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="26dp"
+            android:background="@drawable/ic_bus_come" />
+
+        <Spinner
+            android:id="@+id/FromSpinner"
+            android:layout_width="100dp"
+            android:layout_height="48dp"
+            android:layout_below="@+id/tVfrom"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="25dp"
+            android:layout_marginTop="26dp"
+            android:layout_marginRight="50dp"
+            android:layout_toRightOf="@+id/airplane_ta" />
+
+        <TextView
+            android:id="@+id/tVto"
+            android:layout_width="wrap_content"
+            android:layout_height="17dp"
+            android:layout_below="@+id/FromSpinner"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="15dp"
+            android:gravity="center"
+            android:text="Đến"
+            android:textColor="@color/white" />
+
+        <ImageView
+            android:id="@+id/bus_come"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_below="@+id/tVto"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="26dp"
+            android:background="@drawable/ic_bus_come_2" />
+
+        <Spinner
+            android:id="@+id/ToSpinner"
+            android:layout_width="100dp"
+            android:layout_height="48dp"
+            android:layout_below="@+id/tVto"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="25dp"
+            android:layout_marginTop="26dp"
+            android:layout_marginRight="50dp"
+            android:layout_toRightOf="@+id/bus_come" />
+
+        <TextView
+            android:id="@+id/tVDepartureDay"
+            android:layout_width="wrap_content"
+            android:layout_height="17dp"
+            android:layout_below="@+id/ToSpinner"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="15dp"
+            android:gravity="center"
+            android:text="Ngày khởi hành"
+            android:textColor="@color/white" />
+
+        <ImageView
+            android:id="@+id/iVDepartureDay"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_below="@+id/tVDepartureDay"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="26dp"
+            android:background="@drawable/ic_cal_in" />
+
+        <TextView
+            android:id="@+id/DepartureDaySpinner"
+            android:layout_width="175dp"
+            android:layout_height="49dp"
+            android:textColor="@color/white"
+            android:layout_below="@+id/tVDepartureDay"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="25dp"
+            android:layout_marginTop="26dp"
+            android:layout_marginRight="120dp"
+            android:layout_toLeftOf="@+id/cBox"
+            android:layout_toRightOf="@+id/iVDepartureDay" />
+
+        <CheckBox
+            android:id="@+id/cBox"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_below="@+id/tVDepartureDay"
+            android:layout_marginTop="25dp"
+            android:layout_marginRight="4dp"
+            android:layout_toLeftOf="@+id/tVRoundTrip" />
+
+        <TextView
+            android:id="@+id/tVRoundTrip"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_below="@+id/tVDepartureDay"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="40dp"
+            android:layout_marginRight="14dp"
+
+            android:gravity="center"
+            android:text="Khứ hồi"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:id="@+id/tVReturnDay"
+            android:layout_width="wrap_content"
+            android:layout_height="17dp"
+            android:layout_below="@+id/DepartureDaySpinner"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="15dp"
+            android:gravity="center"
+            android:text="Ngày về"
+            android:textColor="@color/white" />
+
+        <ImageView
+            android:id="@+id/iVReturnDay"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_below="@+id/tVReturnDay"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="26dp"
+            android:background="@drawable/ic_cal_out" />
+
+        <TextView
+            android:id="@+id/ReturnDaySpinner"
+            android:textColor="@color/white"
+            android:layout_width="100dp"
+            android:layout_height="48dp"
+            android:layout_below="@+id/tVReturnDay"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="25dp"
+            android:layout_marginTop="26dp"
+            android:layout_marginRight="50dp"
+            android:layout_toRightOf="@+id/bus_come" />
+
+        <TextView
+            android:id="@+id/tVSeat"
+            android:layout_width="wrap_content"
+            android:layout_height="17dp"
+            android:layout_below="@+id/ReturnDaySpinner"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="15dp"
+            android:gravity="top"
+            android:text="Ghê"
+            android:textColor="@color/white" />
+
+        <ImageView
+            android:id="@+id/iVseat"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_below="@+id/tVSeat"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="26dp"
+            android:background="@drawable/ic_seat_on_bus" />
+
+        <Spinner
+            android:id="@+id/SeatSpinner"
+            android:layout_width="100dp"
+            android:layout_height="48dp"
+            android:layout_below="@+id/tVSeat"
+            android:background="@color/white"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="25dp"
+            android:layout_marginTop="26dp"
+            android:layout_marginRight="50dp"
+            android:layout_toRightOf="@+id/iVseat" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tìm kiếm"
+            android:textColor="@color/white"
+            android:layout_below="@+id/SeatSpinner"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/rounded_edittext"
+            />
+
+    </RelativeLayout>
+    </ScrollView>
+
+</RelativeLayout>
