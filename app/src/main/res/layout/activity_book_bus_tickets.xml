@@ -243,6 +243,7 @@
             android:layout_width="100dp"
             android:layout_height="48dp"
             android:layout_below="@+id/tVSeat"
+            android:background="@color/white"
             android:layout_alignParentRight="true"
             android:layout_marginLeft="25dp"
             android:layout_marginTop="26dp"
