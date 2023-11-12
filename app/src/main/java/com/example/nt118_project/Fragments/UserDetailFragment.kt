@@ -61,7 +61,6 @@ class UserDetailFragment : AppCompatActivity() {
                     Log.e("TAG", "User data not found")
                 }
             }
-
             override fun onCancelled(databaseError: DatabaseError) {
                 Log.w("TAG", "Failed to read value.", databaseError.toException())
             }
@@ -87,7 +86,7 @@ class UserDetailFragment : AppCompatActivity() {
             userFullName.isEnabled = true
             userSex.isEnabled = true
             userPhoneNumber.isEnabled = true
-            userEmail.isEnabled = true
+//            userEmail.isEnabled = true
             userBD.isEnabled = true
             userAddress.isEnabled = true
             SaveBtn.isVisible = true
@@ -109,7 +108,7 @@ class UserDetailFragment : AppCompatActivity() {
                 Toast.makeText(this, "Lưu thông tin thất bại", Toast.LENGTH_SHORT).show()
             }
             val newEmail = userEmail.text.toString()
-            val auth: FirebaseAuth = FirebaseAuth.getInstance()
+//            val auth: FirebaseAuth = FirebaseAuth.getInstance()
 
 //            firebaseAuth.signInWithEmailAndPassword(currentUser_!!.email.toString(), "123456")
 //                .addOnCompleteListener { task ->
