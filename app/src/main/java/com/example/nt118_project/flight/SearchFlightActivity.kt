@@ -17,6 +17,7 @@ import com.example.nt118_project.Fragments.Flight1Fragment
 import com.example.nt118_project.Fragments.Flight2Fragment
 import com.example.nt118_project.Fragments.FragmentPageAdapter
 import com.example.nt118_project.R
+import com.example.nt118_project.hotel.ListofHotelsActivity
 import com.google.android.material.tabs.TabLayout
 
 open class SearchFlightActivity : AppCompatActivity() {
@@ -57,6 +58,12 @@ open class SearchFlightActivity : AppCompatActivity() {
             }
         })
 
+        val listFlightsBtn = findViewById<Button>(R.id.btn_search)
+        listFlightsBtn.setOnClickListener{
+            val intent = Intent(this, ListofFlightsActivity::class.java)
+            val LAUNCH_SECOND_ACTIVITY:Int = 1
+            startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
+        }
         btn_back.setOnClickListener {
             val returnIntent = Intent()
             setResult(RESULT_CANCELED, returnIntent)
