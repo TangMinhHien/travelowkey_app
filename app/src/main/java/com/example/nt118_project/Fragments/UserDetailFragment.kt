@@ -38,6 +38,7 @@ class UserDetailFragment : AppCompatActivity() {
         val userEmail: EditText = findViewById(R.id.eTEmail)
         val userBD: EditText = findViewById(R.id.eTBirthDay)
         val userAddress: EditText = findViewById(R.id.eTAddress)
+        val tVChangePw: TextView = findViewById(R.id.tVChangePw)
 
         val firebaseAuth = FirebaseAuth.getInstance()
         val currentUser_: FirebaseUser? = firebaseAuth.currentUser
@@ -79,6 +80,15 @@ class UserDetailFragment : AppCompatActivity() {
             val returnIntent = Intent()
             setResult(RESULT_CANCELED, returnIntent)
             finish()
+        }
+        tVChangePw.setOnClickListener {
+            val intent = Intent(this@UserDetailFragment, ChangePasswordActivity::class.java)
+            val pwStr = intent.getStringExtra("Pw").toString()
+            intent.putExtra("Pw", pwStr)
+            //Toast.makeText(this,pwStr, Toast.LENGTH_LONG).show()
+//            val LAUNCH_SECOND_ACTIVITY:Int = 1
+//            startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
+            startActivity(intent)
         }
         val ChangeBtn = findViewById<TextView>(R.id.tVChangePersonalData)
         val SaveBtn = findViewById<TextView>(R.id.SaveBtn)
@@ -131,35 +141,35 @@ class UserDetailFragment : AppCompatActivity() {
 //                }
 
 //            val user = FirebaseAuth.getInstance().currentUser
-            val credential = EmailAuthProvider.getCredential(currentUser_!!.email.toString(), "123456") // Current Login Credentials
-            currentUser_!!.reauthenticate(credential).addOnCompleteListener {
-//                val user_ = FirebaseAuth.getInstance().currentUser
-                currentUser_!!.updateEmail(newEmail).addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        Toast.makeText(
-                            this,
-                            "Email Changed" + " Current Email is 1 " + newEmail,
-                            Toast.LENGTH_LONG
-                        ).show()
-                        currentUser_!!.updatePassword(newEmail).addOnCompleteListener { task ->
-                            if(task.isSuccessful){
-                                Toast.makeText(
-                                    this,
-                                    "Email Changed" + " Current Email is " + newEmail,
-                                    Toast.LENGTH_LONG
-                                ).show()
-                            }
-                        }
-                    }
-                    else{
-                        Toast.makeText(
-                            this,
-                            "Không cập nhật được email: ${task.exception}",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
-                }
-            }
+//            val credential = EmailAuthProvider.getCredential(currentUser_!!.email.toString(), "123456") // Current Login Credentials
+//            currentUser_!!.reauthenticate(credential).addOnCompleteListener {
+////                val user_ = FirebaseAuth.getInstance().currentUser
+//                currentUser_!!.updateEmail(newEmail).addOnCompleteListener { task ->
+//                    if (task.isSuccessful) {
+//                        Toast.makeText(
+//                            this,
+//                            "Email Changed" + " Current Email is 1 " + newEmail,
+//                            Toast.LENGTH_LONG
+//                        ).show()
+//                        currentUser_!!.updatePassword(newEmail).addOnCompleteListener { task ->
+//                            if(task.isSuccessful){
+//                                Toast.makeText(
+//                                    this,
+//                                    "Email Changed" + " Current Email is " + newEmail,
+//                                    Toast.LENGTH_LONG
+//                                ).show()
+//                            }
+//                        }
+//                    }
+//                    else{
+//                        Toast.makeText(
+//                            this,
+//                            "Không cập nhật được email: ${task.exception}",
+//                            Toast.LENGTH_LONG
+//                        ).show()
+//                    }
+//                }
+//            }
 
         }
     }
