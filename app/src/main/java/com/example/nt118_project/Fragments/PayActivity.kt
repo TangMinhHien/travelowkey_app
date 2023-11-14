@@ -40,10 +40,17 @@ class PayActivity : AppCompatActivity() {
         replaceFragment(FillUserInfoFragment())
         FillUserRadio.setOnClickListener {
             replaceFragment(FillUserInfoFragment())
+            NextBtn.text = "Tiếp tục"
         }
         ReviewUserRadio.setOnClickListener {
             ReviewUserRadio.isEnabled = true
             replaceFragment(ReviewUserInfoFragmentFragment())
+            NextBtn.text = "Tiếp tục"
+        }
+        PayUserRadio.setOnClickListener {
+            PayUserRadio.isEnabled = true
+            replaceFragment(PaymentInfoFragment())
+            NextBtn.text = "Hoàn tất"
         }
         ReturnBtn.setOnClickListener {
             val returnIntent = Intent()
@@ -58,7 +65,9 @@ class PayActivity : AppCompatActivity() {
             if (currentFragment is FillUserInfoFragment) {
                 ReviewUserRadio.performClick()
                 //replaceFragment(ReviewUserInfoFragmentFragment())
-            } else if (currentFragment is ReviewUserInfoFragmentFragment) { }
+            } else if (currentFragment is ReviewUserInfoFragmentFragment) {
+                PayUserRadio.performClick()
+            }
         }
 
     }

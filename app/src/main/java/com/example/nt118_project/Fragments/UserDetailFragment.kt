@@ -81,9 +81,10 @@ class UserDetailFragment : AppCompatActivity() {
             setResult(RESULT_CANCELED, returnIntent)
             finish()
         }
+        val myIntent = intent
+        val pwStr = myIntent.getStringExtra("Pw").toString()
         tVChangePw.setOnClickListener {
             val intent = Intent(this@UserDetailFragment, ChangePasswordActivity::class.java)
-            val pwStr = intent.getStringExtra("Pw").toString()
             intent.putExtra("Pw", pwStr)
             //Toast.makeText(this,pwStr, Toast.LENGTH_LONG).show()
 //            val LAUNCH_SECOND_ACTIVITY:Int = 1

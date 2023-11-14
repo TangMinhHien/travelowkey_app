@@ -8,6 +8,8 @@ class BusTicket {
     public var TravelTime: String = ""
     public var DeparturePoint: String = ""
     public var ArrivalPoint: String = ""
+    public var DeparturePlace: String = ""
+    public var ArrivalPlace: String = ""
     public var Money: String = ""
     constructor(){}
     constructor(Name:String,
@@ -17,6 +19,8 @@ class BusTicket {
                 TravelTime:String,
                 DeparturePoint:String,
                 ArrivalPoint:String,
+                DeparturePlace:String,
+                ArrivalPlace:String,
         Money:String)
     {
         this.Name = Name
@@ -26,6 +30,8 @@ class BusTicket {
         this.TravelTime = TravelTime
         this.DeparturePoint = DeparturePoint
         this.ArrivalPoint = ArrivalPoint
+        this.DeparturePlace = DeparturePlace
+        this.ArrivalPlace = ArrivalPlace
         this.Money = Money
     }
 }

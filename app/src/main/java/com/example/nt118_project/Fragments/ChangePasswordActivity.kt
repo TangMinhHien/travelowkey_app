@@ -27,14 +27,14 @@ class ChangePasswordActivity : AppCompatActivity() {
         val SaveBtn = findViewById<Button>(R.id.Savebutton)
         val tVEmail = findViewById<EditText>(R.id.eTEmail)
         val tVOlePw = findViewById<EditText>(R.id.eTOldPw)
-        val tVNewPw_1 = findViewById<EditText>(R.id.eTNewPw_1)
+        val tVNewPw_1:EditText = findViewById<EditText>(R.id.eTNewPw_1)
         val tVNewPw_2 = findViewById<EditText>(R.id.eTNewPw_2)
         val firebaseAuth = FirebaseAuth.getInstance()
         val currUser: FirebaseUser? = firebaseAuth.currentUser
         val receivedPw = intent.getStringExtra("Pw").toString()
-        val newPw  =tVNewPw_1.text.toString()
+        val newPw:String  =tVNewPw_1.text.toString()
         SaveBtn.setOnClickListener {
-            if (tVEmail.text.toString() == "" || tVOlePw.text.toString() == "" || tVNewPw_1.text.toString() == "" || tVNewPw_2.text.toString() == "")
+            if (tVEmail.text.toString() == "" || tVOlePw.text.toString() == "" || tVNewPw_1.text.toString() == null || tVNewPw_2.text.toString() == "")
             {
                 Toast.makeText(this,"Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_LONG).show()
             }
@@ -46,37 +46,37 @@ class ChangePasswordActivity : AppCompatActivity() {
             {
                 Toast.makeText(this,"Bạn xác minh lại không đúng password", Toast.LENGTH_LONG).show()
             }
-            else{
+            else if(tVOlePw.text.toString() != receivedPw)
+            {
+                Toast.makeText(this,"Bạn nhập sai password cũ", Toast.LENGTH_LONG).show()
+            }
+            else {
                 val firebaseAuth = FirebaseAuth.getInstance()
                 val curr: FirebaseUser? = firebaseAuth.currentUser
-                //val credential = EmailAuthProvider.getCredential(curr!!.email.toString(), tVOlePw.text.toString())
-                firebaseAuth.signInWithEmailAndPassword(curr!!.email.toString(), tVOlePw.text.toString()).addOnCompleteListener {
-                    curr!!.verifyBeforeUpdateEmail(curr!!.email.toString()).addOnCompleteListener { task ->
-                        if(task.isSuccessful)
-                        {
-                            curr!!.updatePassword(newPw).addOnCompleteListener { task ->
+                if (curr != null && curr.email != null) {
+                    val credential = EmailAuthProvider.getCredential(
+                        tVEmail.text.toString(),
+                        tVOlePw.text.toString()
+                    )
+                    curr.reauthenticate(credential).addOnCompleteListener {
+                        if (it.isSuccessful) {
+                            curr?.updatePassword(tVNewPw_1.text.toString())?.addOnCompleteListener { task ->
                                 if (task.isSuccessful) {
                                     Toast.makeText(
                                         this,
-                                        "Email Changed" + " Current Email is 1 " + newPw,
+                                        "Thay đổi thành công. Mật khẩu mới: " + tVNewPw_1.text.toString(),
                                         Toast.LENGTH_LONG
                                     ).show()
+                                    firebaseAuth.signOut()
                                 } else {
                                     Toast.makeText(
                                         this,
-                                        "Không cập nhật được email: ${task.exception}",
+                                        "Thay đổi mật khẩu thất bại",
                                         Toast.LENGTH_LONG
                                     ).show()
+                                    firebaseAuth.signOut()
                                 }
                             }
-                        }
-                        else
-                        {
-                            Toast.makeText(
-                            this,
-                            "Fail",
-                            Toast.LENGTH_LONG
-                            ).show()
                         }
                     }
                 }

@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.nt118_project.Adapter.BusTicketAdapter
@@ -17,13 +18,14 @@ class SelectBusTickets_2Activity : AppCompatActivity() {
     private lateinit var tvSeat: TextView
     private lateinit var DepartureDaytV: TextView
     private lateinit var dataList:ArrayList<BusTicket>
+    private lateinit var f_dataList:ArrayList<BusTicket>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_select_bus_tickets2)
 
         val myIntent = intent // this is just for example purpose
-        val startingpoint:String = myIntent.getStringExtra("Starting Point").toString()
-        val destinationpoint:String = myIntent.getStringExtra("Destination Point").toString()
+        val startingpoint: String = myIntent.getStringExtra("Starting Point").toString()
+        val destinationpoint: String = myIntent.getStringExtra("Destination Point").toString()
         val ReturnBtn = findViewById<ImageView>(R.id.iVBack)
         tv_search = findViewById<TextView>(R.id.tv_search)
         DepartureDaytV = findViewById<TextView>(R.id.DepartureDaySpinner)
@@ -39,12 +41,46 @@ class SelectBusTickets_2Activity : AppCompatActivity() {
 
         RecyclerViewBusTicket = findViewById<RecyclerView>(R.id.RecyclerViewBusTicket)
         dataList = ArrayList<BusTicket>()
-        var firstBusTicket: BusTicket = BusTicket("Hoa Mai", "16", "10:00","13:00","3h","Văn Phòng 1","Văn phòng 2","100.000")
-        dataList.add(firstBusTicket)
+        f_dataList = ArrayList<BusTicket>()
+        var firstBusTicket: BusTicket = BusTicket(
+            "Hoa Mai",
+            "16",
+            "10:00",
+            "13:00",
+            "3h",
+            "Văn Phòng 1",
+            "Văn phòng 2",
+            "TP. HCM",
+            "TP. Đà Nẵng",
+            "100.000"
+        )
+        var secondBusTicket: BusTicket = BusTicket(
+            "Hoa Mai",
+            "16",
+            "10:00",
+            "13:00",
+            "3h",
+            "Văn Phòng 1",
+            "Văn phòng 2",
+            "TP. Đà Nẵng",
+            "TP. HCM",
+            "100.000"
+        )
+        f_dataList.add(firstBusTicket)
+        f_dataList.add(secondBusTicket)
+        for (e in f_dataList) {
+            if (e.ArrivalPlace == startingpoint && e.DeparturePlace == destinationpoint)
+                dataList.add(e)
+        }
+        if (dataList.size == 0) {
+            Toast.makeText(this, "Không tìm thấy chuyến đi phù hợp", Toast.LENGTH_LONG).show()
+        } else {
         var busTicketAdapter = BusTicketAdapter(dataList)
         RecyclerViewBusTicket.adapter = busTicketAdapter
-        RecyclerViewBusTicket.layoutManager = LinearLayoutManager(this,
-            LinearLayoutManager.VERTICAL,false)
+        RecyclerViewBusTicket.layoutManager = LinearLayoutManager(
+            this,
+            LinearLayoutManager.VERTICAL, false
+        )
         busTicketAdapter.onItemClick = {
             val intent = Intent(this, PayActivity::class.java)
             intent.putExtra("Starting Point", startingpoint);
@@ -52,8 +88,9 @@ class SelectBusTickets_2Activity : AppCompatActivity() {
             intent.putExtra("DepartTime", DepartureDaytV.text.toString());
             intent.putExtra("ReturnTime", myIntent.getStringExtra("ReturnTime").toString());
             intent.putExtra("Seat", myIntent.getStringExtra("Seat").toString());
-            val LAUNCH_SECOND_ACTIVITY:Int = 1
+            val LAUNCH_SECOND_ACTIVITY: Int = 1
             startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
+        }
         }
     }
 }
