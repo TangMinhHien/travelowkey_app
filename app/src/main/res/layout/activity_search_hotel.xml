@@ -109,6 +109,8 @@
             android:id="@+id/sp_date"
             android:layout_width="0dp"
             android:layout_height="50dp"
+            android:textColor="@color/white"
+            android:gravity="center"
             app:layout_constraintTop_toBottomOf="@+id/tv_date"
             app:layout_constraintLeft_toRightOf="@id/ic_date"
             app:layout_constraintRight_toRightOf="parent"
