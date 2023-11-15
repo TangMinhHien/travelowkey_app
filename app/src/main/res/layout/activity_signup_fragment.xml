@@ -57,7 +57,7 @@
         android:layout_marginRight="50dp"
         android:background="@drawable/rounded_username"
         android:padding="10dp"
-        android:hint="Tên đăng nhập"
+        android:hint="Tên người dùng"
         />
     <EditText
         android:id="@+id/pw_signup"

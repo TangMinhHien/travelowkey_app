@@ -20,9 +20,9 @@
 
                 <ImageView
                     android:id="@+id/iVBack"
-                    android:layout_width="30sp"
-                    android:layout_height="30sp"
-                    android:src="@drawable/ic_arrow_back"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_back"
                     android:layout_marginLeft="16dp"
                     app:layout_constraintStart_toStartOf="@+id/frame_app_bar_layout_search"
                     app:layout_constraintTop_toTopOf="@+id/frame_app_bar_layout_search"
@@ -47,7 +47,7 @@
             android:id="@+id/tab_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/main_blue"
+            android:background="@drawable/action_bar"
             android:gravity="center"
             app:layout_constraintTop_toBottomOf="@+id/app_bar_layout_search"
             android:orientation="horizontal">
@@ -94,7 +94,7 @@
             android:scrollbars="vertical"
             tools:ignore="NotSibling">
         </FrameLayout>
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/Savebutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -105,5 +105,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/frame_layout"
-        android:background="@drawable/rounded_username"/>
+        android:background="@drawable/button"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

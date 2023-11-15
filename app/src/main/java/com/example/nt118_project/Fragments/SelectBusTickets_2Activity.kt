@@ -1,9 +1,14 @@
 package com.example.nt118_project.Fragments
 
 import android.content.Intent
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.view.View
+import android.widget.AdapterView
 import android.widget.ImageView
+import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,13 +17,15 @@ import com.example.nt118_project.Adapter.BusTicketAdapter
 import com.example.nt118_project.Model.BusTicket
 import com.example.nt118_project.R
 
-class SelectBusTickets_2Activity : AppCompatActivity() {
+class SelectBusTickets_2Activity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private lateinit var tv_search: TextView
     private lateinit var RecyclerViewBusTicket: RecyclerView
     private lateinit var tvSeat: TextView
     private lateinit var DepartureDaytV: TextView
     private lateinit var dataList:ArrayList<BusTicket>
     private lateinit var f_dataList:ArrayList<BusTicket>
+    private lateinit var spinner1: Spinner
+    private lateinit var spinner2: Spinner
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_select_bus_tickets2)
@@ -30,9 +37,13 @@ class SelectBusTickets_2Activity : AppCompatActivity() {
         tv_search = findViewById<TextView>(R.id.tv_search)
         DepartureDaytV = findViewById<TextView>(R.id.DepartureDaySpinner)
         tvSeat = findViewById<TextView>(R.id.tVSeat)
+        spinner1 = findViewById<Spinner>(R.id.SpinnerFrom)
+        spinner2 = findViewById<Spinner>(R.id.SpinnerTo)
         tv_search.text = destinationpoint + " -> " + startingpoint
         DepartureDaytV.text = myIntent.getStringExtra("ReturnTime").toString()
         tvSeat.text = myIntent.getStringExtra("Seat").toString()
+        spinner1.onItemSelectedListener = this
+        spinner2.onItemSelectedListener = this
         ReturnBtn.setOnClickListener {
             val returnIntent = Intent()
             setResult(RESULT_CANCELED, returnIntent)
@@ -92,5 +103,13 @@ class SelectBusTickets_2Activity : AppCompatActivity() {
             startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
         }
         }
+    }
+    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        Log.d("Selected","Select Seat")
+        (view as TextView).setTextColor(Color.WHITE)
+    }
+
+    override fun onNothingSelected(parent: AdapterView<*>?) {
+        Log.d("Selected","Not select seat")
     }
 }
