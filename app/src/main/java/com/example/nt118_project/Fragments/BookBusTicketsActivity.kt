@@ -91,20 +91,22 @@ class BookBusTicketsActivity : AppCompatActivity(), AdapterView.OnItemSelectedLi
         SpinnerSeat.setAdapter(adapter)
 
         val DestinationSpinnerData: ArrayList<Any?> = ArrayList()
-        DestinationSpinnerData.add("TP. HCM")
+        DestinationSpinnerData.add("Ho Chi Minh City")
         DestinationSpinnerData.add("TP. Đà Nẵng")
         DestinationSpinnerData.add("TP. Hà Nội")
         DestinationSpinnerData.add("TP. Bà Rịa - Vũng Tàu")
+        DestinationSpinnerData.add("An Giang Province")
         val DestinationAdapter: ArrayAdapter<Any?> = ArrayAdapter<Any?>(this,android.R.layout.simple_spinner_item,DestinationSpinnerData)
         DestinationAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         SpinnerDestination.onItemSelectedListener = this
         SpinnerDestination.setAdapter(DestinationAdapter)
 
         val StartingPointSpinnerData: ArrayList<Any?> = ArrayList()
-        StartingPointSpinnerData.add("TP. HCM")
+        StartingPointSpinnerData.add("Ho Chi Minh City")
         StartingPointSpinnerData.add("TP. Đà Nẵng")
         StartingPointSpinnerData.add("TP. Hà Nội")
         StartingPointSpinnerData.add("TP. Bà Rịa - Vũng Tàu")
+        StartingPointSpinnerData.add("An Giang Province")
         val StartingPointAdapter: ArrayAdapter<Any?> = ArrayAdapter<Any?>(this,android.R.layout.simple_spinner_item,StartingPointSpinnerData)
         StartingPointAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         SpinnerStartingPoint.onItemSelectedListener = this

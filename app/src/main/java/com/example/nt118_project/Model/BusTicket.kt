@@ -2,7 +2,7 @@ package com.example.nt118_project.Model
 
 class BusTicket {
     public var Name: String = ""
-    public var NumberOfSeat: String = "1"
+    public var NumberOfSeat: String = ""
     public var DepartureTime: String = ""
     public var ArrivalTime: String = ""
     public var TravelTime: String = ""
@@ -10,18 +10,23 @@ class BusTicket {
     public var ArrivalPoint: String = ""
     public var DeparturePlace: String = ""
     public var ArrivalPlace: String = ""
-    public var Money: String = ""
+    public var Price: String = ""
+    public var NumberOfCus:String = "1"
+    public var DepartureDate:String = ""
+    private var id:String = ""
     constructor(){}
-    constructor(Name:String,
-                NumberOfSeat:String,
-                DepartureTime:String,
-                ArrivalTime:String,
-                TravelTime:String,
-                DeparturePoint:String,
+    constructor(ArrivalPlace:String,
                 ArrivalPoint:String,
+                ArrivalTime:String,
                 DeparturePlace:String,
-                ArrivalPlace:String,
-        Money:String)
+                DeparturePoint:String,
+                DepartureTime:String,
+                Name:String,
+                NumberOfCus:String,
+                NumberOfSeat:String,
+                Price:String,
+                TravelTime:String,
+                DepartureDate:String)
     {
         this.Name = Name
         this.NumberOfSeat = NumberOfSeat
@@ -32,6 +37,12 @@ class BusTicket {
         this.ArrivalPoint = ArrivalPoint
         this.DeparturePlace = DeparturePlace
         this.ArrivalPlace = ArrivalPlace
-        this.Money = Money
+        this.Price = Price
+        this.DepartureDate = DepartureDate
     }
+    fun setID(id:String)
+    {
+        this.id = id
+    }
+    fun getID(): String {return this.id}
 }

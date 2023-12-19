@@ -31,6 +31,20 @@
             app:layout_constraintTop_toBottomOf="@+id/tVServiceInfo"
             android:layout_marginTop="10dp">
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/tVTotal"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="60dp"
+            android:textColor="#EB3911"
+            android:textStyle="bold"
+            android:text="TextView"
+            android:textSize="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ServiceDetailLayout" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

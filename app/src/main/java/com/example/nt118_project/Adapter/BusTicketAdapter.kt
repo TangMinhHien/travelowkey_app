@@ -34,11 +34,11 @@ class BusTicketAdapter(private var dataList: ArrayList<BusTicket>): RecyclerView
     override fun onBindViewHolder(holder: BusTicketViewHolder, position: Int) {
         val currItem:BusTicket = dataList[position]
         holder.tVName.setText(currItem.Name)
-        holder.tVNumberOfSeat.setText("Ghế ngồi "+currItem.NumberOfSeat+" chỗ")
+        holder.tVNumberOfSeat.setText(currItem.NumberOfSeat)
         holder.tVDepartureTime.setText(currItem.DepartureTime)
         holder.tVArrivalTime.setText(currItem.ArrivalTime)
         holder.tVTravelTime.setText(currItem.TravelTime)
-        holder.tVMoney.setText(currItem.Money + " VND/chỗ")
+        holder.tVMoney.setText(currItem.Price + " VND/chỗ")
         holder.tVDeparturePoint.setText(currItem.DeparturePoint)
         holder.tVArrivalPoint.setText(currItem.ArrivalPoint)
 

@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@drawable/rounded_username"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <RelativeLayout
@@ -11,7 +11,7 @@
         android:background="@drawable/rounded_username"
         android:backgroundTint="@color/black"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="190dp">
 
         <TextView
             android:id="@+id/tVName"
@@ -93,7 +93,7 @@
 
         <View
             android:layout_width="1dp"
-            android:layout_height="30dp"
+            android:layout_height="40dp"
             android:layout_below="@+id/iVDepartureTime"
             android:layout_marginTop="1dp"
             android:layout_marginBottom="1dp"
@@ -103,12 +103,12 @@
 
         <TextView
             android:id="@+id/tVDeparturePoint"
-            android:layout_width="wrap_content"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
             android:layout_below="@+id/tVNumberOfSeat"
             android:layout_toRightOf="@+id/iVDepartureTime"
-            android:layout_marginLeft="100dp"
+            android:layout_marginLeft="40dp"
             android:layout_marginTop="10dp"
             />
         <ImageView
@@ -124,11 +124,11 @@
         <TextView
             android:id="@+id/tVArrivalPoint"
             android:textColor="@color/white"
-            android:layout_width="wrap_content"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tVTravelTime"
             android:layout_toRightOf="@+id/iVArrivalTime"
-            android:layout_marginLeft="100dp"
+            android:layout_marginLeft="40dp"
             android:layout_marginTop="10dp"
             />
     </RelativeLayout>
