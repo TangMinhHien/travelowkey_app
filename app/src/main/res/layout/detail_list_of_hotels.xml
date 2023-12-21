@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@drawable/tab_indicator_flight"
     android:layout_marginBottom="10dp">
     <ImageView
@@ -24,13 +25,18 @@
         android:textSize="18dp"
         android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@id/image"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginTop="10dp"/>
+        app:layout_constraintLeft_toLeftOf="@id/image"
+        android:layout_marginTop="10dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:singleLine="true"
+        android:scrollHorizontally="true"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit ="marquee_forever"/>
     <ImageView
         android:id="@+id/ic_address"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:src="@drawable/ic_location"
         app:layout_constraintTop_toBottomOf="@id/tv_name_hotel"
         app:layout_constraintLeft_toLeftOf="@id/tv_name_hotel"/>
@@ -39,26 +45,60 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Thắng Tam, Thành phố Vũng Tàu "
-        android:textSize="14dp"
+        android:textSize="12dp"
         android:textColor="@color/white"
-        app:layout_constraintTop_toBottomOf="@id/tv_name_hotel"
+        app:layout_constraintBottom_toBottomOf="@id/ic_address"
+        app:layout_constraintTop_toTopOf="@id/ic_address"
         app:layout_constraintLeft_toRightOf="@id/ic_address"
-        android:layout_margin="10dp"/>
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:singleLine="true"
+        android:scrollHorizontally="true"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit ="marquee_forever"/>
+
+    <RatingBar
+        android:id="@+id/rating_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:numStars="3"
+        android:scaleX="0.4"
+        android:scaleY="0.4"
+        android:transformPivotX="0dp"
+        android:transformPivotY="0dp"
+        android:progressDrawable="@drawable/rating"
+        app:layout_constraintLeft_toRightOf="@id/tv_rating_title"
+        app:layout_constraintTop_toTopOf="@id/tv_rating_title"
+        android:layout_marginLeft="3dp"/>
+
+    <TextView
+        android:id="@+id/tv_rating_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:textSize="15dp"
+        android:text="Rating:"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="@id/tv_address"
+        app:layout_constraintTop_toBottomOf="@id/tv_address"
+        android:layout_marginTop="5dp"/>
     <TextView
         android:id="@+id/price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="VND 344.250"
         android:textColor="@color/button"
-        android:textSize="18dp"
+        android:textSize="15dp"
         android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/tv_address"
+        app:layout_constraintTop_toBottomOf="@id/tv_rating_title"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_margin="10dp"/>
-    <androidx.appcompat.widget.AppCompatButton
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="5dp"/>
+    <TextView
         android:id="@+id/btn_book_hotel"
         android:layout_width="90dp"
         android:layout_height="30dp"
+        android:gravity="center"
         android:text="Đặt chỗ"
         android:textAllCaps="false"
         android:textSize="14dp"

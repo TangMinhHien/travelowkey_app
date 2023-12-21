@@ -35,7 +35,7 @@
             android:textStyle="bold"
             android:textSize="20dp"
             app:layout_constraintLeft_toRightOf="@id/list_rooms_back"
-            app:layout_constraintTop_toTopOf="@id/list_hotels_back"
+            app:layout_constraintTop_toTopOf="@id/list_rooms_back"
             app:layout_constraintBottom_toBottomOf="@id/list_rooms_back"
             android:layout_marginLeft="5dp"/>
         <TextView
@@ -46,7 +46,13 @@
             android:textSize="14dp"
             android:text="Thắng Tam, Thành phố Vũng Tàu "
             app:layout_constraintTop_toBottomOf="@id/info_room"
-            app:layout_constraintLeft_toRightOf="@id/list_rooms_back"/>
+            app:layout_constraintLeft_toRightOf="@id/list_rooms_back"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:singleLine="true"
+            android:scrollHorizontally="true"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit ="marquee_forever"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
     <ScrollView
@@ -64,6 +70,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/tab_indicator">
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/RecyclerviewRoom"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/tab_indicator_flight"

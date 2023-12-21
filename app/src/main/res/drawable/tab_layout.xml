@@ -6,8 +6,10 @@
             <corners android:radius="20dp"/>
             <padding android:top="5dp"/>
             <padding android:bottom="5dp"/>
+            <padding android:left="10dp"/>
+            <padding android:right="10dp"/>
             <stroke android:color="@color/black"
-                    android:width="5dp"/>
+                    android:width="3dp"/>
         </shape>
     </item>
 </layer-list>
