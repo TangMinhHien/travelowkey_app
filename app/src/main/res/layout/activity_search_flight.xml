@@ -54,10 +54,7 @@
           android:background="@drawable/tab_layout"
           android:paddingVertical="10dp"
           app:tabIndicatorHeight="30dp"
-          app:tabPaddingStart="10dp"
-          app:tabPaddingEnd="10dp"
-          app:tabMode="fixed"
-          android:scrollbars="vertical"/>
+          app:tabMode="fixed"/>
    </androidx.constraintlayout.widget.ConstraintLayout>
 
       <androidx.viewpager2.widget.ViewPager2

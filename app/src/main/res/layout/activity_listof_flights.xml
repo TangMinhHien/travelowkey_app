@@ -27,16 +27,37 @@
             android:layout_marginLeft="10dp"
             android:layout_marginTop="15dp"/>
         <TextView
-            android:id="@+id/info_flight"
+            android:id="@+id/info_flight_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TP HCM -> Tokyo"
+            android:text="TP HCM"
             android:textColor="@color/white"
             android:textStyle="bold"
             android:textSize="20dp"
             app:layout_constraintLeft_toRightOf="@id/list_flights_back"
             app:layout_constraintTop_toTopOf="@id/list_flights_back"
             app:layout_constraintBottom_toBottomOf="@id/list_flights_back"
+            android:layout_marginLeft="5dp"/>
+        <ImageView
+            android:id="@+id/arrow"
+            android:src="@drawable/ic_arrow"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            app:layout_constraintLeft_toRightOf="@id/info_flight_1"
+            app:layout_constraintTop_toTopOf="@id/info_flight_1"
+            app:layout_constraintBottom_toBottomOf="@id/info_flight_1"
+            android:layout_margin="5dp"/>
+        <TextView
+            android:id="@+id/info_flight_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="HA NOI"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:textSize="20dp"
+            app:layout_constraintLeft_toRightOf="@id/arrow"
+            app:layout_constraintTop_toTopOf="@id/info_flight_1"
+            app:layout_constraintBottom_toBottomOf="@id/info_flight_1"
             android:layout_marginLeft="5dp"/>
         <TextView
             android:id="@+id/info_sup_flight"
@@ -45,7 +66,7 @@
             android:textColor="@color/white"
             android:textSize="14dp"
             android:text="10/10/2023 - 1 người - Economy"
-            app:layout_constraintTop_toBottomOf="@id/info_flight"
+            app:layout_constraintTop_toBottomOf="@id/info_flight_1"
             app:layout_constraintLeft_toRightOf="@id/list_flights_back"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -58,11 +79,12 @@
         app:layout_constraintLeft_toRightOf="parent"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginTop="-30dp">
+        android:layout_marginTop="-45dp">
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/RecyclerviewFlightTicket"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/tab_indicator_flight"
