@@ -17,11 +17,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.nt118_project.Adapter.BusTicketAdapter
 import com.example.nt118_project.Model.BusTicket
 import com.example.nt118_project.R
+import com.google.firebase.Firebase
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.firestore.firestore
+import java.text.SimpleDateFormat
+import java.util.Locale
 import java.util.concurrent.locks.ReentrantLock
 
 class SelectBusTickets_2Activity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
@@ -62,29 +66,28 @@ class SelectBusTickets_2Activity : AppCompatActivity(), AdapterView.OnItemSelect
         val reentrantLock = ReentrantLock()
         reentrantLock.lock()
         dataList = ArrayList<BusTicket>()
-        val databaseReference: DatabaseReference = FirebaseDatabase.getInstance().getReference("XeKhach")
+        val databaseReference = Firebase.firestore
         progresssDialog.setMessage("Đang tải dữ liệu...");
         progresssDialog.show();
-        databaseReference.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                for (snapshot in dataSnapshot.children) {
-                    val dataModel:BusTicket? = snapshot.getValue(BusTicket::class.java)
-                    val itemId:String = snapshot.key.toString()
-                    dataModel!!.setID(itemId)
-                    var departureDateList:List<String> = dataModel!!.DepartureDate.split("\\s+".toRegex())
-                    val indexToDrop = listOf(2,4,5)
-                    val resultdepartureDate = departureDateList.filterIndexed { index, _ -> index in indexToDrop }
-                    val resultdepartureDateString = resultdepartureDate.joinToString(separator = "-")
-                    if(resultdepartureDateString == myIntent.getStringExtra("ReturnTime").toString())
-                        if (dataModel.ArrivalPlace == startingpoint && dataModel.DeparturePlace == destinationpoint)
-                        {
-                            dataList.add(dataModel!!)
-                        }
+        val inputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("yyyy-M-d", Locale.getDefault())
+        val departTime = myIntent.getStringExtra("ReturnTime").toString()
+        val date = inputFormat.parse(departTime)
+        val Date= outputFormat.format(date!!)
+        Log.d("DateReturn", Date)
+        databaseReference.collection("Bus").whereEqualTo("From", destinationpoint).whereEqualTo("To", startingpoint)
+            .whereEqualTo("Date", Date)
+            .get()
+            .addOnSuccessListener { documents ->
+                for (document in documents)
+                {
+                    val dataModel= document.toObject(BusTicket::class.java)
+                    dataList.add(dataModel)
                 }
                 if (dataList.size == 0)
                 {
                     progresssDialog.dismiss();
-                    Toast.makeText(this@SelectBusTickets_2Activity, "Không tìm thấy chuyến đi phù hợp1", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@SelectBusTickets_2Activity, "Không tìm thấy chuyến đi phù hợp", Toast.LENGTH_LONG).show()
                 }
                 else
                 {
@@ -94,7 +97,7 @@ class SelectBusTickets_2Activity : AppCompatActivity(), AdapterView.OnItemSelect
                     RecyclerViewBusTicket.layoutManager = LinearLayoutManager(this@SelectBusTickets_2Activity,LinearLayoutManager.VERTICAL,false)
                     val myExtraBoolean = intent.getBooleanExtra("RoundTrip", false)
                     busTicketAdapter.onItemClick = {selectedBusTicket ->
-                        val selectedID:String = selectedBusTicket.getID()
+                        val selectedID:String = selectedBusTicket.Id
                         Log.d("SecondID_Select2",selectedID)
                         val intent = Intent(this@SelectBusTickets_2Activity, PayActivity::class.java)
                         intent.putExtra("Seat", myIntent.getStringExtra("Seat").toString());
@@ -106,9 +109,9 @@ class SelectBusTickets_2Activity : AppCompatActivity(), AdapterView.OnItemSelect
                     }
                 }
             }
-            override fun onCancelled(databaseError: DatabaseError) {
+            .addOnFailureListener{exception ->
+                Log.w("Error getting documents: ", exception)
             }
-        })
         reentrantLock.unlock()
     }
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {

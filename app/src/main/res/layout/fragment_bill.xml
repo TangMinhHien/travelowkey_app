@@ -3,12 +3,91 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/bot_nav"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Fragments.BillFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/tVListInvoice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="52dp"
+            android:text="Danh sách hóa đơn"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <RadioGroup
+            android:id="@+id/radio_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tVListInvoice">
+
+            <RadioButton
+                android:id="@+id/radio_button1"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:button="@android:color/transparent"
+                android:background="@drawable/selector_radiobutton"
+                android:gravity="center"
+                android:layout_marginTop="10dp"
+                android:text="Vé xe khách"
+                android:textColor="@color/white" />
+
+            <RadioButton
+                android:id="@+id/radio_button2"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:button="@android:color/transparent"
+                android:background="@drawable/selector_radiobutton"
+                android:gravity="center"
+                android:layout_marginTop="10dp"
+                android:text="Xe thuê"
+                android:textColor="@color/white" />
+
+            <RadioButton
+                android:id="@+id/radio_button3"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:button="@android:color/transparent"
+                android:background="@drawable/selector_radiobutton"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="Vé máy bay"
+                android:textColor="@color/white" />
+
+            <RadioButton
+                android:id="@+id/radio_button4"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:button="@android:color/transparent"
+                android:background="@drawable/selector_radiobutton"
+                android:gravity="center"
+                android:layout_marginTop="10dp"
+                android:text="Phòng khách sạn"
+                android:textColor="@color/white" />
+        </RadioGroup>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/RecyclerViewTicket"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/radio_group"
+            app:layout_constraintTop_toTopOf="@+id/radio_group" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

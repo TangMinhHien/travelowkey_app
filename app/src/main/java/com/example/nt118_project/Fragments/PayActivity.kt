@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.provider.MediaStore.Audio.Radio
 import android.util.Log
 import android.view.View
+import kotlin.random.Random
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -14,6 +15,9 @@ import android.widget.RadioGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.nt118_project.R
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.firestore
 
 class PayActivity : AppCompatActivity() {
     private lateinit var FillUserRadio: RadioButton
@@ -26,6 +30,7 @@ class PayActivity : AppCompatActivity() {
     private var FirstID:String = ""
     private var SecondID: String = ""
     private var NumberOfSeat: String = ""
+
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,6 +63,7 @@ class PayActivity : AppCompatActivity() {
                         fragobj.setArguments(bundle)
                         replaceFragment(fragobj)
                         NextBtn.text = "Tiếp tục"
+                        NextBtn.setVisibility(View.VISIBLE)
                 }
                 R.id.radio_button3 -> {
                     PayUserRadio.isEnabled = true
@@ -69,6 +75,7 @@ class PayActivity : AppCompatActivity() {
                     fragobj.setArguments(bundle)
                     replaceFragment(fragobj)
                     NextBtn.text = "Hoàn tất"
+                    NextBtn.setVisibility(View.GONE)
                 }
                 R.id.radio_button1 -> {
                         val fragobj = FillUserInfoFragment()
@@ -78,6 +85,7 @@ class PayActivity : AppCompatActivity() {
                         fragobj.setArguments(bundle)
                         replaceFragment(fragobj)
                         NextBtn.text = "Tiếp tục"
+                        NextBtn.setVisibility(View.VISIBLE)
                 }
             }
         }
