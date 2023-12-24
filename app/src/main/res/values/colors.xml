@@ -12,4 +12,6 @@
     <color name="main_blue">#029BF9</color>
     <color name="black2">#1E1E1E</color>
     <color name="button">#EB3911</color>
+    <color name="subtext">#6f7f99</color>
+    <color name="yellow">#f5c715</color>
 </resources>
