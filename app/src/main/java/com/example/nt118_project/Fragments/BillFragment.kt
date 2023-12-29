@@ -13,8 +13,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.nt118_project.Adapter.BusTicketAdapter
 import com.example.nt118_project.Adapter.BusTicketInvoiceAdapter
+import com.example.nt118_project.Adapter.FlightTicketInvoiceBillAdapter
+import com.example.nt118_project.Adapter.RoomTicketInvoiceBillAdapter
 import com.example.nt118_project.Model.BusTicket
 import com.example.nt118_project.Model.BusTicketInvoice
+import com.example.nt118_project.Model.HotelTicketInvoice
+import com.example.nt118_project.Model.Room
 import com.example.nt118_project.R
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks.await
@@ -50,7 +54,7 @@ private const val ARG_PARAM2 = "param2"
  * Use the [BillFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class BillFragment : Fragment(){
+class BillFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -62,18 +66,51 @@ class BillFragment : Fragment(){
             param2 = it.getString(ARG_PARAM2)
         }
     }
+
     class bus_invoice_ {
         var bus_Id_1: String = ""
         var bus_Id_2: String = ""
         var id: String = ""
         var invoice_Id: String = ""
-        constructor(){}
-        constructor(bus_Id_1:String, bus_Id_2: String, id:String, invoice_Id:String)
-        {
+
+        constructor() {}
+        constructor(bus_Id_1: String, bus_Id_2: String, id: String, invoice_Id: String) {
             this.bus_Id_1 = bus_Id_1
             this.bus_Id_2 = bus_Id_2
             this.id = id
             this.invoice_Id = invoice_Id
+        }
+    }
+
+    class service_invoice_ {
+        var id_ticket_1: String = ""
+        var id_ticket_2: String = ""
+        var id: String = ""
+        var invoice_Id: String = ""
+
+        constructor() {}
+        constructor(id_ticket_1: String, id_ticket_2: String, id: String, invoice_Id: String) {
+            this.id_ticket_1 = id_ticket_1
+            this.id_ticket_2 = id_ticket_2
+            this.id = id
+            this.invoice_Id = invoice_Id
+        }
+    }
+
+    class hotel_invoice {
+        var checkInDate: String = ""
+        var checkOutDate: String = ""
+        var id: String = ""
+        var invoice_Id: String = ""
+        var roomId: String = ""
+
+        constructor() {}
+        constructor(CheckIn: String, CheckOut: String, id: String, invoice_Id: String, roomId: String) {
+            this.checkInDate = CheckIn
+            this.checkOutDate = CheckOut
+            this.id = id
+            this.invoice_Id = invoice_Id
+            this.roomId = roomId
         }
     }
     class invoice_ {
@@ -97,11 +134,9 @@ class BillFragment : Fragment(){
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-//        return rootView
         return inflater.inflate(R.layout.fragment_bill, container, false)
     }
     private lateinit var RadioGroup: RadioGroup
-    //private lateinit var RecyclerViewTicket: RecyclerView
     override fun onViewCreated(view: View, savedInstanceState: Bundle?){
         super.onViewCreated(view, savedInstanceState)
         val databaseReference = Firebase.firestore
@@ -118,7 +153,6 @@ class BillFragment : Fragment(){
                     val invoice_model_List = ArrayList<invoice_>()
                     var busTicketInvoiceAdapter: BusTicketInvoiceAdapter
                     var dataList:ArrayList<BusTicketInvoice> = ArrayList<BusTicketInvoice>()
-                    //dataList.add(BusTicketInvoice("HN1000202419256","","1 ghế ngồi","200000.0"))
                     Thread(Runnable(){
                         var test = databaseReference.collection("Invoice").whereEqualTo("user_Id", user_id.toString()).whereEqualTo("tag", "Bus")
                         var testSnapshot = await(test.get())
@@ -134,9 +168,9 @@ class BillFragment : Fragment(){
                                     var temp = ArrayList<String>()
                                     for (document in documents)
                                     {
-                                        val bus_invoice_model = document.toObject(bus_invoice_::class.java)
-                                        temp.add(bus_invoice_model.bus_Id_1)
-                                        temp.add(bus_invoice_model.bus_Id_2)
+                                        val bus_invoice_model = document.toObject(service_invoice_::class.java)
+                                        temp.add(bus_invoice_model.id_ticket_1)
+                                        temp.add(bus_invoice_model.id_ticket_2)
                                         break
                                     }
                                     val busticketinvoice = BusTicketInvoice(temp[0],temp[1],inv.num_Ticket,inv.total)
@@ -147,10 +181,6 @@ class BillFragment : Fragment(){
                                 }
                         }
                     }).start()
-//                    busTicketInvoiceAdapter = BusTicketInvoiceAdapter(dataList)
-//                    RecyclerViewTicket.adapter = busTicketInvoiceAdapter
-//                    RecyclerViewTicket.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL,false)
-                    Log.d("DataList", "dataList.size.toString()4")
                 }
                 R.id.radio_button2 -> {
                     var RecyclerViewTicket: RecyclerView
@@ -162,42 +192,74 @@ class BillFragment : Fragment(){
                     busTicketInvoiceAdapter = BusTicketInvoiceAdapter(dataList)
                     RecyclerViewTicket.adapter = busTicketInvoiceAdapter
                     RecyclerViewTicket.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL,false)
-//                    Thread(Runnable(){
-//                        var test = databaseReference.collection("Invoice").whereEqualTo("user_Id", user_id.toString()).whereEqualTo("tag", "Bus")
-//                        var testSnapshot = await(test.get())
-//                        for (doc in testSnapshot.documents)
-//                        {
-//                            val invoice_model = doc.toObject(invoice_::class.java)
-//                            invoice_model_List.add(invoice_model!!)
-//                        }
-//                        for (inv in invoice_model_List)
-//                        {
-//                            databaseReference.collection("Bus_invoice").whereEqualTo("invoice_Id", inv.id).get()
-//                                .addOnSuccessListener { documents ->
-//                                    var temp = ArrayList<String>()
-//                                    for (document in documents)
-//                                    {
-//                                        val bus_invoice_model = document.toObject(bus_invoice_::class.java)
-//                                        temp.add(bus_invoice_model.bus_Id_1)
-//                                        temp.add(bus_invoice_model.bus_Id_2)
-//                                        break
-//                                    }
-//                                    val busticketinvoice = BusTicketInvoice(temp[0],temp[1],inv.num_Ticket,inv.total)
-//                                    dataList.add(busticketinvoice)
-//                                    busTicketInvoiceAdapter = BusTicketInvoiceAdapter(dataList)
-//                                    RecyclerViewTicket.adapter = busTicketInvoiceAdapter
-//                                    RecyclerViewTicket.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL,false)
-//                                }
-//                        }
-//                    }).start()
-//                    busTicketInvoiceAdapter = BusTicketInvoiceAdapter(dataList)
-//                    RecyclerViewTicket.adapter = busTicketInvoiceAdapter
-//                    RecyclerViewTicket.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL,false)
-                    Log.d("DataList", "dataList.size.toString()4")
                 }
                 R.id.radio_button3 -> {
+                    var RecyclerViewTicket: RecyclerView
+                    RecyclerViewTicket = view.findViewById(R.id.RecyclerViewTicket)
+                    val invoice_model_List = ArrayList<invoice_>()
+                    var flightTicketInvoiceAdapter: FlightTicketInvoiceBillAdapter
+                    var dataList:ArrayList<BusTicketInvoice> = ArrayList<BusTicketInvoice>()
+                    Thread(Runnable(){
+                        var test = databaseReference.collection("Invoice").whereEqualTo("user_Id", user_id.toString()).whereEqualTo("tag", "Flight")
+                        var testSnapshot = await(test.get())
+                        for (doc in testSnapshot.documents)
+                        {
+                            val invoice_model = doc.toObject(invoice_::class.java)
+                            invoice_model_List.add(invoice_model!!)
+                        }
+                        for (inv in invoice_model_List)
+                        {
+                            databaseReference.collection("Flight_invoice").whereEqualTo("invoice_Id", inv.id).get()
+                                .addOnSuccessListener { documents ->
+                                    var temp = ArrayList<String>()
+                                    for (document in documents)
+                                    {
+                                        val bus_invoice_model = document.toObject(service_invoice_::class.java)
+                                        temp.add(bus_invoice_model.id_ticket_1)
+                                        temp.add(bus_invoice_model.id_ticket_2)
+                                        break
+                                    }
+                                    val busticketinvoice = BusTicketInvoice(temp[0],temp[1],inv.num_Ticket,inv.total)
+                                    dataList.add(busticketinvoice)
+                                    flightTicketInvoiceAdapter = FlightTicketInvoiceBillAdapter(dataList)
+                                    RecyclerViewTicket.adapter = flightTicketInvoiceAdapter
+                                    RecyclerViewTicket.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL,false)
+                                }
+                        }
+                    }).start()
                 }
                 R.id.radio_button4 -> {
+                    var RecyclerViewTicket: RecyclerView
+                    RecyclerViewTicket = view.findViewById(R.id.RecyclerViewTicket)
+                    val invoice_model_List = ArrayList<invoice_>()
+                    var roomTicketInvoiceAdapter: RoomTicketInvoiceBillAdapter
+                    var dataList:ArrayList<HotelTicketInvoice> = ArrayList<HotelTicketInvoice>()
+                    Thread(Runnable(){
+                        var test = databaseReference.collection("Invoice").whereEqualTo("user_Id", user_id.toString()).whereEqualTo("tag", "Hotel")
+                        var testSnapshot = await(test.get())
+                        for (doc in testSnapshot.documents)
+                        {
+                            val invoice_model = doc.toObject(invoice_::class.java)
+                            invoice_model_List.add(invoice_model!!)
+                        }
+                        for (inv in invoice_model_List)
+                        {
+                            databaseReference.collection("Hotel_invoice").whereEqualTo("invoice_Id", inv.id).get()
+                                .addOnSuccessListener { documents ->
+                                    var hotel_invoice_model:hotel_invoice = hotel_invoice()
+                                    for (document in documents)
+                                    {
+                                        hotel_invoice_model = document.toObject(hotel_invoice::class.java)
+                                        break
+                                    }
+                                    val busticketinvoice = HotelTicketInvoice(hotel_invoice_model.roomId,hotel_invoice_model.checkOutDate, hotel_invoice_model.checkInDate,inv.num_Ticket,inv.total)
+                                    dataList.add(busticketinvoice)
+                                    roomTicketInvoiceAdapter = RoomTicketInvoiceBillAdapter(dataList)
+                                    RecyclerViewTicket.adapter = roomTicketInvoiceAdapter
+                                    RecyclerViewTicket.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL,false)
+                                }
+                        }
+                    }).start()
                 }
             }
         }

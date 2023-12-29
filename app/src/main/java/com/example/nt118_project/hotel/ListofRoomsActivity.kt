@@ -92,6 +92,7 @@ class ListofRoomsActivity : AppCompatActivity() {
                                 intent.putExtra("DayStart", value.getString("DayStart"));
                                 intent.putExtra("DayEnd",value.getString("DayEnd"));
                                 intent.putExtra("NumRoom", value.getString("NumRoom"));
+                                intent.putExtra("Tag", "Hotel");
                                 val LAUNCH_SECOND_ACTIVITY: Int = 1
                                 startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)}
                         }

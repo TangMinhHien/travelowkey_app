@@ -5,23 +5,16 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.AdapterView
 import android.widget.ImageButton
-import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
-import androidx.databinding.DataBindingUtil.setContentView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.nt118_project.Adapter.BusTicketAdapter
 import com.example.nt118_project.Adapter.FlightTicketAdapter
 import com.example.nt118_project.Fragments.PayActivity
-import com.example.nt118_project.Model.BusTicket
 import com.example.nt118_project.Model.FlightTicket
 import com.example.nt118_project.R
 import com.google.firebase.Firebase
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
@@ -103,7 +96,8 @@ class ListofFlightsActivity : AppCompatActivity() {
                             val intent = Intent(this@ListofFlightsActivity,PayActivity::class.java)
                             intent.putExtra("FirstSelectedID", selectedID)
                             intent.putExtra("SecondSelectedID", "")
-                            intent.putExtra("NumSeat","NumSeat")
+                            intent.putExtra("Seat",value.getString("NumSeat"))
+                            intent.putExtra("Tag", "Flight");
                             val LAUNCH_SECOND_ACTIVITY: Int = 1
                             startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)}
 
@@ -187,7 +181,8 @@ class ListofFlightsActivity : AppCompatActivity() {
                                 var intent = Intent(this@ListofFlightsActivity,PayActivity::class.java)
                                 intent.putExtra("FirstSelectedID", value.getString("FirstSelectedID"))
                                 intent.putExtra("SecondSelectedID", selectedID)
-                                intent.putExtra("NumSeat",value.getString("NumSeat"))
+                                intent.putExtra("Seat",value.getString("NumSeat"))
+                                intent.putExtra("Tag", "Flight")
                                 val LAUNCH_SECOND_ACTIVITY: Int = 1
                                 startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)}
                         }

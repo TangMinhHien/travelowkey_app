@@ -6,9 +6,12 @@ import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.ImageView
+import android.widget.PopupMenu
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
@@ -17,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.nt118_project.Adapter.BusTicketAdapter
 import com.example.nt118_project.Model.BusTicket
 import com.example.nt118_project.R
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.Firebase
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -54,8 +58,9 @@ class SelectBusTickets_2Activity : AppCompatActivity(), AdapterView.OnItemSelect
         tv_search.text = destinationpoint + " -> " + startingpoint
         DepartureDaytV.text = myIntent.getStringExtra("ReturnTime").toString()
         tvSeat.text = myIntent.getStringExtra("Seat").toString()
-        spinner1.onItemSelectedListener = this
-        spinner2.onItemSelectedListener = this
+        val max_require = myIntent.getStringExtra("Seat")!![0].digitToInt()
+        var Spinner1Data: ArrayList<Any?> = ArrayList()
+        var Spinner2Data: ArrayList<Any?> = ArrayList()
         ReturnBtn.setOnClickListener {
             val returnIntent = Intent()
             setResult(RESULT_CANCELED, returnIntent)
@@ -74,7 +79,7 @@ class SelectBusTickets_2Activity : AppCompatActivity(), AdapterView.OnItemSelect
         val departTime = myIntent.getStringExtra("ReturnTime").toString()
         val date = inputFormat.parse(departTime)
         val Date= outputFormat.format(date!!)
-        Log.d("DateReturn", Date)
+
         databaseReference.collection("Bus").whereEqualTo("From", destinationpoint).whereEqualTo("To", startingpoint)
             .whereEqualTo("Date", Date)
             .get()
@@ -82,7 +87,12 @@ class SelectBusTickets_2Activity : AppCompatActivity(), AdapterView.OnItemSelect
                 for (document in documents)
                 {
                     val dataModel= document.toObject(BusTicket::class.java)
-                    dataList.add(dataModel)
+                    if (dataModel.NumSeat.toDouble() >= max_require.toDouble())
+                    {
+                        Spinner1Data.add(dataModel.PickPoint)
+                        Spinner2Data.add(dataModel.DesPoint)
+                        dataList.add(dataModel)
+                    }
                 }
                 if (dataList.size == 0)
                 {
@@ -92,20 +102,152 @@ class SelectBusTickets_2Activity : AppCompatActivity(), AdapterView.OnItemSelect
                 else
                 {
                     progresssDialog.dismiss();
-                    var busTicketAdapter = BusTicketAdapter(dataList)
-                    RecyclerViewBusTicket.adapter = busTicketAdapter
-                    RecyclerViewBusTicket.layoutManager = LinearLayoutManager(this@SelectBusTickets_2Activity,LinearLayoutManager.VERTICAL,false)
-                    val myExtraBoolean = intent.getBooleanExtra("RoundTrip", false)
-                    busTicketAdapter.onItemClick = {selectedBusTicket ->
-                        val selectedID:String = selectedBusTicket.Id
-                        Log.d("SecondID_Select2",selectedID)
-                        val intent = Intent(this@SelectBusTickets_2Activity, PayActivity::class.java)
-                        intent.putExtra("Seat", myIntent.getStringExtra("Seat").toString());
-                        intent.putExtra("SecondSelectedID", selectedID);
-                        intent.putExtra("FirstSelectedID", myIntent.getStringExtra("FirstSelectedID").toString());
-                        intent.putExtra("RoundTrip", myExtraBoolean);
-                        val LAUNCH_SECOND_ACTIVITY: Int = 1
-                        startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
+                    Spinner1Data.add("Tất cả")
+                    Spinner2Data.add("Tất cả")
+                    var dataOfRecyclerView: ArrayList<BusTicket> = ArrayList()
+
+                    val Spinner1Data = Spinner1Data.distinct()
+                    val StartingPointAdapter: ArrayAdapter<Any?> = ArrayAdapter<Any?>(this,android.R.layout.simple_spinner_item,Spinner1Data)
+                    StartingPointAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                    spinner1.onItemSelectedListener = this
+                    spinner1.setAdapter(StartingPointAdapter)
+
+                    val Spinner2Data = Spinner2Data.distinct()
+                    val DesPointAdapter: ArrayAdapter<Any?> = ArrayAdapter<Any?>(this,android.R.layout.simple_spinner_item,Spinner2Data)
+                    DesPointAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                    spinner2.onItemSelectedListener = this
+                    spinner2.setAdapter(DesPointAdapter)
+
+//                    val myExtraBoolean = intent.getBooleanExtra("RoundTrip", false)
+                    spinner1.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                            val selectedItem = Spinner1Data[position]
+                            var sb_dataList:ArrayList<BusTicket> = ArrayList()
+                            (view as TextView).setTextColor(Color.WHITE)
+                            if (spinner2.selectedItem.toString() == "Tất cả")
+                                sb_dataList = ArrayList<BusTicket>().apply { addAll(dataList) }
+                            else
+                                for (i in dataList){
+                                    if (i.DesPoint == spinner2.selectedItem.toString()) {
+                                        sb_dataList.add(i)
+                                    }
+                                }
+                            var index:Int = 0
+                            while(index < sb_dataList.size){
+                                if (selectedItem.toString() == "Tất cả")
+                                    break
+                                if (sb_dataList[index].PickPoint != selectedItem.toString()) {
+                                    sb_dataList.removeAt(index)
+                                    index -= 1
+                                }
+                                index += 1
+                            }
+                            val busTicketAdapter = BusTicketAdapter(sb_dataList)
+                            dataOfRecyclerView = sb_dataList
+                            RecyclerViewBusTicket.adapter = busTicketAdapter
+                            RecyclerViewBusTicket.layoutManager = LinearLayoutManager(this@SelectBusTickets_2Activity,LinearLayoutManager.VERTICAL,false)
+                            busTicketAdapter.onItemClick = {selectedBusTicket ->
+                                val selectedID:String = selectedBusTicket.Id
+                                val intent = Intent(this@SelectBusTickets_2Activity, PayActivity::class.java)
+                                intent.putExtra("Seat", myIntent.getStringExtra("Seat").toString());
+                                intent.putExtra("SecondSelectedID", selectedID);
+                                intent.putExtra("FirstSelectedID", myIntent.getStringExtra("FirstSelectedID").toString());
+                                intent.putExtra("Tag", "Bus");
+                                val LAUNCH_SECOND_ACTIVITY: Int = 1
+                                startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
+                            }
+                        }
+                        override fun onNothingSelected(parent: AdapterView<*>?) {
+                        }
+                    }
+                    spinner2.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                            val selectedItem = Spinner2Data[position]
+                            var sb_dataList:ArrayList<BusTicket> = ArrayList()
+                            (view as TextView).setTextColor(Color.WHITE)
+                            if (spinner1.selectedItem.toString() == "Tất cả")
+                                sb_dataList = ArrayList<BusTicket>().apply { addAll(dataList) }
+                            else
+                                for (i in dataList){
+                                    if (i.PickPoint == spinner1.selectedItem.toString()) {
+                                        sb_dataList.add(i)
+                                    }
+                                }
+                            var index:Int = 0
+                            while(index < sb_dataList.size){
+                                if (selectedItem.toString() == "Tất cả")
+                                    break
+                                if (sb_dataList[index].DesPoint != selectedItem.toString()) {
+                                    sb_dataList.removeAt(index)
+                                    index -= 1
+                                }
+                                index += 1
+                            }
+                            val busTicketAdapter = BusTicketAdapter(sb_dataList)
+                            dataOfRecyclerView = sb_dataList
+                            RecyclerViewBusTicket.adapter = busTicketAdapter
+                            RecyclerViewBusTicket.layoutManager = LinearLayoutManager(this@SelectBusTickets_2Activity,LinearLayoutManager.VERTICAL,false)
+                            busTicketAdapter.onItemClick = {selectedBusTicket ->
+                                val selectedID:String = selectedBusTicket.Id
+                                val intent = Intent(this@SelectBusTickets_2Activity, PayActivity::class.java)
+                                intent.putExtra("Seat", myIntent.getStringExtra("Seat").toString());
+                                intent.putExtra("SecondSelectedID", selectedID);
+                                intent.putExtra("FirstSelectedID", myIntent.getStringExtra("FirstSelectedID").toString());
+                                intent.putExtra("Tag", "Bus");
+                                val LAUNCH_SECOND_ACTIVITY: Int = 1
+                                startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
+                            }
+                        }
+                        override fun onNothingSelected(parent: AdapterView<*>?) {
+                        }
+                    }
+
+                    var sorting_btn: FloatingActionButton = findViewById<FloatingActionButton>(R.id.sorting_button)
+                    sorting_btn.setOnClickListener {
+                        val popupMenu = PopupMenu(this, it)
+                        popupMenu.inflate(R.menu.menu_sorting)
+                        var newDataOfRecyclerView:List<BusTicket>
+                        newDataOfRecyclerView = dataOfRecyclerView
+                        popupMenu.setOnMenuItemClickListener { item: MenuItem ->
+                            when (item.itemId) {
+                                R.id.descending_sort -> {
+                                    var newDataOfRecyclerView_ = newDataOfRecyclerView.sortedByDescending { it.Price }.toCollection(ArrayList())
+                                    val busTicketAdapter = BusTicketAdapter(newDataOfRecyclerView_)
+                                    RecyclerViewBusTicket.adapter = busTicketAdapter
+                                    RecyclerViewBusTicket.layoutManager = LinearLayoutManager(this@SelectBusTickets_2Activity,LinearLayoutManager.VERTICAL,false)
+                                    busTicketAdapter.onItemClick = {selectedBusTicket ->
+                                        val selectedID:String = selectedBusTicket.Id
+                                        val intent = Intent(this@SelectBusTickets_2Activity, PayActivity::class.java)
+                                        intent.putExtra("Seat", myIntent.getStringExtra("Seat").toString());
+                                        intent.putExtra("SecondSelectedID", selectedID);
+                                        intent.putExtra("FirstSelectedID", myIntent.getStringExtra("FirstSelectedID").toString());
+                                        intent.putExtra("Tag", "Bus");
+                                        val LAUNCH_SECOND_ACTIVITY: Int = 1
+                                        startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
+                                    }
+                                    true
+                                }
+                                R.id.ascending_sort -> {
+                                    var newDataOfRecyclerView_ = newDataOfRecyclerView.sortedBy { it.Price }.toCollection(ArrayList())
+                                    val busTicketAdapter = BusTicketAdapter(newDataOfRecyclerView_)
+                                    RecyclerViewBusTicket.adapter = busTicketAdapter
+                                    RecyclerViewBusTicket.layoutManager = LinearLayoutManager(this@SelectBusTickets_2Activity,LinearLayoutManager.VERTICAL,false)
+                                    busTicketAdapter.onItemClick = {selectedBusTicket ->
+                                        val selectedID:String = selectedBusTicket.Id
+                                        val intent = Intent(this@SelectBusTickets_2Activity, PayActivity::class.java)
+                                        intent.putExtra("Seat", myIntent.getStringExtra("Seat").toString());
+                                        intent.putExtra("SecondSelectedID", selectedID);
+                                        intent.putExtra("FirstSelectedID", myIntent.getStringExtra("FirstSelectedID").toString());
+                                        intent.putExtra("Tag", "Bus");
+                                        val LAUNCH_SECOND_ACTIVITY: Int = 1
+                                        startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
+                                    }
+                                    true
+                                }
+                                else -> false
+                            }
+                        }
+                        popupMenu.show()
                     }
                 }
             }

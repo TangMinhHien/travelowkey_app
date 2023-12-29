@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.core.app.ActivityCompat.startActivityForResult
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.example.nt118_project.Fragments.FillUserInfoFragment
 import com.example.nt118_project.Fragments.PayActivity
@@ -15,7 +16,7 @@ import com.example.nt118_project.Model.FlightTicket
 import com.example.nt118_project.R
 import java.text.DecimalFormat
 
-class FlightTicketAdapter(private var dataList: ArrayList<FlightTicket>, private var context: Context): RecyclerView.Adapter<FlightTicketAdapter.FlightTicketViewHolder>() {
+class FlightTicketInvoiceAdapter(private var dataList: ArrayList<FlightTicket>, private var context: Context): RecyclerView.Adapter<FlightTicketInvoiceAdapter.FlightTicketViewHolder>() {
 
     public var onItemClick: ((FlightTicket) -> Unit)? = null
     inner class FlightTicketViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -27,6 +28,7 @@ class FlightTicketAdapter(private var dataList: ArrayList<FlightTicket>, private
         var tVTo: TextView = itemView.findViewById<TextView>(R.id.to)
         var tVStop_direct:TextView = itemView.findViewById<TextView>(R.id.stop_direct)
         var tVTravelTime:TextView = itemView.findViewById<TextView>(R.id.travelTime)
+        var tVSelectedBtn: TextView = itemView.findViewById<TextView>(R.id.select_btn)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FlightTicketViewHolder {
@@ -48,6 +50,7 @@ class FlightTicketAdapter(private var dataList: ArrayList<FlightTicket>, private
         holder.tVTravelTime.setText(currItem.TravelTime)
         holder.tVStop_direct.setText(currItem.Stop_Direct)
         holder.tVPrice.setText(formatter(currItem.Price) + " VND/khách")
+        holder.tVSelectedBtn.setVisibility(View.GONE)
 
         holder.itemView.setOnClickListener {
             onItemClick?.invoke(currItem)

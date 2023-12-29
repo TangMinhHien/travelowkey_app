@@ -7,7 +7,12 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.nt118_project.Model.BusTicket
 import com.example.nt118_project.R
+import java.text.DecimalFormat
 
+fun formatter(n: Int) =
+    DecimalFormat("#,###")
+        .format(n)
+        .replace(",", ".")
 class BusTicketAdapter(private var dataList: ArrayList<BusTicket>): RecyclerView.Adapter<BusTicketAdapter.BusTicketViewHolder>() {
 
     public var onItemClick: ((BusTicket) -> Unit)? = null
@@ -38,13 +43,18 @@ class BusTicketAdapter(private var dataList: ArrayList<BusTicket>): RecyclerView
         holder.tVDepartureTime.setText(currItem.DepartureTime)
         holder.tVArrivalTime.setText(currItem.ArrivalTime)
         holder.tVTravelTime.setText(currItem.TravelTime)
-        holder.tVMoney.setText(currItem.Price.toString() + " VND/chỗ")
+        holder.tVMoney.setText(formatter(currItem.Price).toString() + " VND/chỗ")
         holder.tVDeparturePoint.setText(currItem.PickPoint)
         holder.tVArrivalPoint.setText(currItem.DesPoint)
 
         holder.itemView.setOnClickListener {
             onItemClick?.invoke(currItem)
         }
+    }
+
+    fun getDataList():ArrayList<BusTicket>
+    {
+        return dataList
     }
 
 }

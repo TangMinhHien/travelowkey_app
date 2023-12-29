@@ -6,6 +6,18 @@
     android:layout_height="match_parent"
     android:background="@drawable/bot_nav"
     tools:context=".Fragments.SelectBusTicketsActivity">
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/sorting_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="28dp"
+        android:layout_marginBottom="40dp"
+        android:backgroundTint="@color/main_blue"
+        android:src="@drawable/ic_sorting"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
