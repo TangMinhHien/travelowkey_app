@@ -10,10 +10,12 @@ import android.widget.EditText
 import android.widget.Toast
 import com.example.nt118_project.MainActivity
 import com.example.nt118_project.R
+import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.firestore
 import java.sql.DatabaseMetaData
 
 class SignupFragment : AppCompatActivity() {
@@ -44,7 +46,7 @@ class SignupFragment : AppCompatActivity() {
                 auth.createUserWithEmailAndPassword(email, pw).addOnCompleteListener { task ->
                     if(task.isSuccessful)
                     {
-                        saveInfoUser(email, phone, username, pw, progressDialog)
+                        saveInfoUser(email, phone, username, progressDialog)
 
                     }
                     else
@@ -60,21 +62,24 @@ class SignupFragment : AppCompatActivity() {
 
     }
 
-    private fun saveInfoUser(email: String, phone: String, username: String, pw: String, progressDialog: ProgressDialog) {
+    private fun saveInfoUser(email: String, phone: String, username: String, progressDialog: ProgressDialog) {
         val currUserID = FirebaseAuth.getInstance().currentUser!!.uid
-        val usersRef: DatabaseReference = FirebaseDatabase.getInstance().reference.child("KhachHang")
+        val usersRef = Firebase.firestore
 
-        val usermap = HashMap<String, Any>()
-        usermap["id"] = currUserID
-        usermap["email"] = email
-        usermap["phone_number"] = phone
-        usermap["username"] = username
-        usermap["pw"] = pw
-        usermap["address"] = "Chưa được cập nhật"
-        usermap["sex"] = "Chưa được cập nhật"
-        usermap["Name"] = "Chưa được cập nhật"
+        data class user(
+            val Id:String,
+            val Email: String,
+            val PhoneNumber: String,
+            val UserName: String,
+            val Address: String,
+            val Sex: String,
+            val Name: String,
+            val Birthday: String
+        )
 
-        usersRef.child(currUserID).setValue(usermap).addOnCompleteListener { task ->
+        val new_user = user(currUserID,email,phone,username,"Chưa được cập nhật","Chưa được cập nhật","Chưa được cập nhật", "Chưa được cập nhật")
+
+        usersRef.collection("User").document(currUserID).set(new_user).addOnCompleteListener {task ->
             if(task.isSuccessful)
             {
                 progressDialog.dismiss()
