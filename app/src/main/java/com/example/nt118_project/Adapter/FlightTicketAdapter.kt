@@ -7,9 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.nt118_project.Fragments.PayActivity
 import com.example.nt118_project.Model.FlightTicket
 import com.example.nt118_project.R
@@ -27,6 +29,13 @@ class FlightTicketAdapter(private var dataList: ArrayList<FlightTicket>,private 
         var tVTo: TextView = itemView.findViewById<TextView>(R.id.to)
         var tVStop_direct:TextView = itemView.findViewById<TextView>(R.id.stop_direct)
         var tVTravelTime:TextView = itemView.findViewById<TextView>(R.id.travelTime)
+        var image: ImageView = itemView.findViewById<ImageView>(R.id.logo)
+        val dictionary = hashMapOf("Bamboo Airways" to "https://e7.pngegg.com/pngimages/322/70/png-clipart-logo-brand-graphic-design-bamboo-airways-graphics-transport-bamboo-text-logo.png"
+            , "VietJet Air" to "https://logosdownload.com/logo/vietjet-air-logo-1024.png"
+            ,"Vietnam Airlines" to "https://download.logo.wine/logo/Vietnam_Airlines/Vietnam_Airlines-Logo.wine.png"
+            ,"Vietravel Airlines" to "https://airhex.com/images/airline-logos/alt/vietravel-airlines.png")
+        val set = setOf("Bamboo Airways","VietJet Air","Vietnam Airlines","Vietravel Airlines")
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FlightTicketViewHolder {
@@ -48,6 +57,15 @@ class FlightTicketAdapter(private var dataList: ArrayList<FlightTicket>,private 
         holder.tVTravelTime.setText(currItem.TravelTime)
         holder.tVStop_direct.setText(currItem.Stop_Direct)
         holder.tVPrice.setText(formatter(currItem.Price) + " VND/khách")
+        var value: String = holder.dictionary["VietJet Air"]!!
+        if (holder.set.contains(currItem.Name)){
+            value = holder.dictionary[currItem.Name]!!
+        }
+        Glide.with(context).load(value)
+            .placeholder(R.drawable.ic_launcher_background)
+            .error(R.drawable.ic_launcher_background)
+            .into(holder.image);
+
 
         holder.itemView.setOnClickListener {
             onItemClick?.invoke(currItem)
