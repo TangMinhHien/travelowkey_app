@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -120,8 +121,8 @@ class SearchHotelActivity : AppCompatActivity() {
             val dateReturn = LocalDate.parse(DayEnd.text, sdf)
 
             val result = dateStart.compareTo(dateReturn)
-            if (result > 0) {
-                Toast.makeText(this, "Vui lòng chọn ngày thuê trước hoặc bằng ngày trả phòng", Toast.LENGTH_LONG).show()
+            if (result >= 0) {
+                Toast.makeText(this, "Vui lòng chọn ngày thuê trước ngày trả phòng", Toast.LENGTH_LONG).show()
             }
             else
             {

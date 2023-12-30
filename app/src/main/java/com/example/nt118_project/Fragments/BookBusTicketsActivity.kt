@@ -17,7 +17,10 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import com.example.nt118_project.Model.BusTicket
 import com.example.nt118_project.R
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
 import org.checkerframework.checker.index.qual.GTENegativeOne
 import java.text.SimpleDateFormat
 import java.time.LocalDate
@@ -28,7 +31,6 @@ import java.util.Locale
 
 
 class BookBusTicketsActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
-    private var datePickerDialog: DatePickerDialog? = null
     private lateinit var DepartureDaytV:TextView
     private lateinit var ReturnDaytV:TextView
     private lateinit var SpinnerSeat: Spinner
@@ -74,10 +76,14 @@ class BookBusTicketsActivity : AppCompatActivity(), AdapterView.OnItemSelectedLi
             updateLable(c, ReturnDaytV)
         }
         DepartureDaytV.setOnClickListener {
-            DatePickerDialog(this, datepicker_depart, c.get(Calendar.YEAR),c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)).show()
+            var DatePickerDialog= DatePickerDialog(this, datepicker_depart, c.get(Calendar.YEAR),c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH))
+            DatePickerDialog.datePicker.minDate = System.currentTimeMillis()
+            DatePickerDialog.show()
         }
         ReturnDaytV.setOnClickListener {
-            DatePickerDialog(this, datepicker_return, c.get(Calendar.YEAR),c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)).show()
+            var DatePickerDialog = DatePickerDialog(this, datepicker_return, c.get(Calendar.YEAR),c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH))
+            DatePickerDialog.datePicker.minDate = System.currentTimeMillis()
+            DatePickerDialog.show()
         }
 
         val SeatSpinnerData: ArrayList<Any?> = ArrayList()
@@ -90,23 +96,47 @@ class BookBusTicketsActivity : AppCompatActivity(), AdapterView.OnItemSelectedLi
         SpinnerSeat.onItemSelectedListener = this
         SpinnerSeat.setAdapter(adapter)
 
-        val DestinationSpinnerData: ArrayList<Any?> = ArrayList()
-        DestinationSpinnerData.add("Ho Chi Minh City")
+        //val dtb = Firebase.firestore
+        var DestinationSpinnerData: ArrayList<Any?> = ArrayList()
+        var StartingPointSpinnerData: ArrayList<Any?> = ArrayList()
+//        dtb.collection("Bus").get().addOnSuccessListener { documents ->
+//            Log.d("DesData1", DestinationSpinnerData.size.toString())
+//            for( document in documents)
+//            {
+//                val busticket= document.toObject(BusTicket::class.java)
+//                if (busticket.NumSeat.toDouble() > 0)
+//                {
+//                    DestinationSpinnerData.add(busticket.From)
+//                    StartingPointSpinnerData.add(busticket.To)
+//                }
+//
+//            }
+//        }
+//            .addOnFailureListener{exception ->
+//            Log.w("Error getting documents: ", exception)
+//        }
+        StartingPointSpinnerData.add("TP Hồ Chí Minh")
+        StartingPointSpinnerData.add("TP. Đà Nẵng")
+        StartingPointSpinnerData.add("TP. Hà Nội")
+        StartingPointSpinnerData.add("Khánh Hòa")
+        StartingPointSpinnerData.add("Lâm Đồng")
+        StartingPointSpinnerData.add("TP. Bà Rịa - Vũng Tàu")
+        StartingPointSpinnerData.add("An Giang")
+        DestinationSpinnerData.add("TP Hồ Chí Minh")
         DestinationSpinnerData.add("TP. Đà Nẵng")
         DestinationSpinnerData.add("TP. Hà Nội")
         DestinationSpinnerData.add("TP. Bà Rịa - Vũng Tàu")
-        DestinationSpinnerData.add("An Giang Province")
+        DestinationSpinnerData.add("An Giang")
+        DestinationSpinnerData.add("Khánh Hòa")
+        DestinationSpinnerData.add("Lâm Đồng")
+//        DestinationSpinnerData = DestinationSpinnerData.distinct() as ArrayList<Any?>
+//        StartingPointSpinnerData = StartingPointSpinnerData.distinct() as ArrayList<Any?>
+        Log.d("DesData", DestinationSpinnerData.size.toString())
         val DestinationAdapter: ArrayAdapter<Any?> = ArrayAdapter<Any?>(this,android.R.layout.simple_spinner_item,DestinationSpinnerData)
         DestinationAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         SpinnerDestination.onItemSelectedListener = this
         SpinnerDestination.setAdapter(DestinationAdapter)
 
-        val StartingPointSpinnerData: ArrayList<Any?> = ArrayList()
-        StartingPointSpinnerData.add("Ho Chi Minh City")
-        StartingPointSpinnerData.add("TP. Đà Nẵng")
-        StartingPointSpinnerData.add("TP. Hà Nội")
-        StartingPointSpinnerData.add("TP. Bà Rịa - Vũng Tàu")
-        StartingPointSpinnerData.add("An Giang Province")
         val StartingPointAdapter: ArrayAdapter<Any?> = ArrayAdapter<Any?>(this,android.R.layout.simple_spinner_item,StartingPointSpinnerData)
         StartingPointAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         SpinnerStartingPoint.onItemSelectedListener = this
