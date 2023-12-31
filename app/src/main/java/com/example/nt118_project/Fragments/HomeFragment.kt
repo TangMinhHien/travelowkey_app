@@ -16,11 +16,17 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.findFragment
 import androidx.viewpager2.widget.ViewPager2
+import com.example.nt118_project.Model.Notification
 import com.example.nt118_project.R
 import com.example.nt118_project.flight.SearchFlightActivity
 import com.example.nt118_project.hotel.SearchHotelActivity
 import com.example.nt118_project.notification.ListofNotificationsActivity
 import com.google.android.material.tabs.TabLayout
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 
 class HomeFragment : Fragment() {
@@ -28,6 +34,9 @@ class HomeFragment : Fragment() {
     private lateinit var tabLayout: TabLayout
     private  lateinit var  viewPager2: ViewPager2
     private lateinit var adapter: FragmentPageAdapter
+    private lateinit var dataList:ArrayList<Notification>
+    private lateinit var dbRef: DatabaseReference
+    private lateinit var new_notify: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,13 +52,13 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        new_notify = view.findViewById(R.id.new_notify)
         tabLayout = view.findViewById(R.id.tab_layout)
         viewPager2 = view.findViewById(R.id.viewpaper2)
         adapter = FragmentPageAdapter(childFragmentManager,lifecycle)
         tabLayout.addTab(tabLayout.newTab().setText("Khuyến mãi"))
         tabLayout.addTab(tabLayout.newTab().setText("Dành cho bạn"))
-
+        dataList = ArrayList<Notification>()
 
         viewPager2.adapter = adapter
 
@@ -74,6 +83,31 @@ class HomeFragment : Fragment() {
             }
         })
 
+        dbRef = FirebaseDatabase.getInstance().getReference("Notification")
+        dbRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                dataList.clear()
+                if (snapshot.exists()){
+                    for (Snap in snapshot.children){
+                        val data = Snap.getValue(Notification::class.java)
+                        if (data?.State!="Seen")
+                        {dataList.add(data!!)}
+                    }
+                    if (dataList.size>0)
+                    {
+                        new_notify.visibility = View.VISIBLE
+                    }
+                    else{
+                        new_notify.visibility =  View.GONE
+                    }
+
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+        })
         val BusTicketBtn = view.findViewById<ImageButton>(R.id.img_bus)
         BusTicketBtn.setOnClickListener {
             val intent = Intent(activity, BookBusTicketsActivity::class.java)
