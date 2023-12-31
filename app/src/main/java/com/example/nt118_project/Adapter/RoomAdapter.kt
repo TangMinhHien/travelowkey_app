@@ -44,6 +44,7 @@ class RoomAdapter(private var dataList: ArrayList<Room>, private var context: Co
     override fun onBindViewHolder(holder:RoomAdapter.RoomViewHolder, position: Int) {
         val currItem: Room = dataList[position]
         holder.tvName.setText(currItem.Name)
+        holder.tvName.isSelected = true
         holder.tvMax.setText(currItem.Max.toString()+" khách/phòng")
         holder.tvPrice.setText(formatter(currItem.Price) + " VND")
         holder.tvService.text = currItem.Service
