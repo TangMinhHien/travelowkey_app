@@ -96,8 +96,9 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/tab_indicator_flight"
                 android:backgroundTint="@color/black2"
-                tools:listitem="@layout/detail_list_of_flights"
-                />
+                tools:layout_editor_absoluteX="0dp"
+                tools:layout_editor_absoluteY="0dp"
+                tools:listitem="@layout/detail_list_of_flights" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
     <TextView

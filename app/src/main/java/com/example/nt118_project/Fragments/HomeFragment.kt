@@ -2,6 +2,7 @@ package com.example.nt118_project.Fragments
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +19,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.nt118_project.R
 import com.example.nt118_project.flight.SearchFlightActivity
 import com.example.nt118_project.hotel.SearchHotelActivity
+import com.example.nt118_project.notification.ListofNotificationsActivity
 import com.google.android.material.tabs.TabLayout
 
 
@@ -87,6 +89,12 @@ class HomeFragment : Fragment() {
         val searchHotelBtn = view.findViewById<ImageButton>(R.id.img_hotel)
         searchHotelBtn.setOnClickListener {
             val intent = Intent(activity, SearchHotelActivity::class.java)
+            val LAUNCH_SECOND_ACTIVITY:Int = 1
+            startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
+        }
+        val NotificationBtn = view.findViewById<ImageButton>(R.id.logo_notification)
+        NotificationBtn.setOnClickListener{
+            val intent = Intent(activity, ListofNotificationsActivity::class.java)
             val LAUNCH_SECOND_ACTIVITY:Int = 1
             startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
         }
