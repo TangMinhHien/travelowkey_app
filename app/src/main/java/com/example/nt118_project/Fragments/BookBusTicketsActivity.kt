@@ -116,14 +116,15 @@ class BookBusTicketsActivity : AppCompatActivity(), AdapterView.OnItemSelectedLi
 //            Log.w("Error getting documents: ", exception)
 //        }
         StartingPointSpinnerData.add("TP Hồ Chí Minh")
-        StartingPointSpinnerData.add("TP. Đà Nẵng")
+        StartingPointSpinnerData.add("Đà Nẵng")
         StartingPointSpinnerData.add("TP. Hà Nội")
         StartingPointSpinnerData.add("Khánh Hòa")
         StartingPointSpinnerData.add("Lâm Đồng")
         StartingPointSpinnerData.add("TP. Bà Rịa - Vũng Tàu")
         StartingPointSpinnerData.add("An Giang")
+
         DestinationSpinnerData.add("TP Hồ Chí Minh")
-        DestinationSpinnerData.add("TP. Đà Nẵng")
+        DestinationSpinnerData.add("Đà Nẵng")
         DestinationSpinnerData.add("TP. Hà Nội")
         DestinationSpinnerData.add("TP. Bà Rịa - Vũng Tàu")
         DestinationSpinnerData.add("An Giang")
@@ -146,15 +147,13 @@ class BookBusTicketsActivity : AppCompatActivity(), AdapterView.OnItemSelectedLi
         val currentDay = currentDate.dayOfMonth
         val currentMonth = currentDate.monthValue
         val currentYear = currentDate.year
-        DepartureDaytV.text = currentDay.toString()+"-"+currentMonth.toString()+"-"+currentYear.toString()
-        ReturnDaytV.text = currentDay.toString()+"-"+currentMonth.toString()+"-"+currentYear.toString()
+        DepartureDaytV.text = "0" + currentDay.toString()+"-"+"0"+currentMonth.toString()+"-"+currentYear.toString()
+        ReturnDaytV.text = "0" +currentDay.toString()+"-"+"0" +currentMonth.toString()+"-"+currentYear.toString()
 
         SearchButton.setOnClickListener {
-            val current = LocalDateTime.now()
             val sdf = DateTimeFormatter.ofPattern("dd-MM-yyyy")
-            val dateDepart = LocalDate.parse(DepartureDaytV.text, sdf)
-            val dateReturn = LocalDate.parse(ReturnDaytV.text, sdf)
-
+            val dateDepart = LocalDate.parse(DepartureDaytV.text.toString(), sdf)
+            val dateReturn = LocalDate.parse(ReturnDaytV.text.toString(), sdf)
             val result = dateDepart.compareTo(dateReturn)
             if (SpinnerDestination.getSelectedItem().toString() == SpinnerStartingPoint.getSelectedItem().toString()) {
                 Toast.makeText(this, "Vui lòng chọn điểm xuất phát và điểm đến khác nhau", Toast.LENGTH_LONG).show()

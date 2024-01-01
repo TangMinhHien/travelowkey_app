@@ -175,7 +175,7 @@ class BillFragment : Fragment() {
                                     }
                                     val busticketinvoice = BusTicketInvoice(temp[0],temp[1],inv.num_Ticket,inv.total)
                                     dataList.add(busticketinvoice)
-                                    busTicketInvoiceAdapter = BusTicketInvoiceAdapter(dataList)
+                                    busTicketInvoiceAdapter = BusTicketInvoiceAdapter(dataList, requireActivity())
                                     RecyclerViewTicket.adapter = busTicketInvoiceAdapter
                                     RecyclerViewTicket.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL,false)
                                 }
@@ -189,7 +189,7 @@ class BillFragment : Fragment() {
                     var busTicketInvoiceAdapter: BusTicketInvoiceAdapter
                     var dataList:ArrayList<BusTicketInvoice> = ArrayList<BusTicketInvoice>()
                     dataList.add(BusTicketInvoice("HN080020241313419","","1 ghế ngồi","200000.0"))
-                    busTicketInvoiceAdapter = BusTicketInvoiceAdapter(dataList)
+                    busTicketInvoiceAdapter = BusTicketInvoiceAdapter(dataList, requireActivity())
                     RecyclerViewTicket.adapter = busTicketInvoiceAdapter
                     RecyclerViewTicket.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL,false)
                 }
@@ -221,7 +221,7 @@ class BillFragment : Fragment() {
                                     }
                                     val busticketinvoice = BusTicketInvoice(temp[0],temp[1],inv.num_Ticket,inv.total)
                                     dataList.add(busticketinvoice)
-                                    flightTicketInvoiceAdapter = FlightTicketInvoiceBillAdapter(dataList)
+                                    flightTicketInvoiceAdapter = FlightTicketInvoiceBillAdapter(dataList, requireActivity())
                                     RecyclerViewTicket.adapter = flightTicketInvoiceAdapter
                                     RecyclerViewTicket.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL,false)
                                 }
@@ -254,7 +254,7 @@ class BillFragment : Fragment() {
                                     }
                                     val busticketinvoice = HotelTicketInvoice(hotel_invoice_model.roomId,hotel_invoice_model.checkOutDate, hotel_invoice_model.checkInDate,inv.num_Ticket,inv.total)
                                     dataList.add(busticketinvoice)
-                                    roomTicketInvoiceAdapter = RoomTicketInvoiceBillAdapter(dataList)
+                                    roomTicketInvoiceAdapter = RoomTicketInvoiceBillAdapter(dataList, requireActivity())
                                     RecyclerViewTicket.adapter = roomTicketInvoiceAdapter
                                     RecyclerViewTicket.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL,false)
                                 }

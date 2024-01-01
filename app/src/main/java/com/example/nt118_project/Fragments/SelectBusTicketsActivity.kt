@@ -3,7 +3,6 @@ package com.example.nt118_project.Fragments
 import android.app.ProgressDialog
 import android.content.Intent
 import android.graphics.Color
-import android.media.Image
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
@@ -25,6 +24,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import java.text.SimpleDateFormat
+import java.time.temporal.ChronoUnit
+import java.util.Calendar
 import java.util.Locale
 import java.util.concurrent.locks.ReentrantLock
 
@@ -148,11 +149,22 @@ class SelectBusTicketsActivity : AppCompatActivity(), AdapterView.OnItemSelected
                                 val selectedID:String = selectedBusTicket.Id
                                 if(myExtraBoolean)
                                 {
+                                    var arrivaltime :String = ""
+                                    if(selectedBusTicket.DesPoint.contains("(+1ngày)"))
+                                    {
+                                        arrivaltime = myIntent.getStringExtra("DepartTime").toString()
+                                        val sdf = SimpleDateFormat("dd-MM-yyyy")
+                                        val c: Calendar = Calendar.getInstance()
+                                        c.setTime(sdf.parse( arrivaltime))
+                                        c.add(Calendar.DATE, 1);  // number of days to add
+                                        arrivaltime = sdf.format(c.getTime()) + "T" + selectedBusTicket.ArrivalTime;  // dt is now the new date
+                                    }
                                     val intent = Intent(this@SelectBusTicketsActivity, SelectBusTickets_2Activity::class.java)
                                     intent.putExtra("Starting Point", startingpoint);
                                     intent.putExtra("Destination Point", destinationpoint);
                                     intent.putExtra("DepartTime", DepartureDaytV.text.toString());
                                     intent.putExtra("ReturnTime", myIntent.getStringExtra("ReturnTime").toString());
+                                    intent.putExtra("ArrivalTime", arrivaltime);
                                     intent.putExtra("Seat", myIntent.getStringExtra("Seat").toString());
                                     intent.putExtra("FirstSelectedID", selectedID);
                                     val LAUNCH_SECOND_ACTIVITY:Int = 1
@@ -204,12 +216,23 @@ class SelectBusTicketsActivity : AppCompatActivity(), AdapterView.OnItemSelected
                                 val selectedID:String = selectedBusTicket.Id
                                 if(myExtraBoolean)
                                 {
+                                    var arrivaltime :String = ""
+                                    if(selectedBusTicket.DesPoint.contains("(+1ngày)"))
+                                    {
+                                        arrivaltime = myIntent.getStringExtra("DepartTime").toString()
+                                        val sdf = SimpleDateFormat("dd-MM-yyyy")
+                                        val c: Calendar = Calendar.getInstance()
+                                        c.setTime(sdf.parse( arrivaltime))
+                                        c.add(Calendar.DATE, 1);  // number of days to add
+                                        arrivaltime = sdf.format(c.getTime()) + "T" + selectedBusTicket.ArrivalTime;  // dt is now the new date
+                                    }
                                     val intent = Intent(this@SelectBusTicketsActivity, SelectBusTickets_2Activity::class.java)
                                     intent.putExtra("Starting Point", startingpoint);
                                     intent.putExtra("Destination Point", destinationpoint);
                                     intent.putExtra("DepartTime", DepartureDaytV.text.toString());
                                     intent.putExtra("ReturnTime", myIntent.getStringExtra("ReturnTime").toString());
                                     intent.putExtra("Seat", myIntent.getStringExtra("Seat").toString());
+                                    intent.putExtra("ArrivalTime", arrivaltime);
                                     intent.putExtra("FirstSelectedID", selectedID);
                                     val LAUNCH_SECOND_ACTIVITY:Int = 1
                                     startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
@@ -247,11 +270,22 @@ class SelectBusTicketsActivity : AppCompatActivity(), AdapterView.OnItemSelected
                                         val selectedID:String = selectedBusTicket.Id
                                         if(myExtraBoolean)
                                         {
+                                            var arrivaltime :String = ""
+                                            if(selectedBusTicket.DesPoint.contains("(+1ngày)"))
+                                            {
+                                                arrivaltime = myIntent.getStringExtra("DepartTime").toString()
+                                                val sdf = SimpleDateFormat("dd-MM-yyyy")
+                                                val c: Calendar = Calendar.getInstance()
+                                                c.setTime(sdf.parse( arrivaltime))
+                                                c.add(Calendar.DATE, 1);  // number of days to add
+                                                arrivaltime = sdf.format(c.getTime()) + "T" + selectedBusTicket.ArrivalTime;  // dt is now the new date
+                                            }
                                             val intent = Intent(this@SelectBusTicketsActivity, SelectBusTickets_2Activity::class.java)
                                             intent.putExtra("Starting Point", startingpoint);
                                             intent.putExtra("Destination Point", destinationpoint);
                                             intent.putExtra("DepartTime", DepartureDaytV.text.toString());
                                             intent.putExtra("ReturnTime", myIntent.getStringExtra("ReturnTime").toString());
+                                            intent.putExtra("ArrivalTime", arrivaltime);
                                             intent.putExtra("Seat", myIntent.getStringExtra("Seat").toString());
                                             intent.putExtra("FirstSelectedID", selectedID);
                                             val LAUNCH_SECOND_ACTIVITY:Int = 1
@@ -279,11 +313,22 @@ class SelectBusTicketsActivity : AppCompatActivity(), AdapterView.OnItemSelected
                                         val selectedID:String = selectedBusTicket.Id
                                         if(myExtraBoolean)
                                         {
+                                            var arrivaltime :String = ""
+                                            if(selectedBusTicket.DesPoint.contains("(+1ngày)"))
+                                            {
+                                                arrivaltime = myIntent.getStringExtra("DepartTime").toString()
+                                                val sdf = SimpleDateFormat("dd-MM-yyyy")
+                                                val c: Calendar = Calendar.getInstance()
+                                                c.setTime(sdf.parse( arrivaltime))
+                                                c.add(Calendar.DATE, 1);  // number of days to add
+                                                arrivaltime = sdf.format(c.getTime()) + "T" + selectedBusTicket.ArrivalTime;  // dt is now the new date
+                                            }
                                             val intent = Intent(this@SelectBusTicketsActivity, SelectBusTickets_2Activity::class.java)
                                             intent.putExtra("Starting Point", startingpoint);
                                             intent.putExtra("Destination Point", destinationpoint);
                                             intent.putExtra("DepartTime", DepartureDaytV.text.toString());
                                             intent.putExtra("ReturnTime", myIntent.getStringExtra("ReturnTime").toString());
+                                            intent.putExtra("ArrivalTime", arrivaltime);
                                             intent.putExtra("Seat", myIntent.getStringExtra("Seat").toString());
                                             intent.putExtra("FirstSelectedID", selectedID);
                                             val LAUNCH_SECOND_ACTIVITY:Int = 1
