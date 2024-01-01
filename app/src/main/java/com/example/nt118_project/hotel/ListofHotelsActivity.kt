@@ -3,18 +3,26 @@ package com.example.nt118_project.hotel
 import android.app.ProgressDialog
 import android.content.Intent
 import android.location.Address
+import android.media.Image
 import android.os.Bundle
 import android.util.Log
+import android.view.MenuItem
+import android.view.View
 import android.widget.ImageButton
+import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.nt118_project.Adapter.FlightTicketAdapter
 import com.example.nt118_project.Adapter.HotelAdapter
 import com.example.nt118_project.Fragments.PayActivity
+import com.example.nt118_project.Model.FlightTicket
 import com.example.nt118_project.Model.Hotel
 import com.example.nt118_project.R
+import com.example.nt118_project.flight.ListofFlightsActivity
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.Firebase
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
@@ -38,6 +46,8 @@ class ListofHotelsActivity : AppCompatActivity() {
     private lateinit var ref: CollectionReference
     private lateinit var hotelAdapter:HotelAdapter
     private lateinit var progresssDialog: ProgressDialog
+    private lateinit var sorting_btn: FloatingActionButton
+    private lateinit var tv_notfound: TextView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_listof_hotels)
@@ -49,7 +59,8 @@ class ListofHotelsActivity : AppCompatActivity() {
         tv_info_Hotel.text = value.getString("Area")
         tv_info_sup = findViewById(R.id.info_sup_hotel)
         tv_info_sup.text = value.getString("DayStart") + " - " + value.getString("DayEnd") + " - " + value.getString("NumRoom")+"/phòng"
-
+        tv_notfound = findViewById(R.id.result_not_found)
+        sorting_btn = findViewById(R.id.sorting_button)
         RecyclerViewHotels = findViewById(R.id.RecyclerviewHotel)
         dataList = ArrayList<Hotel>()
         progresssDialog = ProgressDialog(this@ListofHotelsActivity);
@@ -71,7 +82,7 @@ class ListofHotelsActivity : AppCompatActivity() {
             }
             if (dataList.size == 0) {
                 progresssDialog.dismiss()
-                Toast.makeText(this, "Không tìm thấy khách sạn phù hợp", Toast.LENGTH_LONG).show()
+                tv_notfound.visibility = View.VISIBLE
             }
             else{
                 progresssDialog.dismiss()
@@ -90,6 +101,50 @@ class ListofHotelsActivity : AppCompatActivity() {
                     intent.putExtra("NumRoom", value.getString("NumRoom"));
                     val LAUNCH_SECOND_ACTIVITY: Int = 1
                     startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)}
+                sorting_btn.setOnClickListener {
+                    val popupMenu = PopupMenu(this, it)
+                    popupMenu.inflate(R.menu.menu_sorting)
+                    var newDataOfRecyclerView:List<Hotel>
+                    newDataOfRecyclerView = dataList
+                    popupMenu.setOnMenuItemClickListener { item: MenuItem ->
+                        when (item.itemId) {
+                            R.id.descending_sort -> {
+                                var newDataOfRecyclerView_ = newDataOfRecyclerView.sortedByDescending { it.Price }.toCollection(ArrayList())
+                                val hotelAdapter = HotelAdapter(newDataOfRecyclerView_,this@ListofHotelsActivity)
+                                RecyclerViewHotels.adapter = hotelAdapter
+                                RecyclerViewHotels.layoutManager = LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false)
+                                hotelAdapter.onItemClick = {selectedFlightTicket ->
+                                    val selectedID: String = selectedFlightTicket.Id
+                                    val intent = Intent(this@ListofHotelsActivity, ListofRoomsActivity::class.java)
+                                    intent.putExtra("SelectedID", selectedID)
+                                    intent.putExtra("DayStart", value.getString("DayStart"));
+                                    intent.putExtra("DayEnd",value.getString("DayEnd"));
+                                    intent.putExtra("NumRoom", value.getString("NumRoom"));
+                                    val LAUNCH_SECOND_ACTIVITY: Int = 1
+                                    startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)}
+                                true
+                            }
+                            R.id.ascending_sort -> {
+                                var newDataOfRecyclerView_ = newDataOfRecyclerView.sortedBy { it.Price }.toCollection(ArrayList())
+                                val hotelAdapter = HotelAdapter(newDataOfRecyclerView_,this@ListofHotelsActivity)
+                                RecyclerViewHotels.adapter = hotelAdapter
+                                RecyclerViewHotels.layoutManager = LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false)
+                                hotelAdapter.onItemClick = {selectedFlightTicket ->
+                                    val selectedID: String = selectedFlightTicket.Id
+                                    val intent = Intent(this@ListofHotelsActivity, ListofRoomsActivity::class.java)
+                                    intent.putExtra("SelectedID", selectedID)
+                                    intent.putExtra("DayStart", value.getString("DayStart"));
+                                    intent.putExtra("DayEnd",value.getString("DayEnd"));
+                                    intent.putExtra("NumRoom", value.getString("NumRoom"));
+                                    val LAUNCH_SECOND_ACTIVITY: Int = 1
+                                    startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)}
+                                true
+                            }
+                            else -> false
+                        }
+                    }
+                    popupMenu.show()
+                }
             }
         }.addOnFailureListener { exception ->
             Log.e("Firebase", "Error getting data: $exception")
