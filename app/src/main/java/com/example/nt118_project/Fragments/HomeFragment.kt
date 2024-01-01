@@ -18,6 +18,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.nt118_project.R
 import com.example.nt118_project.flight.SearchFlightActivity
 import com.example.nt118_project.hotel.SearchHotelActivity
+import com.example.nt118_project.service_car.Search_ServiceCar_Activity
 import com.google.android.material.tabs.TabLayout
 
 
@@ -87,6 +88,13 @@ class HomeFragment : Fragment() {
         val searchHotelBtn = view.findViewById<ImageButton>(R.id.img_hotel)
         searchHotelBtn.setOnClickListener {
             val intent = Intent(activity, SearchHotelActivity::class.java)
+            val LAUNCH_SECOND_ACTIVITY:Int = 1
+            startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
+        }
+
+        val search_ServiceCar_Btn = view.findViewById<ImageButton>(R.id.img_taxi)
+        search_ServiceCar_Btn.setOnClickListener {
+            val intent = Intent(activity, Search_ServiceCar_Activity::class.java)
             val LAUNCH_SECOND_ACTIVITY:Int = 1
             startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
         }
