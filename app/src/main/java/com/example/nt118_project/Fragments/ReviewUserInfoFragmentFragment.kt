@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.RelativeLayout
 import android.widget.TextView
@@ -28,6 +29,10 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.firestore
+import com.bumptech.glide.Glide
+import com.example.nt118_project.Adapter.BusTicketPayAdapter
+import com.example.nt118_project.Model.User
+import com.google.firebase.auth.FirebaseAuth
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -58,7 +63,23 @@ class ReviewUserInfoFragmentFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val rootView = inflater.inflate(R.layout.fragment_review_user_info_fragment, container, false)
+        var tVNameUser:TextView = rootView.findViewById(R.id.eTFullName)
+        var tVPhoneNumberUser:TextView = rootView.findViewById(R.id.eTPhoneNumber)
+        var tVEmailUser:TextView = rootView.findViewById(R.id.eTEmail)
+        val auth = FirebaseAuth.getInstance()
+        val currentUser = auth.currentUser
+        val user_id = currentUser!!.uid
+
         val databaseReference = Firebase.firestore
+        var currUser: User = User()
+        databaseReference.collection("User").document(user_id).get()
+            .addOnSuccessListener {document ->
+                currUser = document.toObject(User::class.java)!!
+                tVEmailUser.setText(currUser.Email)
+                tVNameUser.setText(currUser.Name)
+                tVPhoneNumberUser.setText(currUser.PhoneNumber)
+                Log.d("User", tVNameUser.text.toString())
+            }
 
         val tag_ = this.arguments?.getString("Tag")
         if(tag_ == "Bus")
@@ -80,7 +101,7 @@ class ReviewUserInfoFragmentFragment : Fragment() {
                         else if(dataModel.Id == SecondID)
                             dataList.add(dataModel)
                     }
-                    var busTicketAdapter = BusTicketAdapter(dataList)
+                    var busTicketAdapter = BusTicketPayAdapter(dataList)
                     recyclerViewTicket.adapter = busTicketAdapter
                     val context: Context = requireActivity()
                     recyclerViewTicket.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL,false)
@@ -131,6 +152,7 @@ class ReviewUserInfoFragmentFragment : Fragment() {
             val NameRoom = rootView.findViewById<TextView>(R.id.tv_name_room)
             val Num = rootView.findViewById<TextView>(R.id.tv_num)
             val ServiceRoom = rootView.findViewById<TextView>(R.id.list_service)
+            var image: ImageView = rootView.findViewById<ImageView>(R.id.image)
 
             recyclerViewTicket.setVisibility(View.GONE)
             RelativeFrame.setVisibility(View.VISIBLE)
@@ -146,18 +168,21 @@ class ReviewUserInfoFragmentFragment : Fragment() {
                     if (document != null)
                     {
                         room_ = document.toObject(Room::class.java)!!
-                        NameRoom.text = room_.Name
-                        Num.text = room_.Max.toString()+" khách/phòng"
-                        ServiceRoom.text = room_.Service
-                        CheckInDate.text = "Ngày nhận: " + DayStart
-                        CheckOutDate.text = "Ngày trả: " + DayEnd
-                        Log.d("Hotel_", room_.Hotel_id)
                         databaseReference.collection("Hotel").document(room_.Hotel_id).get()
                             .addOnSuccessListener { document ->
                                 hotel_ = document.toObject(Hotel::class.java)!!
                                 NameHotel.text = hotel_.Name.toString()
                                 AddressHotel.text = hotel_.Address
                                 RatingHotel.numStars = hotel_.Rating
+                                NameRoom.text = room_.Name
+                                Num.text = room_.Max.toString()+" khách/phòng"
+                                ServiceRoom.text = room_.Service
+                                CheckInDate.text = "Ngày nhận: " + DayStart
+                                CheckOutDate.text = "Ngày trả: " + DayEnd
+                                Glide.with(requireActivity()).load(room_.Img[0])
+                                    .placeholder(R.drawable.ic_launcher_background)
+                                    .error(R.drawable.ic_launcher_background)
+                                    .into(image);
                             }
                     }
                 }

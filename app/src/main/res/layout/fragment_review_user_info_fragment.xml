@@ -35,7 +35,7 @@
 
             <TextView
                 android:id="@+id/tVFullName"
-                android:layout_width="150dp"
+                android:layout_width="90dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="20dp"
@@ -46,7 +46,7 @@
 
             <TextView
                 android:id="@+id/tVPhoneNumber"
-                android:layout_width="150dp"
+                android:layout_width="90dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="40dp"
@@ -57,7 +57,7 @@
 
             <TextView
                 android:id="@+id/tVEmail"
-                android:layout_width="150dp"
+                android:layout_width="90dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="40dp"
@@ -66,15 +66,16 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tVPhoneNumber" />
 
-            <EditText
+            <TextView
                 android:id="@+id/eTFullName"
-                android:layout_width="wrap_content"
+                android:layout_width="280dp"
                 android:layout_height="wrap_content"
-                android:background="@drawable/flight_from_spinner"
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="10dp"
                 android:ems="10"
-                android:hint="Họ tên"
+                android:gravity="center"
+                android:background="@drawable/flight_from_spinner"
+                android:text="Họ tên"
                 android:inputType="textEmailAddress"
                 android:minHeight="48dp"
                 android:textColor="@color/white"
@@ -83,15 +84,15 @@
                 app:layout_constraintStart_toEndOf="@+id/tVFullName"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <EditText
+            <TextView
                 android:id="@+id/eTPhoneNumber"
-                android:layout_width="wrap_content"
+                android:layout_width="280dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
+                android:gravity="center"
                 android:ems="10"
-                android:hint="SĐT"
-                android:inputType="textPassword"
+                android:text="SĐT"
                 android:background="@drawable/flight_from_spinner"
                 android:minHeight="48dp"
                 android:textColor="@color/white"
@@ -100,15 +101,15 @@
                 app:layout_constraintStart_toEndOf="@+id/tVPhoneNumber"
                 app:layout_constraintTop_toBottomOf="@+id/eTFullName" />
 
-            <EditText
+            <TextView
                 android:id="@+id/eTEmail"
-                android:layout_width="wrap_content"
+                android:layout_width="280dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                android:gravity="center"
                 android:layout_marginEnd="10dp"
                 android:ems="10"
-                android:hint="Email"
-                android:inputType="textPassword"
+                android:text="Email"
                 android:minHeight="48dp"
                 android:textColor="@color/white"
                 android:background="@drawable/flight_from_spinner"
@@ -298,12 +299,12 @@
                     <ImageView
                         android:id="@+id/image"
                         android:layout_width="180dp"
-                        android:layout_height="100dp"
+                        android:layout_height="90dp"
                         android:src="@drawable/img_hotel1"
                         app:layout_constraintTop_toBottomOf="@+id/tv_name_room"
                         app:layout_constraintRight_toRightOf="parent"
                         android:layout_marginLeft="10dp"
-                        android:layout_marginTop="5dp"
+                        android:layout_marginTop="4dp"
                         android:scaleType="fitXY"/>
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </RelativeLayout>

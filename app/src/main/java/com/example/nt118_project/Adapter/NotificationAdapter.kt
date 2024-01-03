@@ -21,9 +21,10 @@ class NotificationAdapter(private var dataList: ArrayList<Notification>, private
         var seen: ImageView = itemView.findViewById(R.id.ic_seen)
         var unseen: ImageView = itemView.findViewById(R.id.ic_unseen)
         var context: View = itemView
+        var delete: ImageView = itemView.findViewById(R.id.ic_delete)
 
     }
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int):NotificationAdapter.NotificationViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotificationViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.detail_list_of_notification,parent,false)
         return NotificationViewHolder(itemView)
     }
@@ -32,7 +33,7 @@ class NotificationAdapter(private var dataList: ArrayList<Notification>, private
         return dataList.size
     }
 
-    override fun onBindViewHolder(holder:NotificationAdapter.NotificationViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: NotificationViewHolder, position: Int) {
         val currItem: Notification = dataList[position]
         holder.text.setText(currItem.Text)
         val myColor = ContextCompat.getColor(context, R.color.black)
@@ -45,6 +46,7 @@ class NotificationAdapter(private var dataList: ArrayList<Notification>, private
             holder.seen.visibility = View.GONE
             holder.unseen.visibility = View.VISIBLE
         }
+        holder.delete.setOnClickListener {  }
         holder.itemView.setOnClickListener {
             onItemClick?.invoke(currItem)
         }

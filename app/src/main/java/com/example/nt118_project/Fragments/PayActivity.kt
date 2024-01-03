@@ -12,8 +12,10 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.example.nt118_project.MainActivity
 import com.example.nt118_project.R
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -26,6 +28,7 @@ class PayActivity : AppCompatActivity() {
     private lateinit var LayoutContainer: FrameLayout
     private lateinit var RadioGroup: RadioGroup
     private lateinit var ReturnBtn:ImageView
+    private lateinit var HomeBtn:ImageView
     private lateinit var NextBtn: Button
     private var FirstID:String = ""
     private var SecondID: String = ""
@@ -65,6 +68,7 @@ class PayActivity : AppCompatActivity() {
         RadioGroup = findViewById<RadioGroup>(R.id.radio_group)
         ReturnBtn = findViewById<ImageView>(R.id.iVBack)
         NextBtn = findViewById<Button>(R.id.Savebutton)
+        HomeBtn = findViewById(R.id.iVHome)
 
         FillUserRadio.isEnabled = true
 
@@ -148,6 +152,11 @@ class PayActivity : AppCompatActivity() {
             val returnIntent = Intent()
             setResult(RESULT_CANCELED, returnIntent)
             finish()
+        }
+        HomeBtn.setOnClickListener {
+            val intent = Intent(this@PayActivity, MainActivity::class.java)
+            val LAUNCH_SECOND_ACTIVITY:Int = 1
+            startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
         }
         NextBtn.setOnClickListener {
             val currentFragment: Fragment? = supportFragmentManager.findFragmentById(R.id.frame_layout)

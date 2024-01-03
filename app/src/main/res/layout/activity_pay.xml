@@ -41,6 +41,16 @@
                     android:textColor="@color/white"
                     android:textSize="16sp"
                     android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/iVHome"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_home"
+                    android:layout_marginRight="16dp"
+                    app:layout_constraintEnd_toEndOf="@+id/frame_app_bar_layout_search"
+                    app:layout_constraintTop_toTopOf="@+id/frame_app_bar_layout_search"
+                    app:layout_constraintBottom_toBottomOf="@+id/frame_app_bar_layout_search"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.appbar.AppBarLayout>
         <LinearLayout

@@ -1,6 +1,7 @@
 package com.example.nt118_project.Fragments
 
 import android.app.DatePickerDialog
+import android.app.ProgressDialog
 import android.content.Intent
 import android.graphics.Color
 import android.os.Build
@@ -17,10 +18,20 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.nt118_project.Adapter.RecentBusTicketAdapter
+import com.example.nt118_project.Adapter.RecentFlightTicketAdapter
 import com.example.nt118_project.Model.BusTicket
+import com.example.nt118_project.Model.FlightTicket
 import com.example.nt118_project.R
+import com.example.nt118_project.flight.ListofFlightsActivity
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
+import com.google.firebase.firestore.toObject
 import org.checkerframework.checker.index.qual.GTENegativeOne
 import java.text.SimpleDateFormat
 import java.time.LocalDate
@@ -40,6 +51,12 @@ class BookBusTicketsActivity : AppCompatActivity(), AdapterView.OnItemSelectedLi
     private lateinit var RoundTripCheckBox: CheckBox
     private lateinit var iVReturnDay: ImageView
     private lateinit var tVReturnDay: TextView
+    private lateinit var recentBusTicketRecyclerView: RecyclerView
+    private lateinit var db: FirebaseFirestore
+    private lateinit var ref: CollectionReference
+    private lateinit var ref2: CollectionReference
+    private lateinit var ref3: CollectionReference
+    private lateinit var progresssDialog: ProgressDialog
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,6 +72,7 @@ class BookBusTicketsActivity : AppCompatActivity(), AdapterView.OnItemSelectedLi
         RoundTripCheckBox = findViewById<CheckBox>(R.id.cBox)
         iVReturnDay = findViewById<ImageView>(R.id.iVReturnDay)
         tVReturnDay = findViewById<TextView>(R.id.tVReturnDay)
+        recentBusTicketRecyclerView = findViewById(R.id.RecyclerviewRecentBusTicket)
 
         ReturnBtn.setOnClickListener {
             val returnIntent = Intent()
@@ -85,6 +103,77 @@ class BookBusTicketsActivity : AppCompatActivity(), AdapterView.OnItemSelectedLi
             DatePickerDialog.datePicker.minDate = System.currentTimeMillis()
             DatePickerDialog.show()
         }
+        progresssDialog = ProgressDialog(this@BookBusTicketsActivity);
+        progresssDialog.setMessage("Đang tải dữ liệu...");
+        progresssDialog.show();
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user != null) {
+            var dataList:ArrayList<String> = ArrayList()
+            var dataList2:ArrayList<String> = ArrayList()
+            var dataList3:ArrayList<BusTicket> = ArrayList()
+            val uid = user.uid as String
+            db = Firebase.firestore
+            ref = db.collection("Invoice")
+            ref.whereEqualTo("tag","Bus").whereEqualTo("user_Id",uid).limit(10)
+                .get()
+                .addOnSuccessListener { documents ->
+                    for (document in documents) {
+                        val data = document.id
+                        dataList.add(data)
+                    }
+                    if (dataList.size>0) {
+                        ref2 = db.collection("Bus_invoice")
+                        ref2.whereIn("invoice_Id", dataList)
+                            .get()
+                            .addOnSuccessListener { documents ->
+                                for (document in documents) {
+                                    val data2 = document["id_ticket_1"] as String
+                                    dataList2.add(data2)
+                                }
+                                ref3 = db.collection("Bus")
+                                ref3.whereIn("Id", dataList2)
+                                    .get()
+                                    .addOnSuccessListener { documents ->
+                                        for (document in documents) {
+                                            val data3 = document.toObject<BusTicket>()
+                                            dataList3.add(data3)
+                                        }
+                                        var recentBusAdapter = RecentBusTicketAdapter(
+                                            dataList3,
+                                            this@BookBusTicketsActivity
+                                        )
+                                        recentBusTicketRecyclerView.adapter =
+                                            recentBusAdapter
+                                        recentBusTicketRecyclerView.layoutManager =
+                                            LinearLayoutManager(
+                                                this,
+                                                LinearLayoutManager.HORIZONTAL, false
+                                            )
+                                        progresssDialog.dismiss()
+                                        recentBusAdapter.onItemClick = {selectedBusTicket ->
+                                            val intent = Intent(this@BookBusTicketsActivity, SelectBusTicketsActivity::class.java)
+                                            val currentDate = LocalDate.now()
+                                            val currentDay = currentDate.dayOfMonth
+                                            val currentMonth = currentDate.monthValue
+                                            val currentYear = currentDate.year
+                                            val Date = "0" + currentDay.toString()+"-"+"0"+currentMonth.toString()+"-"+currentYear.toString()
+
+                                            intent.putExtra("Starting Point", selectedBusTicket.From);
+                                            intent.putExtra("Destination Point", selectedBusTicket.To);
+                                            intent.putExtra("DepartTime", Date.toString());
+                                            intent.putExtra("ReturnTime", ReturnDaytV.text.toString());
+                                            intent.putExtra("Seat", SpinnerSeat.getSelectedItem().toString());
+                                            intent.putExtra("RoundTrip", false);
+
+                                            val LAUNCH_SECOND_ACTIVITY:Int = 1
+                                            startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
+                                        }
+                                    }
+                            }
+                    }
+                }
+        } else {
+        }
 
         val SeatSpinnerData: ArrayList<Any?> = ArrayList()
         SeatSpinnerData.add("1 ghế ngồi")
@@ -96,25 +185,8 @@ class BookBusTicketsActivity : AppCompatActivity(), AdapterView.OnItemSelectedLi
         SpinnerSeat.onItemSelectedListener = this
         SpinnerSeat.setAdapter(adapter)
 
-        //val dtb = Firebase.firestore
         var DestinationSpinnerData: ArrayList<Any?> = ArrayList()
         var StartingPointSpinnerData: ArrayList<Any?> = ArrayList()
-//        dtb.collection("Bus").get().addOnSuccessListener { documents ->
-//            Log.d("DesData1", DestinationSpinnerData.size.toString())
-//            for( document in documents)
-//            {
-//                val busticket= document.toObject(BusTicket::class.java)
-//                if (busticket.NumSeat.toDouble() > 0)
-//                {
-//                    DestinationSpinnerData.add(busticket.From)
-//                    StartingPointSpinnerData.add(busticket.To)
-//                }
-//
-//            }
-//        }
-//            .addOnFailureListener{exception ->
-//            Log.w("Error getting documents: ", exception)
-//        }
         StartingPointSpinnerData.add("TP Hồ Chí Minh")
         StartingPointSpinnerData.add("Đà Nẵng")
         StartingPointSpinnerData.add("TP. Hà Nội")

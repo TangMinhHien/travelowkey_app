@@ -5,7 +5,9 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.ImageButton
+import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.nt118_project.Adapter.HotelAdapter
@@ -17,6 +19,7 @@ import com.example.nt118_project.Model.Notification
 import com.example.nt118_project.R
 import com.example.nt118_project.hotel.ListofRoomsActivity
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -36,11 +39,13 @@ class ListofNotificationsActivity : AppCompatActivity() {
     private lateinit var notificationAdapter: NotificationAdapter
     private lateinit var progresssDialog: ProgressDialog
     private lateinit var recyclerviewNotification:RecyclerView
+    private lateinit var tVNoti:TextView
     private lateinit var dbRef: DatabaseReference
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_listof_notifications)
         recyclerviewNotification = findViewById(R.id.RecyclerviewNotification)
+        tVNoti = findViewById(R.id.tVNoti)
         dataList = ArrayList<Notification>()
 //        db = Firebase.firestore
 //        ref = db.collection("Notification")
@@ -62,6 +67,9 @@ class ListofNotificationsActivity : AppCompatActivity() {
 ////                    startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
 //                }
 //            }
+        val auth = FirebaseAuth.getInstance()
+        val currentUser = auth.currentUser
+        val user_id = currentUser!!.uid
         dbRef = FirebaseDatabase.getInstance().getReference("Notification")
         dbRef.orderByChild("State").addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -69,15 +77,24 @@ class ListofNotificationsActivity : AppCompatActivity() {
                 if (snapshot.exists()){
                     for (Snap in snapshot.children){
                         val data = Snap.getValue(Notification::class.java)
-                        dataList.add(data!!)
+                        if(data!!.User_Id == user_id)
+                        {
+                            dataList.add(data!!)
+                        }
                     }
-                    Log.d("check_data1","update failed ${dataList[0].Id} ${dataList[0].Text} ${dataList[0].Tag} ${dataList[0].State}")
-                    var notificationAdapter = NotificationAdapter(dataList,this@ListofNotificationsActivity)
-                    recyclerviewNotification.adapter = notificationAdapter
-                    recyclerviewNotification.layoutManager = LinearLayoutManager(this@ListofNotificationsActivity,LinearLayoutManager.VERTICAL,false)
-                    notificationAdapter.onItemClick= {selecteditem ->
+                    if(dataList.size == 0)
+                    {
+                        recyclerviewNotification.setVisibility(View.GONE)
+                    }
+                    else
+                    {
+                        tVNoti.setVisibility(View.GONE)
+                        var notificationAdapter = NotificationAdapter(dataList,this@ListofNotificationsActivity)
+                        recyclerviewNotification.adapter = notificationAdapter
+                        recyclerviewNotification.layoutManager = LinearLayoutManager(this@ListofNotificationsActivity,LinearLayoutManager.VERTICAL,false)
+                        notificationAdapter.onItemClick= {selecteditem ->
                             val dbRef2 = FirebaseDatabase.getInstance().getReference("Notification")
-                            dbRef2.child(selecteditem.Id).child("State").setValue("Seen")
+                            dbRef2.child(selecteditem.Id).child("state").setValue("Seen")
                                 .addOnCompleteListener {
                                     Log.d("check_data3","update successed")
                                 }.addOnFailureListener { err ->
@@ -88,6 +105,7 @@ class ListofNotificationsActivity : AppCompatActivity() {
                             val LAUNCH_SECOND_ACTIVITY: Int = 1
                             startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
                         }
+                    }
                 }
             }
 

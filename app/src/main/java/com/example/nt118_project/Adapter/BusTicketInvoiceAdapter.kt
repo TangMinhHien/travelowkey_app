@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.view.Window
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
@@ -82,7 +83,7 @@ class BusTicketInvoiceAdapter (private var dataList: ArrayList<BusTicketInvoice>
                         Type_ticket_1 = busticket_.Type
                         TravelTime_ticket_1 = busticket_.DepartureTime + " --> " + busticket_.ArrivalTime + " ("+busticket_.TravelTime+")"
                         holder.tVName.setText(busticket_.Name)
-                        holder.tVDate.setText("Ngày " + busticket_.Date + " " + busticket_.DepartureTime + " - "+ busticket_.ArrivalTime)
+                        holder.tVDate.setText(Date_1 + " " + busticket_.DepartureTime + " - "+ busticket_.ArrivalTime)
                         holder.tVFromTo.setText(busticket_.From + " -> " + busticket_.To)
                     }
                     else if(busticket_.Id == currItem.SecondBusTicket_ID)
@@ -94,7 +95,7 @@ class BusTicketInvoiceAdapter (private var dataList: ArrayList<BusTicketInvoice>
                         Type_ticket_2 = busticket_.Type
                         TravelTime_ticket_2 = busticket_.DepartureTime + " --> " + busticket_.ArrivalTime + " ("+busticket_.TravelTime+")"
                         holder.tVName_ticket_2.setText(busticket_.Name)
-                        holder.tVDate_ticket_2.setText("Ngày " + busticket_.Date + " " + busticket_.DepartureTime + " - "+ busticket_.ArrivalTime)
+                        holder.tVDate_ticket_2.setText(Date_2 + " " + busticket_.DepartureTime + " - "+ busticket_.ArrivalTime)
                         holder.tVFromTo_ticket_2.setText(busticket_.From + " -> " + busticket_.To)
                     }
                 }
@@ -119,6 +120,8 @@ class BusTicketInvoiceAdapter (private var dataList: ArrayList<BusTicketInvoice>
                     var tVType_1: TextView = view.findViewById<TextView>(R.id.tVType)
                     var tVPrice_1: TextView = view.findViewById(R.id.tVPrice_ticket_1)
                     var tVTravelTime_1: TextView = view.findViewById(R.id.tVTravelTime)
+                    var logo_1: ImageView = view.findViewById(R.id.logo_1)
+                    var logo_2: ImageView = view.findViewById(R.id.logo_2)
 
                     var line: View = view.findViewById<View>(R.id.line)
 
@@ -130,6 +133,8 @@ class BusTicketInvoiceAdapter (private var dataList: ArrayList<BusTicketInvoice>
                     var tVTravelTime_2: TextView = view.findViewById(R.id.tVTravelTime_2)
 
                     var Frame_ticket_2_di:RelativeLayout = view.findViewById<RelativeLayout>(R.id.SecondTicket)
+                    logo_1.setVisibility(View.GONE)
+                    logo_2.setVisibility(View.GONE)
                     tVName_di.setText(holder.tVName.text)
                     tVType_1.setText(Type_ticket_1)
                     tVDate_di.setText(Date_1)

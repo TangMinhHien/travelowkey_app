@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.RelativeLayout
 import android.widget.TextView
@@ -16,6 +17,7 @@ import com.example.nt118_project.Model.Hotel
 import com.example.nt118_project.Model.HotelTicketInvoice
 import com.example.nt118_project.Model.Room
 import com.example.nt118_project.R
+import com.bumptech.glide.Glide
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
@@ -56,9 +58,12 @@ class RoomTicketInvoiceBillAdapter(private var dataList: ArrayList<HotelTicketIn
         databaseReference.collection("Room").whereEqualTo("Id", currItem.RoomID).get()
             .addOnSuccessListener { documents ->
                 var SerVice: String = ""
+                var image_hotel:String = ""
+                var image_room:String = ""
                 for (document in documents)
                 {
                     var room_ = document.toObject(Room::class.java)
+                    image_room = room_.Img[0]
                     databaseReference.collection("Hotel").document(room_.Hotel_id).get()
                         .addOnSuccessListener { document ->
                             var hotel_ = document.toObject(Hotel::class.java)
@@ -70,8 +75,9 @@ class RoomTicketInvoiceBillAdapter(private var dataList: ArrayList<HotelTicketIn
                             holder.tVNum.setText(room_.Max.toString()+" khách/phòng")
                             holder.tVNumCus.setText("Số khách: " + currItem.NumCus)
                             holder.tVPrice.setText(this.formatter(currItem.Price.toDouble().toInt()).toString() + "VND")
-                            holder.tVCheckinDate.setText("Ngày nhận: "+ currItem.ChechInDate)
-                            holder.tVCheckoutDate.setText("Ngày trả: "+ currItem.ChechOutDate)
+                            holder.tVCheckinDate.setText("Ngày nhận phòng: "+ currItem.ChechInDate)
+                            holder.tVCheckoutDate.setText("Ngày trả phòng: "+ currItem.ChechOutDate)
+                            image_hotel = hotel_!!.Img
                         }
                 }
                 holder.itemView.setOnClickListener {
@@ -91,6 +97,8 @@ class RoomTicketInvoiceBillAdapter(private var dataList: ArrayList<HotelTicketIn
                     var Service: TextView = view.findViewById(R.id.tvService)
                     var NumCus: TextView = view.findViewById(R.id.tv_numCus)
                     var Price: TextView = view.findViewById(R.id.tVPrice)
+                    var imageHotel: ImageView = view.findViewById(R.id.imageHotel)
+                    var imageRoom: ImageView = view.findViewById(R.id.imageRoom)
 
                     NameHotel.setText(holder.tVNameHotel.text)
                     AddressHotel.setText(holder.tVAddressHotel.text)
@@ -102,6 +110,14 @@ class RoomTicketInvoiceBillAdapter(private var dataList: ArrayList<HotelTicketIn
                     Service.text = SerVice
                     NumCus.text = holder.tVNumCus.text
                     Price.text = holder.tVPrice.text
+                    Glide.with(mcontext).load(image_hotel)
+                        .placeholder(R.drawable.ic_launcher_background)
+                        .error(R.drawable.ic_launcher_background)
+                        .into(imageHotel);
+                    Glide.with(mcontext).load(image_room)
+                        .placeholder(R.drawable.ic_launcher_background)
+                        .error(R.drawable.ic_launcher_background)
+                        .into(imageRoom);
                     builder.setContentView(view)
                     builder.show()
                 }

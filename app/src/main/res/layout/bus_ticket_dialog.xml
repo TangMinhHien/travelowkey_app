@@ -32,18 +32,28 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
             android:padding="5dp">
+            <ImageView
+                android:id="@+id/logo_1"
+                android:layout_width="50dp"
+                android:layout_height="15dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/logo_vietjetair"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="10dp"/>
 
             <TextView
                 android:id="@+id/tVName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
                 android:layout_marginTop="10dp"
-                android:text="Tên hãng xe"
+                android:layout_toEndOf="@+id/logo_1"
                 android:background="@color/black"
+                android:text="Tên hãng xe"
                 android:textColor="@color/white"
                 android:textStyle="bold" />
+
             <TextView
                 android:id="@+id/tVPrice_ticket_1"
                 android:layout_width="wrap_content"
@@ -52,7 +62,7 @@
                 android:layout_alignParentEnd="true"
                 android:text="2000"
                 android:layout_marginTop="10dp"
-                android:layout_marginEnd="20dp"
+                android:layout_marginEnd="10dp"
                 android:background="@color/black"
                 android:textColor="@color/button"
                 android:textStyle="bold" />
@@ -127,14 +137,23 @@
             android:paddingRight="5dp"
             android:paddingBottom="5dp"
             android:paddingTop="0dp">
+            <ImageView
+                android:id="@+id/logo_2"
+                android:layout_width="50dp"
+                android:layout_height="15dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/logo_vietjetair"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="10dp"/>
 
             <TextView
                 android:id="@+id/tVName_ticket_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
                 android:layout_marginTop="10dp"
+                android:layout_toEndOf="@+id/logo_2"
                 android:text="Tên hãng xe 1"
                 android:background="@color/black"
                 android:textColor="@color/white"
@@ -148,7 +167,7 @@
                 android:layout_alignParentEnd="true"
                 android:text="2000"
                 android:layout_marginTop="10dp"
-                android:layout_marginEnd="20dp"
+                android:layout_marginEnd="10dp"
                 android:background="@color/black"
                 android:textColor="@color/button"
                 android:textStyle="bold" />

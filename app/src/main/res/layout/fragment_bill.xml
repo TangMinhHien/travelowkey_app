@@ -103,6 +103,17 @@
                 android:text="Phòng khách sạn"
                 android:textColor="@color/white" />
         </RadioGroup>
+        <TextView
+            android:id="@+id/NotiChoose"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Vui lòng chọn danh sách bạn muốn xem"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toEndOf="@+id/radio_group"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="30dp"
+            app:layout_constraintTop_toTopOf="@+id/radio_group"
+            />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/RecyclerViewTicket"

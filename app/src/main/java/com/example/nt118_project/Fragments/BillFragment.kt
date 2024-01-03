@@ -137,6 +137,7 @@ class BillFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_bill, container, false)
     }
     private lateinit var RadioGroup: RadioGroup
+    private lateinit var NotiChoosetext: TextView
     override fun onViewCreated(view: View, savedInstanceState: Bundle?){
         super.onViewCreated(view, savedInstanceState)
         val databaseReference = Firebase.firestore
@@ -144,10 +145,12 @@ class BillFragment : Fragment() {
         val currentUser = auth.currentUser
         val user_id = currentUser!!.uid
         RadioGroup = view.findViewById(R.id.radio_group)
+        NotiChoosetext = view.findViewById(R.id.NotiChoose)
 
         RadioGroup.setOnCheckedChangeListener { group, checkedId ->
             when(checkedId){
                 R.id.radio_button1 -> {
+                    NotiChoosetext.setVisibility(View.GONE)
                     var RecyclerViewTicket: RecyclerView
                     RecyclerViewTicket = view.findViewById(R.id.RecyclerViewTicket)
                     val invoice_model_List = ArrayList<invoice_>()
@@ -183,6 +186,7 @@ class BillFragment : Fragment() {
                     }).start()
                 }
                 R.id.radio_button2 -> {
+                    NotiChoosetext.setVisibility(View.GONE)
                     var RecyclerViewTicket: RecyclerView
                     RecyclerViewTicket = view.findViewById(R.id.RecyclerViewTicket)
                     val invoice_model_List = ArrayList<invoice_>()
@@ -194,6 +198,7 @@ class BillFragment : Fragment() {
                     RecyclerViewTicket.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL,false)
                 }
                 R.id.radio_button3 -> {
+                    NotiChoosetext.setVisibility(View.GONE)
                     var RecyclerViewTicket: RecyclerView
                     RecyclerViewTicket = view.findViewById(R.id.RecyclerViewTicket)
                     val invoice_model_List = ArrayList<invoice_>()
@@ -229,6 +234,7 @@ class BillFragment : Fragment() {
                     }).start()
                 }
                 R.id.radio_button4 -> {
+                    NotiChoosetext.setVisibility(View.GONE)
                     var RecyclerViewTicket: RecyclerView
                     RecyclerViewTicket = view.findViewById(R.id.RecyclerViewTicket)
                     val invoice_model_List = ArrayList<invoice_>()
