@@ -58,6 +58,7 @@
                     android:id="@+id/new_notify"
                     android:layout_width="15dp"
                     android:layout_height="15dp"
+                    android:visibility="gone"
                     android:src="@drawable/new_notify"
                     app:layout_constraintTop_toTopOf="@id/logo_notification"
                     app:layout_constraintRight_toRightOf="@id/logo_notification"

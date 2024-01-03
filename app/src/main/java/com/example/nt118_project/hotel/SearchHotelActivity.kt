@@ -143,6 +143,7 @@ class SearchHotelActivity : AppCompatActivity() {
                                     }
                             }
                     }
+                    progresssDialog.dismiss()
                 }
         } else {
         }

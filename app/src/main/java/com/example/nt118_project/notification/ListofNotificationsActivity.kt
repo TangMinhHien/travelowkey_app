@@ -34,10 +34,6 @@ import kotlin.reflect.typeOf
 
 class ListofNotificationsActivity : AppCompatActivity() {
     private lateinit var dataList:ArrayList<Notification>
-    private lateinit var db: FirebaseFirestore
-    private lateinit var ref: CollectionReference
-    private lateinit var notificationAdapter: NotificationAdapter
-    private lateinit var progresssDialog: ProgressDialog
     private lateinit var recyclerviewNotification:RecyclerView
     private lateinit var tVNoti:TextView
     private lateinit var dbRef: DatabaseReference
@@ -71,15 +67,18 @@ class ListofNotificationsActivity : AppCompatActivity() {
         val currentUser = auth.currentUser
         val user_id = currentUser!!.uid
         dbRef = FirebaseDatabase.getInstance().getReference("Notification")
-        dbRef.orderByChild("State").addValueEventListener(object : ValueEventListener {
+        dbRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 dataList.clear()
                 if (snapshot.exists()){
                     for (Snap in snapshot.children){
                         val data = Snap.getValue(Notification::class.java)
-                        if(data!!.User_Id == user_id)
+                        if(data!!.User_Id == user_id && data!!.State=="Seen")
                         {
                             dataList.add(data!!)
+                        }
+                        else if (data!!.User_Id == user_id && data!!.State!="Seen"){
+                            dataList.add(0,data!!)
                         }
                     }
                     if(dataList.size == 0)

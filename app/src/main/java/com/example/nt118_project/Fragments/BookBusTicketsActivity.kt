@@ -171,6 +171,7 @@ class BookBusTicketsActivity : AppCompatActivity(), AdapterView.OnItemSelectedLi
                                     }
                             }
                     }
+                    progresssDialog.dismiss()
                 }
         } else {
         }

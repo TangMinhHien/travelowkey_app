@@ -126,6 +126,9 @@ open class SearchFlightActivity : AppCompatActivity() {
                                             }
                                         }
                                 }
+                        else{
+                            progresssDialog.dismiss()
+                        }
                         }
         } else {
         }

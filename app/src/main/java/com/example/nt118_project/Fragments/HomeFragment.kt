@@ -22,6 +22,7 @@ import com.example.nt118_project.flight.SearchFlightActivity
 import com.example.nt118_project.hotel.SearchHotelActivity
 import com.example.nt118_project.notification.ListofNotificationsActivity
 import com.google.android.material.tabs.TabLayout
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -82,7 +83,8 @@ class HomeFragment : Fragment() {
                 tabLayout.selectTab(tabLayout.getTabAt(position))
             }
         })
-
+        val user = FirebaseAuth.getInstance().currentUser
+        val uid = user!!.uid as String
         dbRef = FirebaseDatabase.getInstance().getReference("Notification")
         dbRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -90,7 +92,7 @@ class HomeFragment : Fragment() {
                 if (snapshot.exists()){
                     for (Snap in snapshot.children){
                         val data = Snap.getValue(Notification::class.java)
-                        if (data?.State!="Seen")
+                        if (data!!.User_Id == uid && data!!.State!="Seen")
                         {dataList.add(data!!)}
                     }
                     if (dataList.size>0)
