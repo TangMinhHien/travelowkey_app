@@ -137,6 +137,7 @@ class BillFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_bill, container, false)
     }
     private lateinit var RadioGroup: RadioGroup
+    private lateinit var NotiChoosetext: TextView
     override fun onViewCreated(view: View, savedInstanceState: Bundle?){
         super.onViewCreated(view, savedInstanceState)
         val databaseReference = Firebase.firestore
@@ -144,10 +145,12 @@ class BillFragment : Fragment() {
         val currentUser = auth.currentUser
         val user_id = currentUser!!.uid
         RadioGroup = view.findViewById(R.id.radio_group)
+        NotiChoosetext = view.findViewById(R.id.NotiChoose)
 
         RadioGroup.setOnCheckedChangeListener { group, checkedId ->
             when(checkedId){
                 R.id.radio_button1 -> {
+                    NotiChoosetext.setVisibility(View.GONE)
                     var RecyclerViewTicket: RecyclerView
                     RecyclerViewTicket = view.findViewById(R.id.RecyclerViewTicket)
                     val invoice_model_List = ArrayList<invoice_>()
@@ -175,7 +178,7 @@ class BillFragment : Fragment() {
                                     }
                                     val busticketinvoice = BusTicketInvoice(temp[0],temp[1],inv.num_Ticket,inv.total)
                                     dataList.add(busticketinvoice)
-                                    busTicketInvoiceAdapter = BusTicketInvoiceAdapter(dataList)
+                                    busTicketInvoiceAdapter = BusTicketInvoiceAdapter(dataList, requireActivity())
                                     RecyclerViewTicket.adapter = busTicketInvoiceAdapter
                                     RecyclerViewTicket.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL,false)
                                 }
@@ -183,17 +186,19 @@ class BillFragment : Fragment() {
                     }).start()
                 }
                 R.id.radio_button2 -> {
+                    NotiChoosetext.setVisibility(View.GONE)
                     var RecyclerViewTicket: RecyclerView
                     RecyclerViewTicket = view.findViewById(R.id.RecyclerViewTicket)
                     val invoice_model_List = ArrayList<invoice_>()
                     var busTicketInvoiceAdapter: BusTicketInvoiceAdapter
                     var dataList:ArrayList<BusTicketInvoice> = ArrayList<BusTicketInvoice>()
                     dataList.add(BusTicketInvoice("HN080020241313419","","1 ghế ngồi","200000.0"))
-                    busTicketInvoiceAdapter = BusTicketInvoiceAdapter(dataList)
+                    busTicketInvoiceAdapter = BusTicketInvoiceAdapter(dataList, requireActivity())
                     RecyclerViewTicket.adapter = busTicketInvoiceAdapter
                     RecyclerViewTicket.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL,false)
                 }
                 R.id.radio_button3 -> {
+                    NotiChoosetext.setVisibility(View.GONE)
                     var RecyclerViewTicket: RecyclerView
                     RecyclerViewTicket = view.findViewById(R.id.RecyclerViewTicket)
                     val invoice_model_List = ArrayList<invoice_>()
@@ -221,7 +226,7 @@ class BillFragment : Fragment() {
                                     }
                                     val busticketinvoice = BusTicketInvoice(temp[0],temp[1],inv.num_Ticket,inv.total)
                                     dataList.add(busticketinvoice)
-                                    flightTicketInvoiceAdapter = FlightTicketInvoiceBillAdapter(dataList)
+                                    flightTicketInvoiceAdapter = FlightTicketInvoiceBillAdapter(dataList, requireActivity())
                                     RecyclerViewTicket.adapter = flightTicketInvoiceAdapter
                                     RecyclerViewTicket.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL,false)
                                 }
@@ -229,6 +234,7 @@ class BillFragment : Fragment() {
                     }).start()
                 }
                 R.id.radio_button4 -> {
+                    NotiChoosetext.setVisibility(View.GONE)
                     var RecyclerViewTicket: RecyclerView
                     RecyclerViewTicket = view.findViewById(R.id.RecyclerViewTicket)
                     val invoice_model_List = ArrayList<invoice_>()
@@ -254,7 +260,7 @@ class BillFragment : Fragment() {
                                     }
                                     val busticketinvoice = HotelTicketInvoice(hotel_invoice_model.roomId,hotel_invoice_model.checkOutDate, hotel_invoice_model.checkInDate,inv.num_Ticket,inv.total)
                                     dataList.add(busticketinvoice)
-                                    roomTicketInvoiceAdapter = RoomTicketInvoiceBillAdapter(dataList)
+                                    roomTicketInvoiceAdapter = RoomTicketInvoiceBillAdapter(dataList, requireActivity())
                                     RecyclerViewTicket.adapter = roomTicketInvoiceAdapter
                                     RecyclerViewTicket.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL,false)
                                 }

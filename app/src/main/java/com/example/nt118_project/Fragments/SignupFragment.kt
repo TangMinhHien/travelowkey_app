@@ -24,16 +24,19 @@ class SignupFragment : AppCompatActivity() {
         val phone_  = findViewById<EditText>(R.id.phone_number_signup)
         val username_  = findViewById<EditText>(R.id.username_signup)
         val pw_  = findViewById<EditText>(R.id.pw_signup)
+        val fullname_ = findViewById<EditText>(R.id.fullname_signup)
 
         val email = email_.text.toString()
         val phone = phone_.text.toString()
         val username = username_.text.toString()
         val pw = pw_.text.toString()
+        val fullname = fullname_.text.toString()
 
         when{
             TextUtils.isEmpty(email) -> Toast.makeText(this, "Vui lòng nhập email", Toast.LENGTH_LONG).show()
             TextUtils.isEmpty(phone) -> Toast.makeText(this, "Vui lòng nhập SĐT", Toast.LENGTH_LONG).show()
             TextUtils.isEmpty(username) -> Toast.makeText(this, "Vui lòng nhập tên đăng nhập", Toast.LENGTH_LONG).show()
+            TextUtils.isEmpty(fullname) -> Toast.makeText(this, "Vui lòng nhập họ tên đầy đủ", Toast.LENGTH_LONG).show()
             TextUtils.isEmpty(pw) -> Toast.makeText(this, "Vui lòng nhập mật khẩu", Toast.LENGTH_LONG).show()
 
             else -> {
@@ -46,7 +49,7 @@ class SignupFragment : AppCompatActivity() {
                 auth.createUserWithEmailAndPassword(email, pw).addOnCompleteListener { task ->
                     if(task.isSuccessful)
                     {
-                        saveInfoUser(email, phone, username, progressDialog)
+                        saveInfoUser(email, phone, username,fullname, progressDialog)
 
                     }
                     else
@@ -62,7 +65,7 @@ class SignupFragment : AppCompatActivity() {
 
     }
 
-    private fun saveInfoUser(email: String, phone: String, username: String, progressDialog: ProgressDialog) {
+    private fun saveInfoUser(email: String, phone: String, username: String, fullname:String, progressDialog: ProgressDialog) {
         val currUserID = FirebaseAuth.getInstance().currentUser!!.uid
         val usersRef = Firebase.firestore
 
@@ -77,7 +80,7 @@ class SignupFragment : AppCompatActivity() {
             val Birthday: String
         )
 
-        val new_user = user(currUserID,email,phone,username,"Chưa được cập nhật","Chưa được cập nhật","Chưa được cập nhật", "Chưa được cập nhật")
+        val new_user = user(currUserID,email,phone,username,"Chưa được cập nhật","Chưa được cập nhật",fullname, "Chưa được cập nhật")
 
         usersRef.collection("User").document(currUserID).set(new_user).addOnCompleteListener {task ->
             if(task.isSuccessful)

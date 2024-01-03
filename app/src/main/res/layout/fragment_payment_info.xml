@@ -26,12 +26,21 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/ServiceDetailLayout"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="200dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/rounded_username"
             android:backgroundTint="@color/black"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tVServiceInfo"></androidx.constraintlayout.widget.ConstraintLayout>
+            app:layout_constraintTop_toBottomOf="@+id/tVServiceInfo">
+            <ImageView
+                android:id="@+id/QRcode"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
             android:id="@+id/tVTotal"
@@ -54,7 +63,7 @@
             android:layout_marginTop="20dp"
             android:background="@drawable/button"
             android:padding="5dp"
-            android:text="Thanh toán"
+            android:text="Hoàn tất"
             android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

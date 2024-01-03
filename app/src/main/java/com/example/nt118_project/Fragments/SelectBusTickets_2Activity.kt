@@ -3,6 +3,7 @@ package com.example.nt118_project.Fragments
 import android.app.ProgressDialog
 import android.content.Intent
 import android.graphics.Color
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -15,6 +16,7 @@ import android.widget.PopupMenu
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.nt118_project.Adapter.BusTicketAdapter
@@ -29,6 +31,9 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.firestore
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Locale
 import java.util.concurrent.locks.ReentrantLock
 
@@ -41,6 +46,7 @@ class SelectBusTickets_2Activity : AppCompatActivity(), AdapterView.OnItemSelect
     private lateinit var spinner1: Spinner
     private lateinit var spinner2: Spinner
     private lateinit var progresssDialog: ProgressDialog
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_select_bus_tickets2)
@@ -59,6 +65,13 @@ class SelectBusTickets_2Activity : AppCompatActivity(), AdapterView.OnItemSelect
         DepartureDaytV.text = myIntent.getStringExtra("ReturnTime").toString()
         tvSeat.text = myIntent.getStringExtra("Seat").toString()
         val max_require = myIntent.getStringExtra("Seat")!![0].digitToInt()
+        val arrivaltimeDepart_ = myIntent.getStringExtra("ArrivalTime").toString()
+
+        val pattern = "dd-MM-yyyy'T'HH:mm"
+        val sdf = DateTimeFormatter.ofPattern(pattern)
+        //val simpleDateFormat = SimpleDateFormat(pattern, Locale.getDefault())
+        //val arrivaltimeDepart = simpleDateFormat.parse(arrivaltimeDepart_)
+
         var Spinner1Data: ArrayList<Any?> = ArrayList()
         var Spinner2Data: ArrayList<Any?> = ArrayList()
         ReturnBtn.setOnClickListener {
@@ -87,7 +100,20 @@ class SelectBusTickets_2Activity : AppCompatActivity(), AdapterView.OnItemSelect
                 for (document in documents)
                 {
                     val dataModel= document.toObject(BusTicket::class.java)
-                    if (dataModel.NumSeat.toDouble() >= max_require.toDouble())
+                    val departTime = myIntent.getStringExtra("ReturnTime").toString()
+                    val departuretimeReturn_ = departTime + "T" + dataModel.DepartureTime
+                    Log.d("departuretimeReturn_",departTime+" "+dataModel.DepartureTime)
+                    var temp_check = true
+                    if (arrivaltimeDepart_ != "")
+                    {
+                        val departuretimeReturn = LocalDateTime.parse(departuretimeReturn_, sdf)
+                        val arrivaltimeDepart = LocalDateTime.parse(arrivaltimeDepart_, sdf)
+                        temp_check = arrivaltimeDepart.isBefore(departuretimeReturn)
+                        if(arrivaltimeDepart.isBefore(departuretimeReturn))
+                            Log.d("Check1", arrivaltimeDepart.isBefore(departuretimeReturn).toString())
+                    }
+                    //val departuretimeReturn = simpleDateFormat.parse(departuretimeReturn_)
+                    if (dataModel.NumSeat.toDouble() >= max_require.toDouble() && temp_check)
                     {
                         Spinner1Data.add(dataModel.PickPoint)
                         Spinner2Data.add(dataModel.DesPoint)
@@ -118,7 +144,6 @@ class SelectBusTickets_2Activity : AppCompatActivity(), AdapterView.OnItemSelect
                     spinner2.onItemSelectedListener = this
                     spinner2.setAdapter(DesPointAdapter)
 
-//                    val myExtraBoolean = intent.getBooleanExtra("RoundTrip", false)
                     spinner1.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                         override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                             val selectedItem = Spinner1Data[position]

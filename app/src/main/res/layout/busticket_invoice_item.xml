@@ -38,10 +38,10 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tVName"
                 android:layout_alignParentStart="true"
+                android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
                 android:background="@color/black"
-                android:textColor="@color/white"
-                android:textStyle="bold" />
+                android:textColor="@color/white" />
 
             <TextView
                 android:id="@+id/tVFromTo"
@@ -49,20 +49,31 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tVDate"
                 android:layout_alignParentStart="true"
+                android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
                 android:background="@color/black"
-                android:textColor="@color/white"
-                android:textStyle="bold" />
+                android:textColor="@color/white" />
         </RelativeLayout>
+        <View
+            android:id="@+id/line"
+            android:layout_width="match_parent"
+            android:layout_below="@id/FirstTicket"
+            android:layout_height="1dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="3dp"
+            android:background="@color/white" />
         <RelativeLayout
             android:id="@+id/SecondTicket"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
-            android:layout_below="@+id/FirstTicket"
-            android:padding="5dp"
-            android:layout_marginTop="5dp">
+            android:layout_below="@+id/line"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingBottom="5dp"
+            android:paddingTop="0dp">
 
             <TextView
                 android:id="@+id/tVName_ticket_2"
@@ -82,9 +93,9 @@
                 android:layout_below="@+id/tVName_ticket_2"
                 android:layout_alignParentStart="true"
                 android:layout_marginTop="10dp"
+                android:layout_marginLeft="10dp"
                 android:background="@color/black"
-                android:textColor="@color/white"
-                android:textStyle="bold" />
+                android:textColor="@color/white" />
 
             <TextView
                 android:id="@+id/tVFromTo_ticket_2"
@@ -92,10 +103,10 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tVDate_ticket_2"
                 android:layout_alignParentStart="true"
+                android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
                 android:background="@color/black"
-                android:textColor="@color/white"
-                android:textStyle="bold" />
+                android:textColor="@color/white" />
         </RelativeLayout>
 
         <TextView
@@ -107,7 +118,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginEnd="20dp"
             android:background="@color/black"
-            android:textColor="@color/white"
+            android:textColor="@color/button"
             android:textStyle="bold" />
     </RelativeLayout>
 

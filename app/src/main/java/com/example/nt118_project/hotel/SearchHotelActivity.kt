@@ -184,8 +184,8 @@ class SearchHotelActivity : AppCompatActivity() {
         val currentDay = currentDate.dayOfMonth
         val currentMonth = currentDate.monthValue
         val currentYear = currentDate.year
-        DayStart.text = currentDay.toString()+"-"+currentMonth.toString()+"-"+currentYear.toString()
-        DayEnd.text = currentDay.toString()+"-"+currentMonth.toString()+"-"+currentYear.toString()
+        DayStart.text = "0" + currentDay.toString()+"-"+"0" + currentMonth.toString()+"-"+currentYear.toString()
+        DayEnd.text = "0" + currentDay.toString()+"-"+"0" + currentMonth.toString()+"-"+currentYear.toString()
         val listener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 (view as TextView).setTextColor(Color.WHITE)
