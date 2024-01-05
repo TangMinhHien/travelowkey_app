@@ -29,6 +29,7 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 
 class SuggestFragment : Fragment() {
@@ -87,15 +88,13 @@ class SuggestFragment : Fragment() {
                 recentFlightAdapter.onItemClick = { selectedFlightTicket ->
                     val intent = Intent(view.context,
                         ListofFlightsActivity::class.java)
-                    val currentDate = LocalDate.now()
-                    val currentDay = currentDate.dayOfMonth
-                    val currentMonth = currentDate.monthValue
-                    val currentYear = currentDate.year
-                    val Date = currentDay.toString()+"-"+currentMonth.toString()+"-"+currentYear.toString()
+                    val  formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+                    val currentDate = LocalDate.now().format(formatter)
+                    val Date = currentDate
                     var value = Bundle()
                     value.putBoolean("return_check",false)
                     value.putBoolean("is_return",false)
-                    value.putString("Date",Date)
+                    value.putString("Date",selectedFlightTicket.Date)
                     value.putString("From",selectedFlightTicket.From)
                     value.putString("To",selectedFlightTicket.To)
                     value.putString("NumSeat","1")
@@ -126,18 +125,15 @@ class SuggestFragment : Fragment() {
                     )
                 recentHotelAdapter.onItemClick = { selectedHotel ->
                     val intent = Intent(view.context, ListofHotelsActivity::class.java)
-                    val currentDate = LocalDate.now()
-                    val currentDay = currentDate.dayOfMonth
-                    val currentMonth = currentDate.monthValue
-                    val currentYear = currentDate.year
-                    val Day_start =
-                        currentDay.toString() + "-" + currentMonth.toString() + "-" + currentYear.toString()
-                    val Day_end =
-                        (currentDay+1).toString() + "-" + currentMonth.toString() + "-" + currentYear.toString()
+                    val  formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+                    val currentDate = LocalDate.now().format(formatter)
+                    val tomorrow =  LocalDate.now().plusDays(1).format(formatter)
+                    val Date = currentDate
+                    val nextDate =  tomorrow
                     intent.putExtra("Area", selectedHotel.Area);
-                    intent.putExtra("DayStart", Day_start);
-                    intent.putExtra("DayEnd", Day_end);
-                    intent.putExtra("NumRoom", "1");
+                    intent.putExtra("DayStart", Date);
+                    intent.putExtra("DayEnd", nextDate);
+                    intent.putExtra("NumRoom", "1 người");
                     val LAUNCH_SECOND_ACTIVITY: Int = 1
                     startActivityForResult(
                         intent,
