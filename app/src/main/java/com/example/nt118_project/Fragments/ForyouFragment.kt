@@ -30,6 +30,7 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 
 class ForyouFragment : Fragment() {
@@ -97,8 +98,6 @@ class ForyouFragment : Fragment() {
                         val data = document.id
                         hotel_dataList.add(data)
                     }
-                    Log.d("check_data","${hotel_dataList.size}")
-                    Log.d("check_data","${hotel_dataList.toString()}")
                     if (hotel_dataList.size>0) {
                         hotel_ref2 = db.collection("Hotel_invoice")
                         hotel_ref2.whereIn("invoice_Id", hotel_dataList)
@@ -108,8 +107,6 @@ class ForyouFragment : Fragment() {
                                     val data2 = document["roomId"] as String
                                     hotel_dataList2.add(data2)
                                 }
-                                Log.d("check_data","${hotel_dataList2.size}")
-                                Log.d("check_data","${hotel_dataList2.toString()}")
                                 hotel_ref3 = db.collection("Room")
                                 hotel_ref3.whereIn("Id", hotel_dataList2)
                                     .get()
@@ -118,8 +115,6 @@ class ForyouFragment : Fragment() {
                                             val data3 = document["Hotel_id"] as String
                                             hotel_dataList3.add(data3)
                                         }
-                                        Log.d("check_data","${hotel_dataList3.size}")
-                                        Log.d("check_data","${hotel_dataList3.toString()}")
                                         hotel_ref4 = db.collection("Hotel")
                                         hotel_ref4.whereIn("Id",hotel_dataList3)
                                             .get()
@@ -128,8 +123,6 @@ class ForyouFragment : Fragment() {
                                                     val data = document["Area"] as String
                                                     hotel_dataList4.add(data)
                                                 }
-                                                Log.d("check_data","${hotel_dataList4.size}")
-                                                Log.d("check_data","${hotel_dataList4.toString()}")
                                                 hotel_ref5 = db.collection("Hotel")
                                                 hotel_ref5.whereIn("Area",hotel_dataList4).limit(12)
                                                     .get()
@@ -138,8 +131,6 @@ class ForyouFragment : Fragment() {
                                                             val data = document.toObject<Hotel>()
                                                             hotel_dataList5.add(data)
                                                         }
-                                                        Log.d("check_data","${hotel_dataList5.size}")
-                                                        Log.d("check_data","${hotel_dataList5.toString()}")
                                                         progresssDialog.dismiss()
                                                         var recentHotelAdapter = RecentHotelAdapter(
                                                             hotel_dataList5,
@@ -154,18 +145,15 @@ class ForyouFragment : Fragment() {
                                                             )
                                                         recentHotelAdapter.onItemClick = { selectedHotel ->
                                                             val intent = Intent(view.context, ListofHotelsActivity::class.java)
-                                                            val currentDate = LocalDate.now()
-                                                            val currentDay = currentDate.dayOfMonth
-                                                            val currentMonth = currentDate.monthValue
-                                                            val currentYear = currentDate.year
-                                                            val Day_start =
-                                                                currentDay.toString() + "-" + currentMonth.toString() + "-" + currentYear.toString()
-                                                            val Day_end =
-                                                                (currentDay+1).toString() + "-" + currentMonth.toString() + "-" + currentYear.toString()
+                                                            val  formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+                                                            val currentDate = LocalDate.now().format(formatter)
+                                                            val tomorrow =  LocalDate.now().plusDays(1).format(formatter)
+                                                            val Date = currentDate
+                                                            val nextDate =  tomorrow
                                                             intent.putExtra("Area", selectedHotel.Area);
-                                                            intent.putExtra("DayStart", Day_start);
-                                                            intent.putExtra("DayEnd", Day_end);
-                                                            intent.putExtra("NumRoom", "1");
+                                                            intent.putExtra("DayStart", Date);
+                                                            intent.putExtra("DayEnd", nextDate);
+                                                            intent.putExtra("NumRoom", "1 người");
                                                             val LAUNCH_SECOND_ACTIVITY: Int = 1
                                                             startActivityForResult(
                                                                 intent,
@@ -187,8 +175,6 @@ class ForyouFragment : Fragment() {
                                     val data = document.toObject<Hotel>()
                                     hotel_dataList5.add(data)
                                 }
-                                Log.d("check_data","${hotel_dataList5.size}")
-                                Log.d("check_data","${hotel_dataList5.toString()}")
                                 progresssDialog.dismiss()
                                 var recentHotelAdapter = RecentHotelAdapter(
                                     hotel_dataList5,
@@ -203,18 +189,15 @@ class ForyouFragment : Fragment() {
                                     )
                                 recentHotelAdapter.onItemClick = { selectedHotel ->
                                     val intent = Intent(view.context, ListofHotelsActivity::class.java)
-                                    val currentDate = LocalDate.now()
-                                    val currentDay = currentDate.dayOfMonth
-                                    val currentMonth = currentDate.monthValue
-                                    val currentYear = currentDate.year
-                                    val Day_start =
-                                        currentDay.toString() + "-" + currentMonth.toString() + "-" + currentYear.toString()
-                                    val Day_end =
-                                        (currentDay+1).toString() + "-" + currentMonth.toString() + "-" + currentYear.toString()
+                                    val  formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+                                    val currentDate = LocalDate.now().format(formatter)
+                                    val tomorrow =  LocalDate.now().plusDays(1).format(formatter)
+                                    val Date = currentDate
+                                    val nextDate =  tomorrow
                                     intent.putExtra("Area", selectedHotel.Area);
-                                    intent.putExtra("DayStart", Day_start);
-                                    intent.putExtra("DayEnd", Day_end);
-                                    intent.putExtra("NumRoom", "1");
+                                    intent.putExtra("DayStart", Date);
+                                    intent.putExtra("DayEnd", nextDate);
+                                    intent.putExtra("NumRoom", "1 người");
                                     val LAUNCH_SECOND_ACTIVITY: Int = 1
                                     startActivityForResult(
                                         intent,
@@ -272,15 +255,13 @@ class ForyouFragment : Fragment() {
                                                 recentFlightAdapter.onItemClick = { selectedFlightTicket ->
                                                     val intent = Intent(view.context,
                                                         ListofFlightsActivity::class.java)
-                                                    val currentDate = LocalDate.now()
-                                                    val currentDay = currentDate.dayOfMonth
-                                                    val currentMonth = currentDate.monthValue
-                                                    val currentYear = currentDate.year
-                                                    val Date = currentDay.toString()+"-"+currentMonth.toString()+"-"+currentYear.toString()
+                                                    val  formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+                                                    val currentDate = LocalDate.now().format(formatter)
+                                                    val Date = currentDate
                                                     var value = Bundle()
                                                     value.putBoolean("return_check",false)
                                                     value.putBoolean("is_return",false)
-                                                    value.putString("Date",Date)
+                                                    value.putString("Date",selectedFlightTicket.Date)
                                                     value.putString("From",selectedFlightTicket.From)
                                                     value.putString("To",selectedFlightTicket.To)
                                                     value.putString("NumSeat","1")
@@ -316,15 +297,13 @@ class ForyouFragment : Fragment() {
                                 recentFlightAdapter.onItemClick = { selectedFlightTicket ->
                                     val intent = Intent(view.context,
                                         ListofFlightsActivity::class.java)
-                                    val currentDate = LocalDate.now()
-                                    val currentDay = currentDate.dayOfMonth
-                                    val currentMonth = currentDate.monthValue
-                                    val currentYear = currentDate.year
-                                    val Date = currentDay.toString()+"-"+currentMonth.toString()+"-"+currentYear.toString()
+                                    val  formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+                                    val currentDate = LocalDate.now().format(formatter)
+                                    val Date = currentDate
                                     var value = Bundle()
                                     value.putBoolean("return_check",false)
                                     value.putBoolean("is_return",false)
-                                    value.putString("Date",Date)
+                                    value.putString("Date",selectedFlightTicket.Date)
                                     value.putString("From",selectedFlightTicket.From)
                                     value.putString("To",selectedFlightTicket.To)
                                     value.putString("NumSeat","1")
