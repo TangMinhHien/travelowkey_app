@@ -27,16 +27,37 @@
             android:layout_marginLeft="10dp"
             android:layout_marginTop="15dp"/>
         <TextView
-            android:id="@+id/info_flight"
+            android:id="@+id/info_flight_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TP HCM -> Tokyo"
+            android:text="TP HCM"
             android:textColor="@color/white"
             android:textStyle="bold"
             android:textSize="20dp"
             app:layout_constraintLeft_toRightOf="@id/list_flights_back"
             app:layout_constraintTop_toTopOf="@id/list_flights_back"
             app:layout_constraintBottom_toBottomOf="@id/list_flights_back"
+            android:layout_marginLeft="5dp"/>
+        <ImageView
+            android:id="@+id/arrow"
+            android:src="@drawable/ic_arrow"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            app:layout_constraintLeft_toRightOf="@id/info_flight_1"
+            app:layout_constraintTop_toTopOf="@id/info_flight_1"
+            app:layout_constraintBottom_toBottomOf="@id/info_flight_1"
+            android:layout_margin="5dp"/>
+        <TextView
+            android:id="@+id/info_flight_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="HA NOI"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:textSize="20dp"
+            app:layout_constraintLeft_toRightOf="@id/arrow"
+            app:layout_constraintTop_toTopOf="@id/info_flight_1"
+            app:layout_constraintBottom_toBottomOf="@id/info_flight_1"
             android:layout_marginLeft="5dp"/>
         <TextView
             android:id="@+id/info_sup_flight"
@@ -45,8 +66,15 @@
             android:textColor="@color/white"
             android:textSize="14dp"
             android:text="10/10/2023 - 1 người - Economy"
-            app:layout_constraintTop_toBottomOf="@id/info_flight"
-            app:layout_constraintLeft_toRightOf="@id/list_flights_back"/>
+            app:layout_constraintTop_toBottomOf="@id/info_flight_1"
+            app:layout_constraintLeft_toRightOf="@id/list_flights_back"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:singleLine="true"
+            android:scrollHorizontally="true"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit ="marquee_forever"/>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
     <ScrollView
@@ -58,18 +86,44 @@
         app:layout_constraintLeft_toRightOf="parent"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginTop="-30dp">
+        android:layout_marginTop="-45dp">
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/RecyclerviewFlightTicket"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/tab_indicator_flight"
                 android:backgroundTint="@color/black2"
-                tools:listitem="@layout/detail_list_of_flights"
-                />
+                tools:layout_editor_absoluteX="0dp"
+                tools:layout_editor_absoluteY="0dp"
+                tools:listitem="@layout/detail_list_of_flights" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
+    <TextView
+        android:id="@+id/result_not_found"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/button"
+        android:textSize="15dp"
+        android:text="Không tìm thấy chuyến bay phù hợp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/action_bar"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="10dp"/>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/sorting_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="28dp"
+        android:layout_marginBottom="40dp"
+        android:src="@drawable/ic_sorting"
+        android:backgroundTint="@color/main_blue"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

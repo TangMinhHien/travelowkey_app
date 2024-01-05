@@ -150,14 +150,19 @@ class ServiceCar1_Fragment: Fragment() {
         et.setText(sdf.format(c.time))
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun getValue(): Any {
         var value = Bundle()
+        val sdf = DateTimeFormatter.ofPattern("d-M-yyyy")
+        val dateDepart = LocalDate.parse(DepartureDay.text, sdf)
+        val dateEnd = dateDepart.plusDays(Duration.selectedItem.toString().toLong()-1)
         value.putBoolean("return_check",false)
         value.putBoolean("is_return",false)
         value.putString("Date Depature",DepartureDay.text.toString())
         value.putString("Place",DeparturePlace.selectedItem.toString())
         value.putString("Duration",Duration.selectedItem.toString())
         value.putString("Time",TimeDeparture.text.toString())
+        value.putString("Date End", dateEnd.toString())
         return value;
     }
 }
