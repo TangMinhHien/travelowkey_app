@@ -85,7 +85,7 @@ open class Search_ServiceCar_Activity: AppCompatActivity() {
                                             dataList3.add(data3)
                                         }
                                         progresssDialog.dismiss()
-                                        var recentFlightAdapter = RecentFlightTicketAdapter(
+                                        var recentFlightAdapter = RecentServiceCarTicketAdapter(
                                             dataList3,
                                             this@Search_ServiceCar_Activity
                                         )
@@ -97,8 +97,7 @@ open class Search_ServiceCar_Activity: AppCompatActivity() {
                                                 LinearLayoutManager.HORIZONTAL, false
                                             )
                                         recentFlightAdapter.onItemClick = { selectedFlightTicket ->
-                                            val intent = Intent(this@Search_ServiceCar_Activity,
-                                                ListOfServiceCarActivity::class.java)
+                                            val intent = Intent(this@Search_ServiceCar_Activity, ListOfServiceCarActivity::class.java)
                                             val currentDate = LocalDate.now()
                                             val currentDay = currentDate.dayOfMonth
                                             val currentMonth = currentDate.monthValue
