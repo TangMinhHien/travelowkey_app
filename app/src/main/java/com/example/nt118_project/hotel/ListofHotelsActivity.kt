@@ -72,9 +72,7 @@ class ListofHotelsActivity : AppCompatActivity() {
         ref.whereEqualTo("Area",value.getString("Area")).get().addOnSuccessListener { documents ->
             for (document in documents) {
                 try{
-                    Log.d("Hotel","${document.data}")
                 val Data = document.toObject<Hotel>()
-//                Data.setID(document.id)
                 dataList.add(Data)}
                 catch (e:Exception){
                     Log.d("Fail","Can't get data")
