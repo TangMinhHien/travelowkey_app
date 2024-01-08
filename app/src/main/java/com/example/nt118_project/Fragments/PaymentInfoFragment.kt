@@ -21,11 +21,14 @@ import com.example.nt118_project.Model.FlightTicket
 import com.example.nt118_project.Model.Hotel
 import com.example.nt118_project.Model.Notification
 import com.example.nt118_project.Model.Room
+import com.example.nt118_project.Model.User
 import com.example.nt118_project.R
+import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ServerValue
 import com.google.firebase.firestore.firestore
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.WriterException
@@ -78,6 +81,7 @@ class PaymentInfoFragment : Fragment() {
         val rootView = inflater.inflate(R.layout.fragment_payment_info, container, false)
         var TvTotal: TextView = rootView.findViewById<TextView>(R.id.tVTotal)
         var iVQRcode: ImageView = rootView.findViewById(R.id.QRcode)
+        val tVNotiPoint: TextView = rootView.findViewById(R.id.tVNotiPoint)
         val databaseReference = Firebase.firestore
 
         val auth = FirebaseAuth.getInstance()
@@ -106,6 +110,37 @@ class PaymentInfoFragment : Fragment() {
             val Num_Ticket: String,
             val Total: String
         )
+        val usersRef = Firebase.firestore
+        var user_ = User()
+        var Total_:Double = 0.0
+        var Point:Int = 0
+        var LastTotal: Int = 0
+        val tVPoint:TextView = rootView.findViewById(R.id.tVPoint)
+        val switchButton: SwitchMaterial = rootView.findViewById(R.id.material_switch)
+        switchButton.setOnCheckedChangeListener { buttonView, isChecked ->
+            // Handle the switch state change
+            if (isChecked) {
+                // Switch is ON
+                TvTotal.setText("Tổng tiền: "+ formatter((Total_.toInt() - Point)).toString() + " VND")
+                LastTotal = Total_.toInt() - Point
+                tVNotiPoint.text = "Bạn nhận được "+(LastTotal * 0.008).toInt().toString()+" điểm khi thực hiện thanh toán."
+            } else {
+                // Switch is OFF
+                TvTotal.setText("Tổng tiền: "+ formatter(Total_.toInt()).toString() + " VND")
+                LastTotal = Total_.toInt()
+                tVNotiPoint.text = "Bạn nhận được "+(LastTotal * 0.008).toInt().toString()+" điểm khi thực hiện thanh toán."
+            }
+        }
+        usersRef.collection("User").document(user_id).get()
+            .addOnSuccessListener { document ->
+                if (document != null)
+                {
+                    user_ = document.toObject(User::class.java)!!
+                }
+            }
+            .addOnFailureListener{exception ->
+                Log.e("TAG", "User data not found")
+            }
 
         if(tag_ == "Bus" || tag_ == "Flight")
         {
@@ -155,21 +190,36 @@ class PaymentInfoFragment : Fragment() {
                             }
                         }
                         Total *= NumberOfSeat.get(0).toString().toInt()
+                        Total_ = Total
+                        LastTotal = Total_.toInt()
                         TvTotal.setText("Tổng tiền: "+ formatter(Total.toInt()).toString() + " VND")
+                        var redeemedPoint:Int  = user_.Point
+                        var temp_redeemedPoint:Int = ((Total - 50000)*0.1).toInt()
+                        if (temp_redeemedPoint <= redeemedPoint)
+                        {
+                            tVPoint.text = temp_redeemedPoint.toString() + " điểm"
+                            Point = temp_redeemedPoint * 10
+                        }
+                        else {
+                            Point = redeemedPoint * 10
+                            tVPoint.text = redeemedPoint.toString() + " điểm"
+                        }
+                        tVNotiPoint.text = "Bạn nhận được "+(LastTotal * 0.008).toInt().toString()+" điểm khi thực hiện thanh toán."
                     }
                     .addOnFailureListener{exception ->
                         Log.w("Error getting documents: ", exception)
                     }
             }
             PayBtn.setOnClickListener {
-//                val Invoice_Id = generateRandomString(14)
                 val Service_Invoice_Id = tag_[0] + generateRandomString(14)
-                val new_invoice = invoice(Invoice_Id, tag_, user_id.toString(), NumberOfSeat?.get(0).toString(), Total.toString())
+                val new_invoice = invoice(Invoice_Id, tag_, user_id.toString(), NumberOfSeat?.get(0).toString(), LastTotal.toString())
                 var new_service_invoice = service_invoice(FirstID.toString(),SecondID.toString(), Service_Invoice_Id, Invoice_Id)
                 var BusTicketList: ArrayList<BusTicket> = ArrayList()
                 var FlightTicketList: ArrayList<FlightTicket> = ArrayList()
                 val noti_list: ArrayList<String> = ArrayList()
+                user_.Point += ((LastTotal * 0.008).toInt() - (Point * 0.1).toInt())
                 //var noti_text: String = "Bạn đã đăng ký vé {} từ {} đến {} vào ngày {}, chuyến {} mang {}"
+                databaseReference.collection("User").document(user_id).update("Point", user_.Point)
                 if (tag_ == "Bus")
                 {
                     val outputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
@@ -210,8 +260,11 @@ class PaymentInfoFragment : Fragment() {
                 for (noti in noti_list)
                 {
                     val noti_id= generateRandomString(14)
+                    val map: HashMap<String, Any> = HashMap<String, Any>()
+                    map["timestamp"] = ServerValue.TIMESTAMP
                     var new_noti: Notification = Notification(noti_id, noti, tag_, "Not", user_id)
                     dbRef.child(noti_id).setValue(new_noti)
+                    dbRef.child(noti_id).updateChildren(map)
                 }
                 val intent = Intent(requireActivity(), MainActivity::class.java)
                 val LAUNCH_SECOND_ACTIVITY:Int = 1
@@ -229,6 +282,25 @@ class PaymentInfoFragment : Fragment() {
             var room_ = Room()
             var hotel_ = Hotel()
             var Total: Double = 0.0
+            val Invoice_Id = generateRandomString(14)
+            val writer = QRCodeWriter()
+            try{
+                val bitMatrix = writer.encode(Invoice_Id, BarcodeFormat.QR_CODE, 512, 512)
+                val width = bitMatrix.width
+                val height = bitMatrix.height
+                val bmp = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565)
+                for (x in 0 until width)
+                {
+                    for(y in 0 until height)
+                    {
+                        bmp.setPixel(x,y, if(bitMatrix[x, y]) Color.BLACK else Color.WHITE)
+                    }
+                }
+                iVQRcode.setImageBitmap(bmp)
+            }catch(e: WriterException){
+                e.printStackTrace()
+            }
+
             databaseReference.collection("Room").document(RoomID.toString()).get()
                 .addOnSuccessListener { document ->
                     if (document != null)
@@ -240,8 +312,23 @@ class PaymentInfoFragment : Fragment() {
                         val period = Period.between(from, to)
                         val days = period.days
                         Total = (room_.Price.toInt()*days.toInt()).toDouble()
+                        Total_ = Total
+                        LastTotal = Total_.toInt()
                         room_.State = "Rented"
                         TvTotal.setText("Tổng tiền: "+ formatter(room_.Price.toInt()*days.toInt()).toString() + " VND")
+                        var redeemedPoint:Int  = user_.Point
+                        var temp_redeemedPoint:Int = ((Total - 50000)*0.1).toInt()
+                        if (temp_redeemedPoint <= redeemedPoint)
+                        {
+                            tVPoint.text = temp_redeemedPoint.toString() + " điểm"
+                            Point = temp_redeemedPoint * 10
+                        }
+                        else
+                        {
+                            Point = redeemedPoint * 10
+                            tVPoint.text = redeemedPoint.toString() + " điểm"
+                        }
+                        tVNotiPoint.text = "Bạn nhận được "+(LastTotal * 0.008).toInt().toString()+" điểm khi thực hiện thanh toán."
                         databaseReference.collection("Hotel").document(room_.Hotel_id).get()
                             .addOnSuccessListener { document ->
                                 hotel_ = document.toObject(Hotel::class.java)!!
@@ -254,18 +341,22 @@ class PaymentInfoFragment : Fragment() {
                     Log.e("TAG", "User data not found")
                 }
             PayBtn.setOnClickListener {
-                val Invoice_Id = generateRandomString(14)
                 val Service_Invoice_Id = tag_[0] + generateRandomString(14)
-                val new_invoice = invoice(Invoice_Id, tag_, user_id.toString(), NumRoom?.get(0).toString(), Total.toString())
+                val new_invoice = invoice(Invoice_Id, tag_, user_id.toString(), NumRoom?.get(0).toString(), LastTotal.toString())
                 var new_service_invoice = hotel_invoice(DayStart.toString(),DayEnd.toString(), Service_Invoice_Id, Invoice_Id, RoomID.toString())
                 databaseReference.collection("Room").document(room_.Id).update("State", room_.State)
                 databaseReference.collection("Invoice").document(Invoice_Id).set(new_invoice)
+                user_.Point += ((LastTotal * 0.008).toInt() - (Point * 0.1).toInt())
+                databaseReference.collection("User").document(user_id).update("Point", user_.Point)
                 val dbRef: DatabaseReference = FirebaseDatabase.getInstance().getReference("Notification")
                 for (noti in noti_list)
                 {
                     val noti_id= generateRandomString(14)
+                    val map: HashMap<String, Any> = HashMap<String, Any>()
+                    map["timestamp"] = ServerValue.TIMESTAMP
                     var new_noti: Notification = Notification(noti_id, noti, tag_, "Not", user_id)
                     dbRef.child(noti_id).setValue(new_noti)
+                    dbRef.child(noti_id).updateChildren(map)
                 }
                 databaseReference.collection(tag_+"_invoice").document(Service_Invoice_Id).set(new_service_invoice)
                     .addOnSuccessListener {

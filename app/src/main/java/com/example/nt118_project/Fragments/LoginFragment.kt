@@ -7,8 +7,10 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.nt118_project.ForgetPwActivity
 import com.example.nt118_project.MainActivity
 import com.example.nt118_project.R
 import com.google.firebase.auth.FirebaseAuth
@@ -20,6 +22,11 @@ class LoginFragment : AppCompatActivity() {
         setContentView(R.layout.activity_login_fragment)
 
         val signup_button = findViewById<Button>(R.id.signup_button)
+        val forgetpw_ = findViewById<TextView>(R.id.tVForgetPw)
+
+        forgetpw_.setOnClickListener {
+            startActivity(Intent(this, ForgetPwActivity::class.java))
+        }
 
         signup_button.setOnClickListener {
             startActivity(Intent(this, SignupFragment::class.java))

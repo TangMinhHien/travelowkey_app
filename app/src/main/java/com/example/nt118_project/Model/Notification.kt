@@ -1,5 +1,8 @@
 package com.example.nt118_project.Model
 
+import java.util.Objects
+
+
 class Notification {
     public var Id: String = ""
     public var Text: String = ""

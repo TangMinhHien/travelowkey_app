@@ -35,9 +35,10 @@ class user{
     public var Sex: String = ""
     public var Name: String = ""
     public var Birthday: String = ""
+    public var Point:Int = 0
 
     constructor()
-    constructor(id:String, email:String, phone:String, userName: String, address:String, sex:String, name:String, bd:String)
+    constructor(id:String, email:String, phone:String, userName: String, address:String, sex:String, name:String, bd:String, point:Int)
     {
         this.Id = id
         this.Email = email
@@ -47,6 +48,7 @@ class user{
         this.Sex = sex
         this.Name = name
         this.Birthday = bd
+        this.Point = point
     }
 }
 class UserDetailFragment : AppCompatActivity() {
@@ -69,6 +71,7 @@ class UserDetailFragment : AppCompatActivity() {
         val currentUser_: FirebaseUser? = firebaseAuth.currentUser
         val currentUser = currentUser_!!.uid
         val database = FirebaseDatabase.getInstance()
+        var curr_point:Int = 0
 
         val usersRef = Firebase.firestore
         usersRef.collection("User").document(currentUser).get()
@@ -85,6 +88,7 @@ class UserDetailFragment : AppCompatActivity() {
                 userEmail.setText(user_.Email)
                 userBD.setText(user_.Birthday)
                 userAddress.setText(user_.Address)
+                curr_point = user_.Point
             }
             .addOnFailureListener{exception ->
                 Log.e("TAG", "User data not found")
@@ -110,9 +114,6 @@ class UserDetailFragment : AppCompatActivity() {
         tVChangePw.setOnClickListener {
             val intent = Intent(this@UserDetailFragment, ChangePasswordActivity::class.java)
             intent.putExtra("Pw", pwStr)
-            //Toast.makeText(this,pwStr, Toast.LENGTH_LONG).show()
-//            val LAUNCH_SECOND_ACTIVITY:Int = 1
-//            startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
             startActivity(intent)
         }
         val ChangeBtn = findViewById<TextView>(R.id.tVChangePersonalData)
@@ -135,7 +136,8 @@ class UserDetailFragment : AppCompatActivity() {
                 userAddress.text.toString(),
                 userSex.text.toString(),
                 userFullName.text.toString(),
-                userBD.text.toString()
+                userBD.text.toString(),
+                curr_point
             )
             usersRef.collection("User").document(currentUser).set(user_).addOnSuccessListener {
                 Toast.makeText(this, "Lưu thông tin thành công", Toast.LENGTH_SHORT).show()
