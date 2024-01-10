@@ -67,18 +67,44 @@ class ListofNotificationsActivity : AppCompatActivity() {
         val currentUser = auth.currentUser
         val user_id = currentUser!!.uid
         dbRef = FirebaseDatabase.getInstance().getReference("Notification")
-        dbRef.addValueEventListener(object : ValueEventListener {
+        dbRef.orderByChild("user_Id").equalTo(user_id).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 dataList.clear()
                 if (snapshot.exists()){
+                    var index_not_seen = 0
                     for (Snap in snapshot.children){
                         val data = Snap.getValue(Notification::class.java)
-                        if(data!!.User_Id == user_id && data!!.State=="Seen")
+                        if(data!!.State=="Seen")
                         {
-                            dataList.add(data!!)
+                            if (dataList.size-index_not_seen==0){
+                                dataList.add(data)
+                            }
+                            else
+                                for (i in index_not_seen..dataList.size){
+                                    if (i==dataList.size){
+                                        dataList.add(data!!)
+                                    }
+                                    else if (dataList[i].Created<data.Created){
+                                        dataList.add(i,data!!)
+                                        break
+                                    }
+                            }
                         }
-                        else if (data!!.User_Id == user_id && data!!.State!="Seen"){
-                            dataList.add(0,data!!)
+                        else if (data!!.State!="Seen"){
+                            if (index_not_seen==0){
+                                dataList.add(0,data)
+                            }
+                            else
+                                for (i in 0..index_not_seen){
+                                    if (i == index_not_seen){
+                                        dataList.add(index_not_seen,data!!)
+                                    }
+                                    else if (dataList[i].Created<data.Created){
+                                        dataList.add(i,data!!)
+                                        break
+                                    }
+                            }
+                            index_not_seen+=1
                         }
                     }
                     if(dataList.size == 0)

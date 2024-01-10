@@ -1,5 +1,7 @@
 package com.example.nt118_project.Fragments
 
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -14,6 +16,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.core.app.NotificationCompat
 import androidx.fragment.app.Fragment
 import com.example.nt118_project.MainActivity
 import com.example.nt118_project.Model.BusTicket
@@ -28,7 +31,6 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ServerValue
 import com.google.firebase.firestore.firestore
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.WriterException
@@ -38,6 +40,7 @@ import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.Period
 import java.time.format.DateTimeFormatter
+import java.util.Date
 import java.util.Locale
 
 
@@ -62,6 +65,19 @@ class PaymentInfoFragment : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
+    }
+    fun showNotification(text:String,tag:String){
+        val intent = Intent(requireActivity(), MainActivity::class.java)
+        intent.putExtra("previous_intent","notification")
+        val pendingIntent = PendingIntent.getActivity(context,0,intent,PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        val notificationManager = requireActivity().getSystemService(Context.NOTIFICATION_SERVICE) as android.app.NotificationManager
+        val notification = NotificationCompat.Builder(requireActivity().applicationContext,"channel_id")
+            .setContentTitle("Travelowkey ${tag} Notification")
+            .setContentText(text)
+            .setContentIntent(pendingIntent)
+            .setSmallIcon(R.drawable.ic_notification)
+            .build()
+        notificationManager.notify(1,notification)
     }
     fun generateRandomString(length: Int): String {
         val allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
@@ -256,15 +272,15 @@ class PaymentInfoFragment : Fragment() {
                         Toast.makeText(requireActivity(), "Thanh toán thất bại", Toast.LENGTH_LONG).show()
                     }
                 Toast.makeText(requireActivity(), "Thanh toán thành công", Toast.LENGTH_LONG).show()
+                showNotification(noti_list[0],tag_)
                 val dbRef: DatabaseReference = FirebaseDatabase.getInstance().getReference("Notification")
                 for (noti in noti_list)
                 {
                     val noti_id= generateRandomString(14)
-                    val map: HashMap<String, Any> = HashMap<String, Any>()
-                    map["timestamp"] = ServerValue.TIMESTAMP
-                    var new_noti: Notification = Notification(noti_id, noti, tag_, "Not", user_id)
+                    val dateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
+                    val date = dateFormat.format(Date())
+                    var new_noti: Notification = Notification(noti_id, noti, tag_, "Not", user_id,date)
                     dbRef.child(noti_id).setValue(new_noti)
-                    dbRef.child(noti_id).updateChildren(map)
                 }
                 val intent = Intent(requireActivity(), MainActivity::class.java)
                 val LAUNCH_SECOND_ACTIVITY:Int = 1
@@ -352,11 +368,10 @@ class PaymentInfoFragment : Fragment() {
                 for (noti in noti_list)
                 {
                     val noti_id= generateRandomString(14)
-                    val map: HashMap<String, Any> = HashMap<String, Any>()
-                    map["timestamp"] = ServerValue.TIMESTAMP
-                    var new_noti: Notification = Notification(noti_id, noti, tag_, "Not", user_id)
+                    val dateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
+                    val date = dateFormat.format(Date())
+                    var new_noti: Notification = Notification(noti_id, noti, tag_, "Not", user_id,date)
                     dbRef.child(noti_id).setValue(new_noti)
-                    dbRef.child(noti_id).updateChildren(map)
                 }
                 databaseReference.collection(tag_+"_invoice").document(Service_Invoice_Id).set(new_service_invoice)
                     .addOnSuccessListener {
@@ -365,6 +380,7 @@ class PaymentInfoFragment : Fragment() {
                         Toast.makeText(requireActivity(), "Thanh toán thất bại", Toast.LENGTH_LONG).show()
                     }
                 Toast.makeText(requireActivity(), "Thanh toán thành công", Toast.LENGTH_LONG).show()
+                showNotification(noti_list[0],tag_)
                 val intent = Intent(requireActivity(), MainActivity::class.java)
                 val LAUNCH_SECOND_ACTIVITY:Int = 1
                 startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)

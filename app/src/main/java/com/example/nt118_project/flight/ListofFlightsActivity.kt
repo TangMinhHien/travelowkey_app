@@ -3,6 +3,7 @@ package com.example.nt118_project.flight
 import android.app.ProgressDialog
 import android.content.Intent
 import android.opengl.Visibility
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -12,6 +13,7 @@ import android.widget.ImageButton
 import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.nt118_project.Adapter.BusTicketAdapter
@@ -27,6 +29,9 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
+import java.time.LocalDate
+import java.time.OffsetTime
+import java.time.format.DateTimeFormatter
 
 class ListofFlightsActivity : AppCompatActivity() {
     private lateinit var tv_info_flight_1: TextView
@@ -41,7 +46,7 @@ class ListofFlightsActivity : AppCompatActivity() {
     private lateinit var progresssDialog: ProgressDialog
     private lateinit var sorting_btn: FloatingActionButton
     private lateinit var tv_notfound: TextView
-
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_listof_flights)
@@ -80,6 +85,11 @@ class ListofFlightsActivity : AppCompatActivity() {
         progresssDialog.show();
         db = Firebase.firestore
         ref = db.collection("Flight")
+        val  formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+        val currentDate = LocalDate.now().format(formatter)
+        val Date = currentDate
+        val currentTime = OffsetTime.now()
+        Log.d("current_time","${currentTime.hour}")
         if (!value.getBoolean("return_check")){
             ref.whereEqualTo("Date",value.getString("Date")).whereEqualTo("From",value.getString("From")).whereEqualTo("To",value.getString("To"))
                 .whereEqualTo("SeatClass",value.getString("SeatClass"))
@@ -87,10 +97,9 @@ class ListofFlightsActivity : AppCompatActivity() {
                 .addOnSuccessListener { documents ->
                     for (document in documents) {
                         val data = document.toObject<FlightTicket>()
-
-//                        data.setID(document.id)
                         if (data.NumSeat>=max_require){
-                            dataList.add(data)
+                            if (data.Date!=Date||(data.Date==Date&&((data.DepartureTime.substring(0,2).toInt()-currentTime.hour.toInt()).toInt()>=1))){
+                            dataList.add(data)}
                         }
                     }
                     if (dataList.size==0){
@@ -174,7 +183,8 @@ class ListofFlightsActivity : AppCompatActivity() {
                             val data = document.toObject<FlightTicket>()
 //                            data.setID(document.id)
                             if (data.NumSeat>=max_require){
-                                dataList.add(data)
+                                if (data.Date!=Date||(data.Date==Date&&((data.DepartureTime.substring(0,2).toInt()-currentTime.hour.toInt()).toInt()>=1))){
+                                dataList.add(data)}
                             }
                         }
                         if (dataList.size==0){
@@ -271,7 +281,6 @@ class ListofFlightsActivity : AppCompatActivity() {
                     .addOnSuccessListener { documents ->
                         for (document in documents) {
                             val data = document.toObject<FlightTicket>()
-//                            data.setID(document.id)
                             if (data.NumSeat>=max_require){
                                 dataList.add(data)
                             }

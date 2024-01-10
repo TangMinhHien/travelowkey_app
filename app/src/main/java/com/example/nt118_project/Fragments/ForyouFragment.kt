@@ -83,9 +83,15 @@ class ForyouFragment : Fragment() {
         flight_dataList4 = ArrayList<FlightTicket>()
         RecyclerviewRecentHotel = view.findViewById(R.id.RecyclerviewRecentHotel)
         RecyclerviewRecentFlightTicket = view.findViewById(R.id.RecyclerviewRecentFlightTicket)
-        progresssDialog = ProgressDialog(view.context);
-        progresssDialog.setMessage("Đang tải dữ liệu...");
-        progresssDialog.show();
+        val  formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+        val currentDate = LocalDate.now().format(formatter)
+        val Date = currentDate
+        val nextDate =  ArrayList<String>()
+        nextDate.add(Date)
+        for (i in 1..5){
+            val tomorrow = LocalDate.now().plusDays(i.toLong()).format(formatter)
+            nextDate.add(tomorrow)
+        }
         val user = FirebaseAuth.getInstance().currentUser
         if (user != null) {
             val uid = user.uid as String
@@ -131,7 +137,6 @@ class ForyouFragment : Fragment() {
                                                             val data = document.toObject<Hotel>()
                                                             hotel_dataList5.add(data)
                                                         }
-                                                        progresssDialog.dismiss()
                                                         var recentHotelAdapter = RecentHotelAdapter(
                                                             hotel_dataList5,
                                                             view.context
@@ -148,11 +153,9 @@ class ForyouFragment : Fragment() {
                                                             val  formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
                                                             val currentDate = LocalDate.now().format(formatter)
                                                             val tomorrow =  LocalDate.now().plusDays(1).format(formatter)
-                                                            val Date = currentDate
-                                                            val nextDate =  tomorrow
                                                             intent.putExtra("Area", selectedHotel.Area);
                                                             intent.putExtra("DayStart", Date);
-                                                            intent.putExtra("DayEnd", nextDate);
+                                                            intent.putExtra("DayEnd", nextDate[1]);
                                                             intent.putExtra("NumRoom", "1 người");
                                                             val LAUNCH_SECOND_ACTIVITY: Int = 1
                                                             startActivityForResult(
@@ -175,7 +178,6 @@ class ForyouFragment : Fragment() {
                                     val data = document.toObject<Hotel>()
                                     hotel_dataList5.add(data)
                                 }
-                                progresssDialog.dismiss()
                                 var recentHotelAdapter = RecentHotelAdapter(
                                     hotel_dataList5,
                                     view.context
@@ -192,11 +194,9 @@ class ForyouFragment : Fragment() {
                                     val  formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
                                     val currentDate = LocalDate.now().format(formatter)
                                     val tomorrow =  LocalDate.now().plusDays(1).format(formatter)
-                                    val Date = currentDate
-                                    val nextDate =  tomorrow
                                     intent.putExtra("Area", selectedHotel.Area);
                                     intent.putExtra("DayStart", Date);
-                                    intent.putExtra("DayEnd", nextDate);
+                                    intent.putExtra("DayEnd", nextDate[1]);
                                     intent.putExtra("NumRoom", "1 người");
                                     val LAUNCH_SECOND_ACTIVITY: Int = 1
                                     startActivityForResult(
@@ -233,14 +233,13 @@ class ForyouFragment : Fragment() {
                                             flight_dataList3.add(data3)
                                         }
                                         flight_ref4 = db.collection("Flight")
-                                        flight_ref4.whereIn("From",flight_dataList3).limit(15)
+                                        flight_ref4.whereIn("From",flight_dataList3).whereIn("Date",nextDate).limit(15)
                                             .get()
                                             .addOnSuccessListener { documents->
                                                 for (document in documents){
                                                     val data = document.toObject<FlightTicket>()
                                                     flight_dataList4.add(data)
                                                 }
-                                                progresssDialog.dismiss()
                                                 var recentFlightAdapter = RecentFlightTicketAdapter(
                                                     flight_dataList4,
                                                     view.context
@@ -275,14 +274,13 @@ class ForyouFragment : Fragment() {
                     }
                     else {
                         flight_ref2 = db.collection("Flight")
-                        flight_ref2.orderBy("Price", Query.Direction.ASCENDING).limit(15)
+                        flight_ref2.whereIn("Date",nextDate).limit(15)
                             .get()
                             .addOnSuccessListener { documents->
                                 for (document in documents){
                                     val data = document.toObject<FlightTicket>()
                                     flight_dataList4.add(data)
                                 }
-                                progresssDialog.dismiss()
                                 var recentFlightAdapter = RecentFlightTicketAdapter(
                                     flight_dataList4,
                                     view.context
