@@ -21,6 +21,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 import java.text.SimpleDateFormat
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
@@ -70,11 +71,10 @@ class Flight1Fragment : Fragment() {
             DatePickerDialog.datePicker.minDate = System.currentTimeMillis()
             DatePickerDialog.show()
         }
-        val currentDate = LocalDate.now()
-        val currentDay = currentDate.dayOfMonth
-        val currentMonth = currentDate.monthValue
-        val currentYear = currentDate.year
-        DepartureDaytV.text = currentDay.toString()+"-"+currentMonth.toString()+"-"+currentYear.toString()
+        val  formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+        val currentDate = LocalDate.now().format(formatter)
+        val Date = currentDate
+        DepartureDaytV.text = Date
         val listener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 (view as TextView).setTextColor(Color.WHITE)

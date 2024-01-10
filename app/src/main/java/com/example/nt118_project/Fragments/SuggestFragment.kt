@@ -41,7 +41,6 @@ class SuggestFragment : Fragment() {
     private lateinit var ref2: CollectionReference
     private lateinit var data1: ArrayList<FlightTicket>
     private lateinit var data2: ArrayList<Hotel>
-    private lateinit var progresssDialog: ProgressDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,12 +61,18 @@ class SuggestFragment : Fragment() {
         RecyclerviewRecentHotel = view.findViewById(R.id.RecyclerviewRecentHotel)
         data1 = ArrayList<FlightTicket>()
         data2 = ArrayList<Hotel>()
-        progresssDialog = ProgressDialog(view.context);
-        progresssDialog.setMessage("Đang tải dữ liệu...");
-        progresssDialog.show();
         db = Firebase.firestore
+        val  formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+        val currentDate = LocalDate.now().format(formatter)
+        val Date = currentDate
+        val nextDate =  ArrayList<String>()
+        nextDate.add(Date)
+        for (i in 1..5){
+            val tomorrow = LocalDate.now().plusDays(i.toLong()).format(formatter)
+            nextDate.add(tomorrow)
+        }
         ref1 = db.collection("Flight")
-        ref1.orderBy("Price", Query.Direction.ASCENDING).limit(15)
+        ref1.whereIn("Date",nextDate).limit(15)
             .get()
             .addOnSuccessListener { documents->
                 for (document in documents){
@@ -111,7 +116,6 @@ class SuggestFragment : Fragment() {
                     val data = document.toObject<Hotel>()
                     data2.add(data)
                 }
-                progresssDialog.dismiss()
                 var recentHotelAdapter = RecentHotelAdapter(
                     data2,
                     view.context
@@ -128,11 +132,9 @@ class SuggestFragment : Fragment() {
                     val  formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
                     val currentDate = LocalDate.now().format(formatter)
                     val tomorrow =  LocalDate.now().plusDays(1).format(formatter)
-                    val Date = currentDate
-                    val nextDate =  tomorrow
                     intent.putExtra("Area", selectedHotel.Area);
                     intent.putExtra("DayStart", Date);
-                    intent.putExtra("DayEnd", nextDate);
+                    intent.putExtra("DayEnd", nextDate[1]);
                     intent.putExtra("NumRoom", "1 người");
                     val LAUNCH_SECOND_ACTIVITY: Int = 1
                     startActivityForResult(

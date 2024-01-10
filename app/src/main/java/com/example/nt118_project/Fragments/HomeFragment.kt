@@ -86,13 +86,13 @@ class HomeFragment : Fragment() {
         val user = FirebaseAuth.getInstance().currentUser
         val uid = user!!.uid as String
         dbRef = FirebaseDatabase.getInstance().getReference("Notification")
-        dbRef.addValueEventListener(object : ValueEventListener {
+        dbRef.orderByChild("user_Id").equalTo(uid).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 dataList.clear()
                 if (snapshot.exists()){
                     for (Snap in snapshot.children){
                         val data = Snap.getValue(Notification::class.java)
-                        if (data!!.User_Id == uid && data!!.State!="Seen")
+                        if (data!!.State!="Seen")
                         {dataList.add(data!!)}
                     }
                     if (dataList.size>0)

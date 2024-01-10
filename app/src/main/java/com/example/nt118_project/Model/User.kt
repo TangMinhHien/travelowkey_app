@@ -11,9 +11,10 @@ class User{
     public var Sex: String = ""
     public var Name: String = ""
     public var Birthday: String = ""
+    public var Point:Int = 0
 
     constructor()
-    constructor(id:String, email:String, phone:String, userName: String, address:String, sex:String, name:String, bd:String)
+    constructor(id:String, email:String, phone:String, userName: String, address:String, sex:String, name:String, bd:String, point:Int)
     {
         this.Id = id
         this.Email = email
@@ -23,5 +24,6 @@ class User{
         this.Sex = sex
         this.Name = name
         this.Birthday = bd
+        this.Point = point
     }
 }

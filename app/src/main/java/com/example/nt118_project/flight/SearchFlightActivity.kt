@@ -60,9 +60,6 @@ open class SearchFlightActivity : AppCompatActivity() {
         dataList2 = ArrayList<String>()
         dataList3 = ArrayList<FlightTicket>()
         RecyclerviewRecentFlightTicket = findViewById(R.id.RecyclerviewRecentFlightTicket)
-        progresssDialog = ProgressDialog(this@SearchFlightActivity);
-        progresssDialog.setMessage("Đang tải dữ liệu...");
-        progresssDialog.show();
         val user = FirebaseAuth.getInstance().currentUser
         if (user != null) {
             val uid = user.uid as String
@@ -92,7 +89,6 @@ open class SearchFlightActivity : AppCompatActivity() {
                                                 val data3 = document.toObject<FlightTicket>()
                                                 dataList3.add(data3)
                                             }
-                                            progresssDialog.dismiss()
                                             var recentFlightAdapter = RecentFlightTicketAdapter(
                                                 dataList3,
                                                 this@SearchFlightActivity
@@ -107,11 +103,9 @@ open class SearchFlightActivity : AppCompatActivity() {
                                             recentFlightAdapter.onItemClick = { selectedFlightTicket ->
                                                 val intent = Intent(this@SearchFlightActivity,
                                                     ListofFlightsActivity::class.java)
-                                                val currentDate = LocalDate.now()
-                                                val currentDay = currentDate.dayOfMonth
-                                                val currentMonth = currentDate.monthValue
-                                                val currentYear = currentDate.year
-                                                val Date = currentDay.toString()+"-"+currentMonth.toString()+"-"+currentYear.toString()
+                                                val  formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+                                                val currentDate = LocalDate.now().format(formatter)
+                                                val Date = currentDate
                                                 var value = Bundle()
                                                 value.putBoolean("return_check",false)
                                                 value.putBoolean("is_return",false)

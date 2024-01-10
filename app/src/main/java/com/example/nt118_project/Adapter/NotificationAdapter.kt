@@ -18,6 +18,7 @@ class NotificationAdapter(private var dataList: ArrayList<Notification>, private
 
     inner class NotificationViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         var text :TextView = itemView.findViewById(R.id.text)
+        var created: TextView = itemView.findViewById(R.id.created)
         var seen: ImageView = itemView.findViewById(R.id.ic_seen)
         var unseen: ImageView = itemView.findViewById(R.id.ic_unseen)
         var context: View = itemView
@@ -35,6 +36,7 @@ class NotificationAdapter(private var dataList: ArrayList<Notification>, private
     override fun onBindViewHolder(holder: NotificationViewHolder, position: Int) {
         val currItem: Notification = dataList[position]
         holder.text.setText(currItem.Text)
+        holder.created.setText(currItem.Created)
         val myColor = ContextCompat.getColor(context, R.color.black)
         if (currItem.State == "Seen"){
             holder.context.backgroundTintList = ContextCompat.getColorStateList(context,R.color.black)

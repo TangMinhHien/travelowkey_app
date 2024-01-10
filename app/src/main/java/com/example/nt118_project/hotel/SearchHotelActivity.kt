@@ -67,9 +67,6 @@ class SearchHotelActivity : AppCompatActivity() {
         dataList3 = ArrayList<String>()
         dataList4 = ArrayList<Hotel>()
         RecyclerviewRecentHotel = findViewById(R.id.RecyclerviewRecentHotel)
-        progresssDialog = ProgressDialog(this@SearchHotelActivity);
-        progresssDialog.setMessage("Đang tải dữ liệu...");
-        progresssDialog.show();
         val user = FirebaseAuth.getInstance().currentUser
         if (user != null) {
             val uid = user.uid as String
@@ -107,7 +104,6 @@ class SearchHotelActivity : AppCompatActivity() {
                                                     val data = document.toObject<Hotel>()
                                                     dataList4.add(data)
                                                 }
-                                                progresssDialog.dismiss()
                                                 var recentHotelAdapter = RecentHotelAdapter(
                                                     dataList4,
                                                     this@SearchHotelActivity
@@ -121,18 +117,14 @@ class SearchHotelActivity : AppCompatActivity() {
                                                     )
                                                 recentHotelAdapter.onItemClick = { selectedHotel ->
                                                     val intent = Intent(this@SearchHotelActivity, ListofHotelsActivity::class.java)
-                                                    val currentDate = LocalDate.now()
-                                                    val currentDay = currentDate.dayOfMonth
-                                                    val currentMonth = currentDate.monthValue
-                                                    val currentYear = currentDate.year
-                                                    val Day_start =
-                                                        currentDay.toString() + "-" + currentMonth.toString() + "-" + currentYear.toString()
-                                                    val Day_end =
-                                                        (currentDay+1).toString() + "-" + currentMonth.toString() + "-" + currentYear.toString()
+                                                    val  formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+                                                    val currentDate = LocalDate.now().format(formatter)
+                                                    val Date = currentDate
+                                                    val nexDate = LocalDate.now().plusDays(1).format(formatter)
                                                     intent.putExtra("Area", selectedHotel.Area);
-                                                    intent.putExtra("DayStart", Day_start);
-                                                    intent.putExtra("DayEnd", Day_end);
-                                                    intent.putExtra("NumRoom", "1");
+                                                    intent.putExtra("DayStart", Date);
+                                                    intent.putExtra("DayEnd", nexDate);
+                                                    intent.putExtra("NumRoom", "1 người");
                                                     val LAUNCH_SECOND_ACTIVITY: Int = 1
                                                     startActivityForResult(
                                                         intent,
@@ -143,7 +135,6 @@ class SearchHotelActivity : AppCompatActivity() {
                                     }
                             }
                     }
-                    progresssDialog.dismiss()
                 }
         } else {
         }
@@ -181,12 +172,13 @@ class SearchHotelActivity : AppCompatActivity() {
             DatePickerDialog.datePicker.minDate = System.currentTimeMillis()
             DatePickerDialog.show()
         }
-        val currentDate = LocalDate.now()
-        val currentDay = currentDate.dayOfMonth
-        val currentMonth = currentDate.monthValue
-        val currentYear = currentDate.year
-        DayStart.text = "0" + currentDay.toString()+"-"+"0" + currentMonth.toString()+"-"+currentYear.toString()
-        DayEnd.text = "0" + currentDay.toString()+"-"+"0" + currentMonth.toString()+"-"+currentYear.toString()
+        val  formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+        val currentDate = LocalDate.now().format(formatter)
+        val nextDate = LocalDate.now().plusDays(1).format(formatter)
+        val Date = currentDate
+
+        DayStart.text = Date
+        DayEnd.text = nextDate
         val listener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 (view as TextView).setTextColor(Color.WHITE)
