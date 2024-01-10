@@ -102,7 +102,7 @@
         android:id="@+id/supplier"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hiện có 1 nhà cung cấp"
+        android:text="Nhà cung cấp: MIOTO Hồ Chí Minh"
         android:textColor="@color/white"
         android:textSize="14dp"
         android:textStyle="bold"

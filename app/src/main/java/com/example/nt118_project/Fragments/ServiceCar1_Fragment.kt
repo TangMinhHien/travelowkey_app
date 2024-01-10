@@ -15,6 +15,10 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import com.example.nt118_project.R
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.firestore
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -28,6 +32,8 @@ class ServiceCar1_Fragment: Fragment() {
     private lateinit var TimeDeparture: TextView
     private lateinit var DepartureDay: TextView
     private lateinit var EndDay: TextView
+    private lateinit var db: FirebaseFirestore
+    private lateinit var ref_place: CollectionReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,17 +97,31 @@ class ServiceCar1_Fragment: Fragment() {
             }
         }
 
-        // Data of Depature Place
+        // Connect Database
+        db = Firebase.firestore
+        ref_place = db.collection("ServiceCar_PickingPoint")
         val DeparturePlaceSpinnerData: ArrayList<Any?> = ArrayList()
-        DeparturePlaceSpinnerData.add("Sân bay Tân Sơn Nhất")
-        DeparturePlaceSpinnerData.add("Sân bay Nội Bài")
-        DeparturePlaceSpinnerData.add("Sân bay Cát Bi")
-        DeparturePlaceSpinnerData.add("Sân bay Cam Ranh")
-        DeparturePlaceSpinnerData.add("Sân bay Phú Bài")
-        val StartingPointAdapter: ArrayAdapter<Any?> = ArrayAdapter<Any?>(view.context,android.R.layout.simple_spinner_item,DeparturePlaceSpinnerData)
-        StartingPointAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        DeparturePlace.onItemSelectedListener = listener
-        DeparturePlace.setAdapter(StartingPointAdapter)
+        ref_place.get().addOnSuccessListener { documents ->
+            for (document in documents){
+                DeparturePlaceSpinnerData.add(document.get("name"))
+            }
+            val StartingPointAdapter: ArrayAdapter<Any?> = ArrayAdapter<Any?>(view.context,android.R.layout.simple_spinner_item, DeparturePlaceSpinnerData)
+            StartingPointAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            DeparturePlace.onItemSelectedListener = listener
+            DeparturePlace.setAdapter(StartingPointAdapter)
+        }
+
+//        // Data of Depature Place
+////        val DeparturePlaceSpinnerData: ArrayList<Any?> = ArrayList()
+////        DeparturePlaceSpinnerData.add("Sân bay Tân Sơn Nhất")
+////        DeparturePlaceSpinnerData.add("Sân bay Nội Bài")
+////        DeparturePlaceSpinnerData.add("Sân bay Cát Bi")
+////        DeparturePlaceSpinnerData.add("Sân bay Cam Ranh")
+////        DeparturePlaceSpinnerData.add("Sân bay Phú Bài")
+//        val StartingPointAdapter: ArrayAdapter<Any?> = ArrayAdapter<Any?>(view.context,android.R.layout.simple_spinner_item,DeparturePlaceSpinnerData)
+//        StartingPointAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+//        DeparturePlace.onItemSelectedListener = listener
+//        DeparturePlace.setAdapter(StartingPointAdapter)
 
         // Data of Duration
         val DurationSpinnerData: ArrayList<Any?> = ArrayList()
@@ -151,18 +171,18 @@ class ServiceCar1_Fragment: Fragment() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun getValue(): Any {
+    fun getValue(): Bundle {
         var value = Bundle()
         val sdf = DateTimeFormatter.ofPattern("d-M-yyyy")
         val dateDepart = LocalDate.parse(DepartureDay.text, sdf)
         val dateEnd = dateDepart.plusDays(Duration.selectedItem.toString().toLong()-1)
         value.putBoolean("return_check",false)
         value.putBoolean("is_return",false)
-        value.putString("Date Depature",DepartureDay.text.toString())
+        value.putString("DateDepature",DepartureDay.text.toString())
         value.putString("Place",DeparturePlace.selectedItem.toString())
         value.putString("Duration",Duration.selectedItem.toString())
         value.putString("Time",TimeDeparture.text.toString())
-        value.putString("Date End", dateEnd.toString())
+        value.putString("DateEnd", dateEnd.toString())
         return value;
     }
 }

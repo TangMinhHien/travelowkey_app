@@ -1,28 +1,30 @@
 package com.example.nt118_project.Model
 
 class ServiceCar_Ticket {
-    public var id:String = ""
+    public var id: String = ""
+    public var type: String = ""
     public var Place: String = ""
     public var CarName: String = ""
     public var Status: String = ""
     public var DepatureTime : String = ""
     public var EndTime: String = ""
-    public var NumSeat:Int = 0
-    public var NumLuggage: Int = 0
+    public var NumSeat: String = ""
+    public var NumLuggage: String = ""
     public var Price: Int = 0
     constructor(){}
-    constructor(Id:String,
-                DepaturePlace:String,
-                Company:String,
-                Status:String,
-                TimePick:String,
-                DepatureTime:String,
-                EndTime:String,
-                NumSeat: Int,
-                NumLuggage: Int,
+    constructor(Id: String,
+                DepaturePlace :String,
+                Company: String,
+                Status: String,
+                type: String,
+                DepatureTime: String,
+                EndTime: String,
+                NumSeat: String,
+                NumLuggage: String,
                 Price:Int)
     {
         this.id = Id
+        this.type = type
         this.Place = DepaturePlace
         this.CarName = Company
         this.Status = Status

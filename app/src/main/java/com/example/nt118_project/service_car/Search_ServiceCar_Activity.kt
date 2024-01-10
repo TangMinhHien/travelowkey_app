@@ -2,17 +2,22 @@ package com.example.nt118_project.service_car
 
 import android.app.ProgressDialog
 import android.content.Intent
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.AdapterView
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
+import com.example.nt118_project.Fragments.Flight1Fragment
 import com.example.nt118_project.Model.ServiceCar_Ticket
 import com.example.nt118_project.R
 import com.example.nt118_project.Fragments.ServiceCar1_Fragment
@@ -27,7 +32,7 @@ import com.google.firebase.firestore.toObject
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-open class Search_ServiceCar_Activity: AppCompatActivity() {
+open class Search_ServiceCar_Activity: AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private lateinit var tabLayout: TabLayout
     private lateinit var viewPager2: ViewPager2
     private lateinit var adapter: Search_ServiceCar_Adapter
@@ -60,7 +65,7 @@ open class Search_ServiceCar_Activity: AppCompatActivity() {
             val uid = user.uid as String
             db = Firebase.firestore
             ref = db.collection("Invoice")
-            ref.whereEqualTo("tag","Flight").whereEqualTo("user_Id",uid).limit(10)
+            ref.whereEqualTo("tag","ServiceCar").whereEqualTo("user_Id",uid).limit(10)
                 .get()
                 .addOnSuccessListener { documents ->
                     for (document in documents) {
@@ -68,7 +73,7 @@ open class Search_ServiceCar_Activity: AppCompatActivity() {
                         dataList.add(data)
                     }
                     if (dataList.size>0) {
-                        ref2 = db.collection("Flight_invoice")
+                        ref2 = db.collection("ServiceCar_invoice")
                         ref2.whereIn("invoice_Id", dataList)
                             .get()
                             .addOnSuccessListener { documents ->
@@ -76,7 +81,7 @@ open class Search_ServiceCar_Activity: AppCompatActivity() {
                                     val data2 = document["id_ticket_1"] as String
                                     dataList2.add(data2)
                                 }
-                                ref3 = db.collection("Flight")
+                                ref3 = db.collection("ServiceCar")
                                 ref3.whereIn("Id", dataList2)
                                     .get()
                                     .addOnSuccessListener { documents ->
@@ -85,35 +90,35 @@ open class Search_ServiceCar_Activity: AppCompatActivity() {
                                             dataList3.add(data3)
                                         }
                                         progresssDialog.dismiss()
-                                        var recentFlightAdapter = RecentServiceCarTicketAdapter(
-                                            dataList3,
-                                            this@Search_ServiceCar_Activity
-                                        )
-                                        RecyclerviewRecentFlightTicket.adapter =
-                                            recentFlightAdapter
-                                        RecyclerviewRecentFlightTicket.layoutManager =
-                                            LinearLayoutManager(
-                                                this,
-                                                LinearLayoutManager.HORIZONTAL, false
-                                            )
-                                        recentFlightAdapter.onItemClick = { selectedFlightTicket ->
-                                            val intent = Intent(this@Search_ServiceCar_Activity, ListOfServiceCarActivity::class.java)
-                                            val currentDate = LocalDate.now()
-                                            val currentDay = currentDate.dayOfMonth
-                                            val currentMonth = currentDate.monthValue
-                                            val currentYear = currentDate.year
-                                            val Date = currentDay.toString()+"-"+currentMonth.toString()+"-"+currentYear.toString()
-                                            var value = Bundle()
-                                            value.putBoolean("return_check",false)
-                                            value.putBoolean("is_return",false)
-                                            value.putString("Date",Date)
-                                            value.putString("From",selectedFlightTicket.From)
-                                            value.putString("To",selectedFlightTicket.To)
-                                            value.putString("NumSeat","1")
-                                            value.putString("SeatClass",selectedFlightTicket.SeatClass)
-                                            intent.putExtras(value)
-                                            val LAUNCH_SECOND_ACTIVITY: Int = 1
-                                            startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)}
+//                                        var recentServiceCarAdapter = RecentServiceCarTicketAdapter(
+//                                            dataList3,
+//                                            this@Search_ServiceCar_Activity
+//                                        )
+//                                        RecyclerviewRecentFlightTicket.adapter =
+//                                            recentServiceCarAdapter
+//                                        RecyclerviewRecentFlightTicket.layoutManager =
+//                                            LinearLayoutManager(
+//                                                this,
+//                                                LinearLayoutManager.HORIZONTAL, false
+//                                            )
+//                                        recentServiceCarAdapter.onItemClick = { selectedServiceCarTicket ->
+//                                            val intent = Intent(this@Search_ServiceCar_Activity, ListOfServiceCarActivity::class.java)
+//                                            val currentDate = LocalDate.now()
+//                                            val currentDay = currentDate.dayOfMonth
+//                                            val currentMonth = currentDate.monthValue
+//                                            val currentYear = currentDate.year
+//                                            val Date = currentDay.toString()+"-"+currentMonth.toString()+"-"+currentYear.toString()
+//                                            var value = Bundle()
+//                                            value.putBoolean("return_check",false)
+//                                            value.putBoolean("is_return",false)
+//                                            value.putString("Date",Date)
+//                                            value.putString("CarName",selectedServiceCarTicket.CarName)
+//                                            value.putString("Place",selectedServiceCarTicket.Place)
+//                                            value.putString("NumSeat",selectedServiceCarTicket.NumSeat.toString())
+//                                            value.putString("NumLuggage",selectedServiceCarTicket.NumLuggage.toString())
+//                                            intent.putExtras(value)
+//                                            val LAUNCH_SECOND_ACTIVITY: Int = 1
+//                                            startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)}
                                     }
                             }
                     }
@@ -152,9 +157,10 @@ open class Search_ServiceCar_Activity: AppCompatActivity() {
         listFlightsBtn.setOnClickListener{
             if (viewPager2.currentItem == 0) {
                 var currentFragment = supportFragmentManager.findFragmentByTag("f" + viewPager2.currentItem) as ServiceCar1_Fragment?
-                if (currentFragment?.getValue() != null){
+                if (currentFragment?.getValue()!=null){
+                    var result = currentFragment?.getValue()
                     val intent = Intent(this, ListOfServiceCarActivity::class.java)
-                    intent.putExtras (currentFragment?.getValue()!!)
+                    intent.putExtras(currentFragment?.getValue()!!)
                     Log.d("bundle","${currentFragment.getValue()}")
                     val LAUNCH_SECOND_ACTIVITY:Int = 1
                     startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
@@ -165,26 +171,30 @@ open class Search_ServiceCar_Activity: AppCompatActivity() {
                 if (currentFragment?.getValue()!=null){
                     var result = currentFragment?.getValue()
 
-                    val sdf = DateTimeFormatter.ofPattern("dd-MM-yyyy")
-                    val dateStart = LocalDate.parse(result?.getString("Date"), sdf)
-                    val dateReturn = LocalDate.parse(result?.getString("ReturnDate"), sdf)
-                    val compareTo = dateStart.compareTo(dateReturn)
-                    if (result?.getString("From")==result?.getString("To")){
-                        Toast.makeText(this, "Vui lòng chọn điểm xuất phát và điểm đến khác nhau", Toast.LENGTH_LONG).show()}
-                    else if (compareTo>=0){
+                    val sdf = DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm")
+                    val getDateDepart = result?.getString("FromDate").toString()
+                    val getTimeDepart = result?.getString("TimeDepature").toString()
+                    val getDateEnd = result?.getString("ToDate").toString()
+                    val getTimeEnd = result?.getString("TimeEnd").toString()
+
+                    val timeDepart = getDateDepart + " " + getTimeDepart
+                    val timeEnd = getDateEnd + " " + getTimeEnd
+
+                    val dateDepart = LocalDate.parse(timeDepart, sdf)
+                    val dateReturn = LocalDate.parse(timeEnd, sdf)
+                    val compareTo = dateReturn.compareTo(dateDepart)
+
+                    if (compareTo>=0){
                         Toast.makeText(this, "Vui lòng chọn ngày khởi hành trước ngày về", Toast.LENGTH_LONG).show()
                     }
                     else {
                         val intent = Intent(this, ListOfServiceCarActivity::class.java)
-                        var bundle: Bundle = Bundle ()
-                        bundle.putString(currentFragment?.getValue()!!)
-                        intent.putExtras(bundle)
+                        intent.putExtras(currentFragment?.getValue()!!)
+                        Log.d("bundle","${currentFragment.getValue()}")
                         val LAUNCH_SECOND_ACTIVITY:Int = 1
                         startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
                     }}
             }
-
-
         }
 
         // Back Button
@@ -193,5 +203,14 @@ open class Search_ServiceCar_Activity: AppCompatActivity() {
             setResult(RESULT_CANCELED, returnIntent)
             finish()
         }
+    }
+
+    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        Log.d("Selected","Select Seat")
+        (view as TextView).setTextColor(Color.WHITE)
+    }
+
+    override fun onNothingSelected(parent: AdapterView<*>?) {
+        Log.d("Selected","Not select seat")
     }
 }
