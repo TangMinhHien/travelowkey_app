@@ -1,43 +1,43 @@
 package com.example.nt118_project.Model
 
 class ServiceCar_Ticket {
-    public var id: String = ""
+    public var Id: String = ""
     public var type: String = ""
     public var Place: String = ""
-    public var CarName: String = ""
+    public var Name: String = ""
+    public var Company: String = ""
     public var Status: String = ""
-    public var DepatureTime : String = ""
-    public var EndTime: String = ""
-    public var NumSeat: String = ""
-    public var NumLuggage: String = ""
+    public var NumSeat: Int = 0
+    public var NumLuggage: Int = 0
     public var Price: Int = 0
+    public var Image: String = ""
     constructor(){}
     constructor(Id: String,
-                DepaturePlace :String,
+                PickPoint :String,
+                Name: String,
                 Company: String,
                 Status: String,
                 type: String,
-                DepatureTime: String,
-                EndTime: String,
-                NumSeat: String,
-                NumLuggage: String,
-                Price:Int)
+                NumSeat: Int,
+                NumLuggage: Int,
+                Price:Int,
+                image: String)
     {
-        this.id = Id
+        this.Id = Id
         this.type = type
-        this.Place = DepaturePlace
-        this.CarName = Company
+        this.Place = PickPoint
+        this.Company = Company
+        this.Name = Name
         this.Status = Status
-        this.DepatureTime =DepatureTime
-        this.EndTime = EndTime
         this.NumLuggage = NumLuggage
         this.NumSeat = NumSeat
         this.Price = Price
+        this.Image = image
     }
 
     fun setID(id:String)
     {
-        this.id = id
+        this.Id = id
     }
-    fun getID(): String {return this.id}
+    fun getID(): String {return this.Id}
 }

@@ -133,7 +133,7 @@ class ServiceCar2_Fragment: Fragment() {
         val DeparturePlaceSpinnerData: ArrayList<Any?> = ArrayList()
         ref_place.get().addOnSuccessListener { documents ->
             for (document in documents){
-                DeparturePlaceSpinnerData.add(document.get("name"))
+                DeparturePlaceSpinnerData.add(document.get("area"))
             }
             val StartingPointAdapter: ArrayAdapter<Any?> = ArrayAdapter<Any?>(view.context,android.R.layout.simple_spinner_item, DeparturePlaceSpinnerData)
             StartingPointAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -168,7 +168,7 @@ class ServiceCar2_Fragment: Fragment() {
 
     fun getValue(): Bundle {
         var value = Bundle()
-        value.putBoolean("return_check",false)
+        value.putBoolean("return_check",true)
         value.putBoolean("is_return",false)
         value.putString("Place", DeparturePlace.selectedItem.toString())
         value.putString("DateDepature", DepartureDay.text.toString())

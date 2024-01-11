@@ -22,11 +22,11 @@ class ServiceCar_Ticket_Adapter(private var dataList: ArrayList<ServiceCar_Ticke
         var tVNumLuggage:TextView = itemView.findViewById<TextView>(R.id.luggage_amount)
         var tVNumSeat:TextView = itemView.findViewById<TextView>(R.id.seat_amount)
         var image: ImageView = itemView.findViewById<ImageView>(R.id.logo_car)
-        val dictionary = hashMapOf("Hyundai Grand i10" to "https://ik.imagekit.io/tvlk/image/imageResource/2021/11/18/1637208296447-606cf4459b8f5abcde719a333e019725.jpeg?tr=q-75,w-140"
-            , "VinFast Fadil" to "https://ik.imagekit.io/tvlk/image/imageResource/2021/11/18/1637208308735-14c75db4b125d8cc4a19d7b6f6906e96.jpeg?tr=q-75,w-140"
-            ,"Toyota Vios" to "https://ik.imagekit.io/tvlk/image/imageResource/2021/11/18/1637208345239-adfca7e6d8f35ad5ef953e0ca754432f.jpeg?tr=q-75,w-140"
-            ,"Kia Cerato" to "https://ik.imagekit.io/tvlk/image/imageResource/2021/11/18/1637209686570-fc1c1975f622f1d8c26df24372fd239a.jpeg?tr=q-75,w-140")
-        val set = setOf("Hyundai Grand i10","VinFast Fadil","Toyota Vios","Kia Cerato")
+//        val dictionary = hashMapOf("Hyundai Grand i10" to "https://ik.imagekit.io/tvlk/image/imageResource/2021/11/18/1637208296447-606cf4459b8f5abcde719a333e019725.jpeg?tr=q-75,w-140"
+//            , "VinFast Fadil" to "https://ik.imagekit.io/tvlk/image/imageResource/2021/11/18/1637208308735-14c75db4b125d8cc4a19d7b6f6906e96.jpeg?tr=q-75,w-140"
+//            ,"Toyota Vios" to "https://ik.imagekit.io/tvlk/image/imageResource/2021/11/18/1637208345239-adfca7e6d8f35ad5ef953e0ca754432f.jpeg?tr=q-75,w-140"
+//            ,"Kia Cerato" to "https://ik.imagekit.io/tvlk/image/imageResource/2021/11/18/1637209686570-fc1c1975f622f1d8c26df24372fd239a.jpeg?tr=q-75,w-140")
+//        val set = setOf("Hyundai Grand i10","VinFast Fadil","Toyota Vios","Kia Cerato")
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ServiceCar_ViewHolder {
@@ -40,17 +40,18 @@ class ServiceCar_Ticket_Adapter(private var dataList: ArrayList<ServiceCar_Ticke
 
     override fun onBindViewHolder(holder: ServiceCar_ViewHolder, position: Int) {
         val currItem: ServiceCar_Ticket = dataList [position]
-        holder.tVName.setText(currItem.CarName)
+        holder.tVName.setText(currItem.Name)
         holder.tVNumLuggage.setText(currItem.NumLuggage)
         holder.tVNumSeat.setText(currItem.NumSeat)
-//        holder.tVStop_direct.setText(currItem.Stop_Direct)
+        holder.tVNumSupplier.setText(currItem.Company)
         holder.tVPrice.setText("Từ "+formatter(currItem.Price) + " VND/khách")
-        var value: String = holder.dictionary["VietJet Air"]!!
-        if (holder.set.contains(currItem.CarName)){
-            value = holder.dictionary[currItem.CarName]!!
-        }
 
-        Glide.with(context).load(value)
+//        var value: String = holder.dictionary["VinFast Fadil"]!!
+//        if (holder.set.contains(currItem.CarName)){
+//            value = holder.dictionary[currItem.CarName]!!
+//        }
+
+        Glide.with(context).load(currItem.Image)
             .placeholder(R.drawable.ic_launcher_background)
             .error(R.drawable.ic_launcher_background)
             .into(holder.image);

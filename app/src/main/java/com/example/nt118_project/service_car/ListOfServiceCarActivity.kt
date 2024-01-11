@@ -30,7 +30,8 @@ class ListOfServiceCarActivity : AppCompatActivity() {
     private lateinit var RecyclerViewServiceCarTicket: RecyclerView
     private lateinit var dataList: ArrayList<ServiceCar_Ticket>
     private lateinit var db: FirebaseFirestore
-    private lateinit var ref: CollectionReference
+    private lateinit var ref1: CollectionReference
+    private lateinit var ref2: CollectionReference
     private lateinit var progresssDialog: ProgressDialog
     private lateinit var sorting_btn: FloatingActionButton
     private lateinit var tv_notfound: TextView
@@ -68,36 +69,39 @@ class ListOfServiceCarActivity : AppCompatActivity() {
         progresssDialog.show()
 
         db = Firebase.firestore
-        ref = db.collection("ServiceCar")
         if (!value.getBoolean("return_check")) {
-            ref.whereEqualTo("Place", value.getString("Place")).whereEqualTo("Status", "Free")
+            ref1 = db.collection("ServiceCar_NoDriver")
+            ref1.whereEqualTo("Place", value.getString("Place")).whereEqualTo("Status", "Free")
                 .whereEqualTo("type", "Có tài xế")
                 .get()
                 .addOnSuccessListener { documents ->
                     for (document in documents) {
-                        val data = document.toObject<ServiceCar_Ticket>()
-//                        data.setID(document.id)
+                        try{
+                            val Data = document.toObject<ServiceCar_Ticket>()
+                            dataList.add(Data)
+                        }
+                        catch (e:Exception){
+                            Log.d("Fail","Can't get data")
+                        }
                     }
                     if (dataList.size == 0) {
                         progresssDialog.dismiss()
                         tv_notfound.visibility = View.VISIBLE
                     } else {
                         progresssDialog.dismiss()
-                        var ServiceCarTicketAdapter =
-                            ServiceCar_Ticket_Adapter(dataList, this@ListOfServiceCarActivity)
+                        var ServiceCarTicketAdapter = ServiceCar_Ticket_Adapter(dataList, this@ListOfServiceCarActivity)
                         RecyclerViewServiceCarTicket.adapter = ServiceCarTicketAdapter
-                        RecyclerViewServiceCarTicket.layoutManager = LinearLayoutManager(
-                            this,
-                            LinearLayoutManager.VERTICAL, false
-                        )
+                        RecyclerViewServiceCarTicket.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
                         ServiceCarTicketAdapter.onItemClick = { selectedServiceCarTicket ->
-                            val selectedID: String = selectedServiceCarTicket.id
-                            val intent =
-                                Intent(this@ListOfServiceCarActivity, PayActivity::class.java)
+                            val selectedID: String = selectedServiceCarTicket.Id
+                            val intent = Intent(this@ListOfServiceCarActivity, PayActivity::class.java)
                             intent.putExtra("FirstSelectedID", selectedID)
-                            intent.putExtra("SecondSelectedID", "")
+                            intent.putExtra("Place",value.getString("Place"))
                             intent.putExtra("Duration", value.getString("Duration"))
-                            intent.putExtra("Tag", "ServiceCar");
+                            intent.putExtra("DateStart", value.getString("DateDepature"))
+                            intent.putExtra("TimeStart", value.getString ("Time"))
+                            intent.putExtra("DateEnd", value.getString("DateEnd"))
+                            intent.putExtra("Tag", "ServiceCar")
                             val LAUNCH_SECOND_ACTIVITY: Int = 1
                             startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
                         }
@@ -110,78 +114,43 @@ class ListOfServiceCarActivity : AppCompatActivity() {
                             popupMenu.setOnMenuItemClickListener { item: MenuItem ->
                                 when (item.itemId) {
                                     R.id.descending_sort -> {
-                                        var newDataOfRecyclerView_ =
-                                            newDataOfRecyclerView.sortedByDescending { it.Price }
-                                                .toCollection(ArrayList())
-                                        val servicecar_ticket_Adapter = ServiceCar_Ticket_Adapter(
-                                            newDataOfRecyclerView_,
-                                            this@ListOfServiceCarActivity
-                                        )
-                                        RecyclerViewServiceCarTicket.adapter =
-                                            servicecar_ticket_Adapter
-                                        RecyclerViewServiceCarTicket.layoutManager =
-                                            LinearLayoutManager(
-                                                this,
-                                                LinearLayoutManager.VERTICAL,
-                                                false
-                                            )
-                                        servicecar_ticket_Adapter.onItemClick =
-                                            { selected_ServiceCar_Ticket ->
-                                                val selectedID: String =
-                                                    selected_ServiceCar_Ticket.id
-                                                val intent = Intent(
-                                                    this@ListOfServiceCarActivity,
-                                                    PayActivity::class.java
-                                                )
+                                        var newDataOfRecyclerView_ = newDataOfRecyclerView.sortedByDescending { it.Price }.toCollection(ArrayList())
+                                        val servicecar_ticket_Adapter = ServiceCar_Ticket_Adapter(newDataOfRecyclerView_, this@ListOfServiceCarActivity)
+                                        RecyclerViewServiceCarTicket.adapter = servicecar_ticket_Adapter
+                                        RecyclerViewServiceCarTicket.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+                                        servicecar_ticket_Adapter.onItemClick = { selected_ServiceCar_Ticket ->
+                                                val selectedID: String = selected_ServiceCar_Ticket.Id
+                                                val intent = Intent(this@ListOfServiceCarActivity, PayActivity::class.java)
                                                 intent.putExtra("FirstSelectedID", selectedID)
-                                                intent.putExtra("SecondSelectedID", "")
-                                                intent.putExtra(
-                                                    "Duration",
-                                                    value.getString("Duration")
-                                                )
-                                                intent.putExtra("Tag", "ServiceCar");
+                                                intent.putExtra("Place",value.getString("Place"))
+                                                intent.putExtra("Duration", value.getString("Duration"))
+                                                intent.putExtra("DateStart", value.getString("DateDepature"))
+                                                intent.putExtra("TimeStart", value.getString ("Time"))
+                                                intent.putExtra("DateEnd", value.getString("DateEnd"))
+                                                intent.putExtra("Tag", "ServiceCar")
                                                 val LAUNCH_SECOND_ACTIVITY: Int = 1
-                                                startActivityForResult(
-                                                    intent,
-                                                    LAUNCH_SECOND_ACTIVITY
-                                                )
+                                                startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
                                             }
                                         true
                                     }
 
                                     R.id.ascending_sort -> {
-                                        var newDataOfRecyclerView_ =
-                                            newDataOfRecyclerView.sortedBy { it.Price }
-                                                .toCollection(ArrayList())
-                                        val servicecar_ticket_Adapter = ServiceCar_Ticket_Adapter(
-                                            newDataOfRecyclerView_,
-                                            this@ListOfServiceCarActivity
-                                        )
-                                        RecyclerViewServiceCarTicket.adapter =
-                                            servicecar_ticket_Adapter
-                                        RecyclerViewServiceCarTicket.layoutManager =
-                                            LinearLayoutManager(
-                                                this,
-                                                LinearLayoutManager.VERTICAL,
-                                                false
-                                            )
-                                        servicecar_ticket_Adapter.onItemClick =
-                                            { selected_ServiceCar_Ticket ->
-                                                val selectedID: String =
-                                                    selected_ServiceCar_Ticket.id
-                                                val intent = Intent(
-                                                    this@ListOfServiceCarActivity,
-                                                    PayActivity::class.java
-                                                )
+                                        var newDataOfRecyclerView_ = newDataOfRecyclerView.sortedBy { it.Price }.toCollection(ArrayList())
+                                        val servicecar_ticket_Adapter = ServiceCar_Ticket_Adapter(newDataOfRecyclerView_, this@ListOfServiceCarActivity)
+                                        RecyclerViewServiceCarTicket.adapter = servicecar_ticket_Adapter
+                                        RecyclerViewServiceCarTicket.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+                                        servicecar_ticket_Adapter.onItemClick = { selected_ServiceCar_Ticket ->
+                                                val selectedID: String = selected_ServiceCar_Ticket.Id
+                                                val intent = Intent(this@ListOfServiceCarActivity, PayActivity::class.java)
                                                 intent.putExtra("FirstSelectedID", selectedID)
-                                                intent.putExtra("SecondSelectedID", "")
-                                                intent.putExtra("Seat", value.getString("NumSeat"))
-                                                intent.putExtra("Tag", "Flight");
+                                                intent.putExtra("Place",value.getString("Place"))
+                                                intent.putExtra("Duration", value.getString("Duration"))
+                                                intent.putExtra("DateStart", value.getString("DateDepature"))
+                                                intent.putExtra("TimeStart", value.getString ("Time"))
+                                                intent.putExtra("DateEnd", value.getString("DateEnd"))
+                                                intent.putExtra("Tag", "ServiceCar")
                                                 val LAUNCH_SECOND_ACTIVITY: Int = 1
-                                                startActivityForResult(
-                                                    intent,
-                                                    LAUNCH_SECOND_ACTIVITY
-                                                )
+                                                startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
                                             }
                                         true
                                     }
@@ -194,42 +163,42 @@ class ListOfServiceCarActivity : AppCompatActivity() {
                     }
                 }
                 .addOnFailureListener { exception ->
-                    Log.w("Error", "Error getting documents: ", exception)
-                }
+                    Log.w("Error", "Error getting documents: ", exception) }
         } else {
-            ref.whereEqualTo("Place", value.getString("Place")).whereEqualTo("Status", "Free")
+            ref2 = db.collection("ServiceCar_Driver")
+            ref2.whereEqualTo("Place", value.getString("Place")).whereEqualTo("Status", "Free")
                 .whereEqualTo("type", "Tự lái")
                 .get()
                 .addOnSuccessListener { documents ->
                     for (document in documents) {
-                        val data = document.toObject<ServiceCar_Ticket>()
-                        //                            data.setID(document.id)
+                        try{
+                            val Data = document.toObject<ServiceCar_Ticket>()
+                            dataList.add(Data)
+                        }
+                        catch (e:Exception){
+                            Log.d("Fail","Can't get data")
+                        }
                     }
                     if (dataList.size == 0) {
                         progresssDialog.dismiss();
                         tv_notfound.visibility = View.VISIBLE
                     } else {
                         progresssDialog.dismiss();
-                        var ServiceCarTicketAdapter =
-                            ServiceCar_Ticket_Adapter(dataList, this@ListOfServiceCarActivity)
+                        var ServiceCarTicketAdapter = ServiceCar_Ticket_Adapter(dataList, this@ListOfServiceCarActivity)
                         RecyclerViewServiceCarTicket.adapter = ServiceCarTicketAdapter
-                        RecyclerViewServiceCarTicket.layoutManager =
-                            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+                        RecyclerViewServiceCarTicket.layoutManager = LinearLayoutManager(this@ListOfServiceCarActivity, LinearLayoutManager.VERTICAL, false)
                         ServiceCarTicketAdapter.onItemClick = { selected_ServiceCar_Ticket ->
-                            val selectedID: String = selected_ServiceCar_Ticket.id
-                            var intent = Intent(
-                                this@ListOfServiceCarActivity,
-                                ListOfServiceCarActivity::class.java
-                            )
+                            val selectedID: String = selected_ServiceCar_Ticket.Id
+                            var intent = Intent(this@ListOfServiceCarActivity, ListOfServiceCarActivity::class.java)
                             intent.putExtra("FirstSelectedID", selectedID)
                             intent.putExtra("return_check", true)
-                            intent.putExtra("is_return", true)
-                            intent.putExtra("Date", value.getString("Date"))
-                            intent.putExtra("ReturnDate", value.getString("ReturnDate"))
-                            intent.putExtra("From", value.getString("From"))
-                            intent.putExtra("To", value.getString("To"))
-                            intent.putExtra("NumSeat", value.getString("NumSeat"))
-                            intent.putExtra("SeatClass", value.getString("SeatClass"))
+                            intent.putExtra("Place",value.getString("Place"))
+                            intent.putExtra("Duration", value.getString("Duration"))
+                            intent.putExtra("DateStart", value.getString("DateDepature"))
+                            intent.putExtra("TimeStart", value.getString ("TimeStart"))
+                            intent.putExtra("DateEnd", value.getString("DateEnd"))
+                            intent.putExtra("TimeEnd", value.getString ("TimeEnd"))
+                            intent.putExtra("Tag", "ServiceCar")
                             val LAUNCH_SECOND_ACTIVITY: Int = 1
                             startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
                         }
@@ -240,107 +209,53 @@ class ListOfServiceCarActivity : AppCompatActivity() {
                             var newDataOfRecyclerView: List<ServiceCar_Ticket>
                             newDataOfRecyclerView = dataList
                             popupMenu.setOnMenuItemClickListener { item: MenuItem ->
-                                when (item.itemId) {
-                                    R.id.descending_sort -> {
-                                        var newDataOfRecyclerView_ =
-                                            newDataOfRecyclerView.sortedByDescending { it.Price }
-                                                .toCollection(ArrayList())
-                                        val servicecar_ticket_Adapter = ServiceCar_Ticket_Adapter(
-                                            newDataOfRecyclerView_,
-                                            this@ListOfServiceCarActivity
-                                        )
-                                        RecyclerViewServiceCarTicket.adapter =
-                                            servicecar_ticket_Adapter
-                                        RecyclerViewServiceCarTicket.layoutManager =
-                                            LinearLayoutManager(
-                                                this,
-                                                LinearLayoutManager.VERTICAL,
-                                                false
-                                            )
-                                        servicecar_ticket_Adapter.onItemClick =
-                                            { selectedFlightTicket ->
-                                                val selectedID: String = selectedFlightTicket.id
-                                                var intent = Intent(
-                                                    this@ListOfServiceCarActivity,
-                                                    ListOfServiceCarActivity::class.java
-                                                )
+                                when (item.itemId) { R.id.descending_sort -> {
+                                        var newDataOfRecyclerView_ = newDataOfRecyclerView.sortedByDescending { it.Price }.toCollection(ArrayList())
+                                        val servicecar_ticket_Adapter = ServiceCar_Ticket_Adapter(newDataOfRecyclerView_, this@ListOfServiceCarActivity)
+                                        RecyclerViewServiceCarTicket.adapter = servicecar_ticket_Adapter
+                                        RecyclerViewServiceCarTicket.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+                                        servicecar_ticket_Adapter.onItemClick = { selectedFlightTicket ->
+                                                val selectedID: String = selectedFlightTicket.Id
+                                                var intent = Intent(this@ListOfServiceCarActivity, ListOfServiceCarActivity::class.java)
                                                 intent.putExtra("FirstSelectedID", selectedID)
                                                 intent.putExtra("return_check", true)
-                                                intent.putExtra("is_return", true)
-                                                intent.putExtra("Date", value.getString("Date"))
-                                                intent.putExtra(
-                                                    "ReturnDate",
-                                                    value.getString("ReturnDate")
-                                                )
-                                                intent.putExtra("From", value.getString("From"))
-                                                intent.putExtra("To", value.getString("To"))
-                                                intent.putExtra(
-                                                    "NumSeat",
-                                                    value.getString("NumSeat")
-                                                )
-                                                intent.putExtra(
-                                                    "SeatClass",
-                                                    value.getString("SeatClass")
-                                                )
+                                                intent.putExtra("Place",value.getString("Place"))
+                                                intent.putExtra("Duration", value.getString("Duration"))
+                                                intent.putExtra("DateStart", value.getString("DateDepature"))
+                                                intent.putExtra("TimeStart", value.getString ("TimeStart"))
+                                                intent.putExtra("DateEnd", value.getString("DateEnd"))
+                                                intent.putExtra("TimeEnd", value.getString ("TimeEnd"))
+                                                intent.putExtra("Tag", "ServiceCar")
                                                 val LAUNCH_SECOND_ACTIVITY: Int = 1
-                                                startActivityForResult(
-                                                    intent,
-                                                    LAUNCH_SECOND_ACTIVITY
-                                                )
+                                                startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
                                             }
                                         true
                                     }
 
                                     R.id.ascending_sort -> {
                                         var newDataOfRecyclerView_ =
-                                            newDataOfRecyclerView.sortedBy { it.Price }
-                                                .toCollection(ArrayList())
-                                        val servicecar_ticket_Adapter = ServiceCar_Ticket_Adapter(
-                                            newDataOfRecyclerView_,
-                                            this@ListOfServiceCarActivity
-                                        )
+                                            newDataOfRecyclerView.sortedBy { it.Price }.toCollection(ArrayList())
+                                        val servicecar_ticket_Adapter = ServiceCar_Ticket_Adapter(newDataOfRecyclerView_, this@ListOfServiceCarActivity)
                                         RecyclerViewServiceCarTicket.adapter =
                                             servicecar_ticket_Adapter
-                                        RecyclerViewServiceCarTicket.layoutManager =
-                                            LinearLayoutManager(
-                                                this,
-                                                LinearLayoutManager.VERTICAL,
-                                                false
-                                            )
-                                        servicecar_ticket_Adapter.onItemClick =
-                                            { selectedFlightTicket ->
-                                                val selectedID: String = selectedFlightTicket.id
-                                                var intent = Intent(
-                                                    this@ListOfServiceCarActivity,
-                                                    ListOfServiceCarActivity::class.java
-                                                )
+                                        RecyclerViewServiceCarTicket.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+                                        servicecar_ticket_Adapter.onItemClick = { selectedFlightTicket ->
+                                                val selectedID: String = selectedFlightTicket.Id
+                                                var intent = Intent(this@ListOfServiceCarActivity, ListOfServiceCarActivity::class.java)
                                                 intent.putExtra("FirstSelectedID", selectedID)
                                                 intent.putExtra("return_check", true)
-                                                intent.putExtra("is_return", true)
-                                                intent.putExtra("Date", value.getString("Date"))
-                                                intent.putExtra(
-                                                    "ReturnDate",
-                                                    value.getString("ReturnDate")
-                                                )
-                                                intent.putExtra("From", value.getString("From"))
-                                                intent.putExtra("To", value.getString("To"))
-                                                intent.putExtra(
-                                                    "NumSeat",
-                                                    value.getString("NumSeat")
-                                                )
-                                                intent.putExtra(
-                                                    "SeatClass",
-                                                    value.getString("SeatClass")
-                                                )
+                                                intent.putExtra("Place",value.getString("Place"))
+                                                intent.putExtra("Duration", value.getString("Duration"))
+                                                intent.putExtra("DateStart", value.getString("DateDepature"))
+                                                intent.putExtra("TimeStart", value.getString ("TimeStart"))
+                                                intent.putExtra("DateEnd", value.getString("DateEnd"))
+                                                intent.putExtra("TimeEnd", value.getString ("TimeEnd"))
+                                                intent.putExtra("Tag", "ServiceCar")
                                                 val LAUNCH_SECOND_ACTIVITY: Int = 1
-                                                startActivityForResult(
-                                                    intent,
-                                                    LAUNCH_SECOND_ACTIVITY
-                                                )
+                                                startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
                                             }
                                         true
                                     }
-
                                     else -> false
                                 }
                             }

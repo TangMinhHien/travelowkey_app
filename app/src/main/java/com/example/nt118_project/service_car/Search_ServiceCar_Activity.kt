@@ -43,9 +43,9 @@ open class Search_ServiceCar_Activity: AppCompatActivity(), AdapterView.OnItemSe
     private lateinit var ref: CollectionReference
     private lateinit var ref2: CollectionReference
     private lateinit var ref3: CollectionReference
-    private lateinit var dataList:ArrayList<String>
-    private lateinit var dataList2:ArrayList<String>
-    private lateinit var dataList3:ArrayList<ServiceCar_Ticket>
+    private lateinit var dataList: ArrayList<String>
+    private lateinit var dataList2: ArrayList<String>
+    private lateinit var dataList3: ArrayList<ServiceCar_Ticket>
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,6 +55,9 @@ open class Search_ServiceCar_Activity: AppCompatActivity(), AdapterView.OnItemSe
         btn_back = findViewById(R.id.search_servicecar_back)
         viewPager2 = findViewById(R.id.servicecar_search_viewpager2)
         adapter = Search_ServiceCar_Adapter (supportFragmentManager, lifecycle)
+        dataList = ArrayList<String>()
+        dataList2 = ArrayList<String>()
+        dataList3 = ArrayList<ServiceCar_Ticket>()
 
         progresssDialog = ProgressDialog(this@Search_ServiceCar_Activity);
         progresssDialog.setMessage("Đang tải dữ liệu...");
@@ -78,7 +81,7 @@ open class Search_ServiceCar_Activity: AppCompatActivity(), AdapterView.OnItemSe
                             .get()
                             .addOnSuccessListener { documents ->
                                 for (document in documents) {
-                                    val data2 = document["id_ticket_1"] as String
+                                    val data2 = document["id_ticket"] as String
                                     dataList2.add(data2)
                                 }
                                 ref3 = db.collection("ServiceCar")
@@ -159,11 +162,16 @@ open class Search_ServiceCar_Activity: AppCompatActivity(), AdapterView.OnItemSe
                 var currentFragment = supportFragmentManager.findFragmentByTag("f" + viewPager2.currentItem) as ServiceCar1_Fragment?
                 if (currentFragment?.getValue()!=null){
                     var result = currentFragment?.getValue()
-                    val intent = Intent(this, ListOfServiceCarActivity::class.java)
-                    intent.putExtras(currentFragment?.getValue()!!)
-                    Log.d("bundle","${currentFragment.getValue()}")
-                    val LAUNCH_SECOND_ACTIVITY:Int = 1
-                    startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
+                    if (result?.getString("Place") == null) {
+                        Toast.makeText(this, "Vui lòng chọn địa điểm đón khách", Toast.LENGTH_LONG).show()
+                    }
+                    else {
+                        val intent = Intent(this, ListOfServiceCarActivity::class.java)
+                        intent.putExtras(currentFragment?.getValue()!!)
+                        Log.d("bundle", "${currentFragment.getValue()}")
+                        val LAUNCH_SECOND_ACTIVITY: Int = 1
+                        startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
+                    }
                 }
             }
             else {
@@ -184,7 +192,10 @@ open class Search_ServiceCar_Activity: AppCompatActivity(), AdapterView.OnItemSe
                     val dateReturn = LocalDate.parse(timeEnd, sdf)
                     val compareTo = dateReturn.compareTo(dateDepart)
 
-                    if (compareTo>=0){
+                    if (result?.getString("Place") == null) {
+                        Toast.makeText(this, "Vui lòng chọn địa điểm đón khách", Toast.LENGTH_LONG).show()
+                    }
+                    else if (compareTo<0){
                         Toast.makeText(this, "Vui lòng chọn ngày khởi hành trước ngày về", Toast.LENGTH_LONG).show()
                     }
                     else {
