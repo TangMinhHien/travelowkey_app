@@ -78,7 +78,7 @@
         app:layout_constraintTop_toBottomOf="@+id/tv_date_start"
         app:layout_constraintLeft_toRightOf="@id/iv_date"
         app:layout_constraintRight_toLeftOf="@id/sp_duration"
-        android:layout_marginRight="30dp"
+        android:layout_marginRight="15dp"
         android:layout_marginLeft="15dp"
         android:layout_marginTop="10dp"
         app:layout_constraintHorizontal_bias="0.5"
@@ -97,7 +97,7 @@
         app:layout_constraintLeft_toRightOf="@id/tv_date_start"
         android:layout_marginTop="25dp"
         android:layout_marginLeft="100dp"
-        android:layout_marginRight="70dp"
+        android:layout_marginRight="45dp"
         />
 
     <Spinner
@@ -108,7 +108,8 @@
         app:layout_constraintLeft_toRightOf="@id/sp_date_start"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginTop="10dp"
-        android:layout_marginRight="70dp"
+        android:layout_marginRight="20dp"
+        android:textColor="@color/white"
         android:background="@drawable/flight_from_spinner" />
 
     <TextView

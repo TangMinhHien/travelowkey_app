@@ -141,15 +141,16 @@ class ServiceCar1_Fragment: Fragment() {
         DurationSpinnerData.add("14")
         val DurationAdapter: ArrayAdapter<Any?> = ArrayAdapter<Any?>(view.context,android.R.layout.simple_spinner_item,DurationSpinnerData)
         DurationAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        Duration.onItemSelectedListener = listener
         Duration.setAdapter(DurationAdapter)
 
         // Update End Date
         Duration?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onNothingSelected(parent: AdapterView<*>?) {
+                Duration.setSelection(0)
             }
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                (view as TextView).setTextColor(Color.WHITE)
                 val sdf = DateTimeFormatter.ofPattern("d-M-yyyy")
                 val dateDepart = LocalDate.parse(DepartureDay.text, sdf)
                 val dateEnd = dateDepart.plusDays(Duration.selectedItem.toString().toLong()-1)
@@ -175,7 +176,8 @@ class ServiceCar1_Fragment: Fragment() {
         var value = Bundle()
         val sdf = DateTimeFormatter.ofPattern("d-M-yyyy")
         val dateDepart = LocalDate.parse(DepartureDay.text, sdf)
-        val dateEnd = dateDepart.plusDays(Duration.selectedItem.toString().toLong()-1)
+        var dateEnd = dateDepart.plusDays(Duration.selectedItem.toString().toLong()-1)
+        dateEnd = LocalDate.parse(dateEnd.toString(), sdf)
         value.putBoolean("return_check",false)
         value.putBoolean("is_return",false)
         value.putString("DateDepature",DepartureDay.text.toString())

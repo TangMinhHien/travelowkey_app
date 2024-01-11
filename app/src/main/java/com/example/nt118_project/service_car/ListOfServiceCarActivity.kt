@@ -46,11 +46,11 @@ class ListOfServiceCarActivity : AppCompatActivity() {
         tv_info_servicecar_2 = findViewById(R.id.info_servicecar_2)
 
         if (value.getBoolean("is_return")) {
-            tv_info_servicecar_1.text = "Xe ở" + value.getString("Place")
-            tv_info_servicecar_2.text = value.getString("Date Depature") + "-" + value.getString("Date End")
+            tv_info_servicecar_1.text = "Xe ở " + value.getString("Place")
+            tv_info_servicecar_2.text = value.getString("DateDepature") + "đến" + value.getString("DateEnd")
         } else {
-            tv_info_servicecar_1.text = "Xe ở" + value.getString("Place")
-            tv_info_servicecar_2.text = value.getString("Date Depature") + "-" + value.getString("Date End")
+            tv_info_servicecar_1.text = "Xe ở " + value.getString("Place")
+            tv_info_servicecar_2.text = value.getString("DateDepature") + "đến" + value.getString("DateEnd")
         }
 
         val backBtn = findViewById<ImageButton>(R.id.list_servicecar_back)
@@ -61,6 +61,7 @@ class ListOfServiceCarActivity : AppCompatActivity() {
         }
 
         sorting_btn = findViewById(R.id.sorting_button)
+        tv_notfound = findViewById(R.id.result_not_found)
         RecyclerViewServiceCarTicket = findViewById<RecyclerView>(R.id.sv_list_servicecar)
         dataList = ArrayList<ServiceCar_Ticket>()
 
