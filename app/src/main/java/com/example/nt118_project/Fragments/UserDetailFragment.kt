@@ -13,8 +13,10 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import com.example.nt118_project.Model.BusTicket
 import com.example.nt118_project.Model.User
 import com.example.nt118_project.R
+import com.google.firebase.Firebase
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -22,8 +24,33 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.firestore.dataObjects
+import com.google.firebase.firestore.firestore
+class user{
+    public var Id:String = ""
+    public var Email: String = ""
+    public var PhoneNumber: String = ""
+    public var UserName: String = ""
+    public var Address: String = ""
+    public var Sex: String = ""
+    public var Name: String = ""
+    public var Birthday: String = ""
+    public var Point:Int = 0
 
-
+    constructor()
+    constructor(id:String, email:String, phone:String, userName: String, address:String, sex:String, name:String, bd:String, point:Int)
+    {
+        this.Id = id
+        this.Email = email
+        this.PhoneNumber = phone
+        this.UserName = userName
+        this.Address = address
+        this.Sex = sex
+        this.Name = name
+        this.Birthday = bd
+        this.Point = point
+    }
+}
 class UserDetailFragment : AppCompatActivity() {
     public val myActivity: Activity? = null
     @SuppressLint("MissingInflatedId")
@@ -44,28 +71,29 @@ class UserDetailFragment : AppCompatActivity() {
         val currentUser_: FirebaseUser? = firebaseAuth.currentUser
         val currentUser = currentUser_!!.uid
         val database = FirebaseDatabase.getInstance()
-        val userRef = database.getReference("KhachHang").child(currentUser)
+        var curr_point:Int = 0
 
-        userRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val user: User? = dataSnapshot.getValue(User::class.java)
-                if (user != null) {
-                    userName.text = user.username
-                    userFullName.setText(user.Name)
-                    userSex.setText(user.sex)
-                    userPhoneNumber.setText(user.phone_number)
-                    userEmail.setText(user.email)
-                    userBD.setText(user.birthday)
-                    userAddress.setText(user.address)
-
-                } else {
-                    Log.e("TAG", "User data not found")
+        val usersRef = Firebase.firestore
+        usersRef.collection("User").document(currentUser).get()
+            .addOnSuccessListener { document ->
+                var user_ = user()
+                if (document != null)
+                {
+                    user_ = document.toObject(user::class.java)!!
                 }
+                userName.text = user_.UserName
+                userFullName.setText(user_.Name)
+                userSex.setText(user_.Sex)
+                userPhoneNumber.setText(user_.PhoneNumber)
+                userEmail.setText(user_.Email)
+                userBD.setText(user_.Birthday)
+                userAddress.setText(user_.Address)
+                curr_point = user_.Point
             }
-            override fun onCancelled(databaseError: DatabaseError) {
-                Log.w("TAG", "Failed to read value.", databaseError.toException())
+            .addOnFailureListener{exception ->
+                Log.e("TAG", "User data not found")
             }
-        })
+
 
         val LogOutBtn = findViewById<Button>(R.id.LogOutBtn)
         LogOutBtn.setOnClickListener {
@@ -86,9 +114,6 @@ class UserDetailFragment : AppCompatActivity() {
         tVChangePw.setOnClickListener {
             val intent = Intent(this@UserDetailFragment, ChangePasswordActivity::class.java)
             intent.putExtra("Pw", pwStr)
-            //Toast.makeText(this,pwStr, Toast.LENGTH_LONG).show()
-//            val LAUNCH_SECOND_ACTIVITY:Int = 1
-//            startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
             startActivity(intent)
         }
         val ChangeBtn = findViewById<TextView>(R.id.tVChangePersonalData)
@@ -103,75 +128,23 @@ class UserDetailFragment : AppCompatActivity() {
             SaveBtn.isVisible = true
         }
         SaveBtn.setOnClickListener {
-            val user_ = User(
-                userFullName.text.toString(),
-                userName.text.toString(),
-                userAddress.text.toString(),
+            val user_ = user(
+                currentUser,
                 userEmail.text.toString(),
                 userPhoneNumber.text.toString(),
+                userName.text.toString(),
+                userAddress.text.toString(),
                 userSex.text.toString(),
-                currentUser,
-                userBD.text.toString()
+                userFullName.text.toString(),
+                userBD.text.toString(),
+                curr_point
             )
-            userRef.setValue(user_).addOnSuccessListener {
+            usersRef.collection("User").document(currentUser).set(user_).addOnSuccessListener {
                 Toast.makeText(this, "Lưu thông tin thành công", Toast.LENGTH_SHORT).show()
             }.addOnFailureListener {
                 Toast.makeText(this, "Lưu thông tin thất bại", Toast.LENGTH_SHORT).show()
             }
             val newEmail = userEmail.text.toString()
-//            val auth: FirebaseAuth = FirebaseAuth.getInstance()
-
-//            firebaseAuth.signInWithEmailAndPassword(currentUser_!!.email.toString(), "123456")
-//                .addOnCompleteListener { task ->
-//                    if (task.isSuccessful)
-//                    {
-//                        val user:FirebaseUser? = firebaseAuth.currentUser
-//                        user!!.updateEmail(newEmail)!!
-//                            .addOnCompleteListener { task ->
-//                                if (task.isSuccessful) {
-//                                    Toast.makeText(this, "Email đăng nhập của bạn đã được cập nhật thành: ${user.email}", Toast.LENGTH_SHORT).show()
-//                                }
-//                                else {
-//                                    Toast.makeText(this, "Không cập nhật được email: ${task.exception}", Toast.LENGTH_SHORT).show()
-//                                    Log.w("Firebase", "Failed to update user email: ${task.exception}")}
-//                            }
-//                    } else
-//                    {
-//                        Log.w("Firebase", "Failed to sign in user:", task.exception)
-//                    }
-//                }
-
-//            val user = FirebaseAuth.getInstance().currentUser
-//            val credential = EmailAuthProvider.getCredential(currentUser_!!.email.toString(), "123456") // Current Login Credentials
-//            currentUser_!!.reauthenticate(credential).addOnCompleteListener {
-////                val user_ = FirebaseAuth.getInstance().currentUser
-//                currentUser_!!.updateEmail(newEmail).addOnCompleteListener { task ->
-//                    if (task.isSuccessful) {
-//                        Toast.makeText(
-//                            this,
-//                            "Email Changed" + " Current Email is 1 " + newEmail,
-//                            Toast.LENGTH_LONG
-//                        ).show()
-//                        currentUser_!!.updatePassword(newEmail).addOnCompleteListener { task ->
-//                            if(task.isSuccessful){
-//                                Toast.makeText(
-//                                    this,
-//                                    "Email Changed" + " Current Email is " + newEmail,
-//                                    Toast.LENGTH_LONG
-//                                ).show()
-//                            }
-//                        }
-//                    }
-//                    else{
-//                        Toast.makeText(
-//                            this,
-//                            "Không cập nhật được email: ${task.exception}",
-//                            Toast.LENGTH_LONG
-//                        ).show()
-//                    }
-//                }
-//            }
-
         }
     }
 }

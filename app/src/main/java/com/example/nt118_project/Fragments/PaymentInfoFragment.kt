@@ -1,24 +1,48 @@
 package com.example.nt118_project.Fragments
 
-import android.annotation.SuppressLint
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.example.nt118_project.Adapter.BusTicketAdapter
+import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.core.app.NotificationCompat
+import androidx.fragment.app.Fragment
+import com.example.nt118_project.MainActivity
 import com.example.nt118_project.Model.BusTicket
+import com.example.nt118_project.Model.FlightTicket
+import com.example.nt118_project.Model.Hotel
+import com.example.nt118_project.Model.Notification
+import com.example.nt118_project.Model.Room
+import com.example.nt118_project.Model.User
 import com.example.nt118_project.R
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
+import com.google.android.material.switchmaterial.SwitchMaterial
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.firestore.firestore
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.WriterException
+import com.google.zxing.qrcode.QRCodeWriter
+import java.text.DecimalFormat
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.Period
+import java.time.format.DateTimeFormatter
+import java.util.Date
+import java.util.Locale
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -42,41 +66,326 @@ class PaymentInfoFragment : Fragment() {
             param2 = it.getString(ARG_PARAM2)
         }
     }
-
+    fun showNotification(text:String,tag:String){
+        val intent = Intent(requireActivity(), MainActivity::class.java)
+        intent.putExtra("previous_intent","notification")
+        val pendingIntent = PendingIntent.getActivity(context,0,intent,PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        val notificationManager = requireActivity().getSystemService(Context.NOTIFICATION_SERVICE) as android.app.NotificationManager
+        val notification = NotificationCompat.Builder(requireActivity().applicationContext,"channel_id")
+            .setContentTitle("Travelowkey ${tag} Notification")
+            .setContentText(text)
+            .setContentIntent(pendingIntent)
+            .setSmallIcon(R.drawable.ic_notification)
+            .build()
+        notificationManager.notify(1,notification)
+    }
+    fun generateRandomString(length: Int): String {
+        val allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+        return (1..length)
+            .map { allowedChars.random() }
+            .joinToString("")
+    }
+    fun formatter(n: Int) =
+        DecimalFormat("#,###")
+            .format(n)
+            .replace(",", ".")
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val FirstID = this.arguments?.getString("FirstID")
-        val SecondID = this.arguments?.getString("SecondID")
-        val NumberOfSeat = this.arguments?.getString("Seat")
-        var words:List<String> = NumberOfSeat.toString().split("\\s+".toRegex())
-        var Total:Double = 0.0
         val rootView = inflater.inflate(R.layout.fragment_payment_info, container, false)
-        val databaseReference: DatabaseReference = FirebaseDatabase.getInstance().getReference("XeKhach")
-        if (NumberOfSeat != null) {
-            databaseReference.addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    var TvTotal: TextView = rootView.findViewById<TextView>(R.id.tVTotal)
-                    for (snapshot in dataSnapshot.children) {
-                        val dataModel: BusTicket? = snapshot.getValue(BusTicket::class.java)
-                        val itemId:String = snapshot.key.toString()
-                        if(itemId == FirstID)
-                        {
-                            Total += dataModel!!.Price.toDouble()
-                        }
-                        else if(itemId == SecondID)
-                        {
-                            Total += dataModel!!.Price.toDouble()
-                        }
+        var TvTotal: TextView = rootView.findViewById<TextView>(R.id.tVTotal)
+        var iVQRcode: ImageView = rootView.findViewById(R.id.QRcode)
+        val tVNotiPoint: TextView = rootView.findViewById(R.id.tVNotiPoint)
+        val databaseReference = Firebase.firestore
+
+        val auth = FirebaseAuth.getInstance()
+        val currentUser = auth.currentUser
+        val user_id = currentUser!!.uid
+
+        val tag_ = this.arguments?.getString("Tag")
+        data class service_invoice(
+            val Id_ticket_1:String,
+            val Id_ticket_2: String,
+            val Id: String,
+            val Invoice_Id: String
+        )
+
+        data class hotel_invoice(
+            val CheckInDate:String,
+            val CheckOutDate: String,
+            val Id: String,
+            val Invoice_Id:String,
+            val RoomId: String
+        )
+        data class invoice(
+            val Id: String,
+            val Tag: String,
+            val User_Id: String,
+            val Num_Ticket: String,
+            val Total: String
+        )
+        val usersRef = Firebase.firestore
+        var user_ = User()
+        var Total_:Double = 0.0
+        var Point:Int = 0
+        var LastTotal: Int = 0
+        val tVPoint:TextView = rootView.findViewById(R.id.tVPoint)
+        val switchButton: SwitchMaterial = rootView.findViewById(R.id.material_switch)
+        switchButton.setOnCheckedChangeListener { buttonView, isChecked ->
+            // Handle the switch state change
+            if (isChecked) {
+                // Switch is ON
+                TvTotal.setText("Tổng tiền: "+ formatter((Total_.toInt() - Point)).toString() + " VND")
+                LastTotal = Total_.toInt() - Point
+                tVNotiPoint.text = "Bạn nhận được "+(LastTotal * 0.008).toInt().toString()+" điểm khi thực hiện thanh toán."
+            } else {
+                // Switch is OFF
+                TvTotal.setText("Tổng tiền: "+ formatter(Total_.toInt()).toString() + " VND")
+                LastTotal = Total_.toInt()
+                tVNotiPoint.text = "Bạn nhận được "+(LastTotal * 0.008).toInt().toString()+" điểm khi thực hiện thanh toán."
+            }
+        }
+        usersRef.collection("User").document(user_id).get()
+            .addOnSuccessListener { document ->
+                if (document != null)
+                {
+                    user_ = document.toObject(User::class.java)!!
+                }
+            }
+            .addOnFailureListener{exception ->
+                Log.e("TAG", "User data not found")
+            }
+
+        if(tag_ == "Bus" || tag_ == "Flight")
+        {
+            val FirstID = this.arguments?.getString("FirstID")
+            val SecondID = this.arguments?.getString("SecondID")
+            val NumberOfSeat = this.arguments?.getString("Seat")
+            val Invoice_Id = generateRandomString(14)
+
+            val writer = QRCodeWriter()
+            try{
+                val bitMatrix = writer.encode(Invoice_Id, BarcodeFormat.QR_CODE, 512, 512)
+                val width = bitMatrix.width
+                val height = bitMatrix.height
+                val bmp = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565)
+                for (x in 0 until width)
+                {
+                    for(y in 0 until height)
+                    {
+                        bmp.setPixel(x,y, if(bitMatrix[x, y]) Color.BLACK else Color.WHITE)
                     }
-                    Total *= words[0].toDouble()
-                    Total *= 1000
-                    TvTotal.setText("Tổng tiền: "+ Total.toInt().toString() + " VND")
                 }
-                override fun onCancelled(databaseError: DatabaseError) {
+                iVQRcode.setImageBitmap(bmp)
+            }catch(e: WriterException){
+                e.printStackTrace()
+            }
+
+            var Total:Double = 0.0
+            var PayBtn: Button = rootView.findViewById<Button>(R.id.PayBtn)
+            val dataModelList:ArrayList<Any> = ArrayList()
+            if (NumberOfSeat != null) {
+                databaseReference.collection(tag_).whereIn("Id", listOf(FirstID,SecondID))
+                    .get()
+                    .addOnSuccessListener { documents ->
+                        for (document in documents)
+                        {
+                            if(tag_ == "Bus")
+                            {
+                                val dataModel= document.toObject(BusTicket::class.java)
+                                dataModelList.add(dataModel)
+                                Total += dataModel!!.Price.toDouble()
+                            }
+                            else if(tag_ == "Flight")
+                            {
+                                val dataModel= document.toObject(FlightTicket::class.java)
+                                dataModelList.add(dataModel)
+                                Total += dataModel!!.Price.toDouble()
+                            }
+                        }
+                        Total *= NumberOfSeat.get(0).toString().toInt()
+                        Total_ = Total
+                        LastTotal = Total_.toInt()
+                        TvTotal.setText("Tổng tiền: "+ formatter(Total.toInt()).toString() + " VND")
+                        var redeemedPoint:Int  = user_.Point
+                        var temp_redeemedPoint:Int = ((Total - 50000)*0.1).toInt()
+                        if (temp_redeemedPoint <= redeemedPoint)
+                        {
+                            tVPoint.text = temp_redeemedPoint.toString() + " điểm"
+                            Point = temp_redeemedPoint * 10
+                        }
+                        else {
+                            Point = redeemedPoint * 10
+                            tVPoint.text = redeemedPoint.toString() + " điểm"
+                        }
+                        tVNotiPoint.text = "Bạn nhận được "+(LastTotal * 0.008).toInt().toString()+" điểm khi thực hiện thanh toán."
+                    }
+                    .addOnFailureListener{exception ->
+                        Log.w("Error getting documents: ", exception)
+                    }
+            }
+            PayBtn.setOnClickListener {
+                val Service_Invoice_Id = tag_[0] + generateRandomString(14)
+                val new_invoice = invoice(Invoice_Id, tag_, user_id.toString(), NumberOfSeat?.get(0).toString(), LastTotal.toString())
+                var new_service_invoice = service_invoice(FirstID.toString(),SecondID.toString(), Service_Invoice_Id, Invoice_Id)
+                var BusTicketList: ArrayList<BusTicket> = ArrayList()
+                var FlightTicketList: ArrayList<FlightTicket> = ArrayList()
+                val noti_list: ArrayList<String> = ArrayList()
+                user_.Point += ((LastTotal * 0.008).toInt() - (Point * 0.1).toInt())
+                //var noti_text: String = "Bạn đã đăng ký vé {} từ {} đến {} vào ngày {}, chuyến {} mang {}"
+                databaseReference.collection("User").document(user_id).update("Point", user_.Point)
+                if (tag_ == "Bus")
+                {
+                    val outputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                    val inputFormat = SimpleDateFormat("yyyy-M-d", Locale.getDefault())
+                    BusTicketList = ArrayList(dataModelList.filterIsInstance<BusTicket>())
+                    for ( i in BusTicketList)
+                    {
+                        var numseat = i.NumSeat.toDouble()
+                        numseat -= NumberOfSeat!!.get(0).toString().toInt()
+                        i.NumSeat = numseat.toString()
+                        databaseReference.collection(tag_).document(i.Id).update("NumSeat", i.NumSeat)
+                        val date = inputFormat.parse(i.Date)
+                        var Date= outputFormat.format(date!!)
+                        var noti_text = "Bạn đã đăng ký vé xe khách từ "+i.From+" đến "+i.To+" vào ngày "+Date+", chuyến xe mang mã số "+i.Id+"."
+                        noti_list.add(noti_text)
+                    }
                 }
-            })
+                else if (tag_ == "Flight")
+                {
+                    FlightTicketList = ArrayList(dataModelList.filterIsInstance<FlightTicket>())
+                    for ( i in FlightTicketList)
+                    {
+                        i.NumSeat -= NumberOfSeat!!.get(0).toString().toInt()
+                        databaseReference.collection(tag_).document(i.Id).update("NumSeat", i.NumSeat)
+                        var noti_text = "Bạn đã đăng ký vé máy bay từ "+i.From+" đến "+i.To+" vào ngày "+i.Date+", chuyến bay số hiệu "+i.Id+"."
+                        noti_list.add(noti_text)
+                    }
+                }
+                databaseReference.collection("Invoice").document(Invoice_Id).set(new_invoice)
+                databaseReference.collection(tag_+"_invoice").document(Service_Invoice_Id).set(new_service_invoice)
+                    .addOnSuccessListener {
+                        Toast.makeText(requireActivity(), "Thanh toán thành công", Toast.LENGTH_LONG).show()
+                    }.addOnFailureListener { e ->
+                        Toast.makeText(requireActivity(), "Thanh toán thất bại", Toast.LENGTH_LONG).show()
+                    }
+                Toast.makeText(requireActivity(), "Thanh toán thành công", Toast.LENGTH_LONG).show()
+                showNotification(noti_list[0],tag_)
+                val dbRef: DatabaseReference = FirebaseDatabase.getInstance().getReference("Notification")
+                for (noti in noti_list)
+                {
+                    val noti_id= generateRandomString(14)
+                    val dateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
+                    val date = dateFormat.format(Date())
+                    var new_noti: Notification = Notification(noti_id, noti, tag_, "Not", user_id,date)
+                    dbRef.child(noti_id).setValue(new_noti)
+                }
+                val intent = Intent(requireActivity(), MainActivity::class.java)
+                val LAUNCH_SECOND_ACTIVITY:Int = 1
+                startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
+            }
+        }
+        else if (tag_ == "Hotel")
+        {
+            val RoomID = this.arguments?.getString("SelectedID")
+            val DayStart = this.arguments?.getString("DayStart")
+            var PayBtn: Button = rootView.findViewById<Button>(R.id.PayBtn)
+            val DayEnd = this.arguments?.getString("DayEnd")
+            val NumRoom = this.arguments?.getString("NumRoom")
+            val noti_list: ArrayList<String> = ArrayList()
+            var room_ = Room()
+            var hotel_ = Hotel()
+            var Total: Double = 0.0
+            val Invoice_Id = generateRandomString(14)
+            val writer = QRCodeWriter()
+            try{
+                val bitMatrix = writer.encode(Invoice_Id, BarcodeFormat.QR_CODE, 512, 512)
+                val width = bitMatrix.width
+                val height = bitMatrix.height
+                val bmp = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565)
+                for (x in 0 until width)
+                {
+                    for(y in 0 until height)
+                    {
+                        bmp.setPixel(x,y, if(bitMatrix[x, y]) Color.BLACK else Color.WHITE)
+                    }
+                }
+                iVQRcode.setImageBitmap(bmp)
+            }catch(e: WriterException){
+                e.printStackTrace()
+            }
+
+            databaseReference.collection("Room").document(RoomID.toString()).get()
+                .addOnSuccessListener { document ->
+                    if (document != null)
+                    {
+                        room_ = document.toObject(Room::class.java)!!
+                        val dateFormatter: DateTimeFormatter =  DateTimeFormatter.ofPattern("dd-MM-yyyy")
+                        val from = LocalDate.parse(DayStart.toString(), dateFormatter)
+                        val to = LocalDate.parse(DayEnd.toString(), dateFormatter)
+                        val period = Period.between(from, to)
+                        val days = period.days
+                        Total = (room_.Price.toInt()*days.toInt()).toDouble()
+                        Total_ = Total
+                        LastTotal = Total_.toInt()
+                        room_.State = "Rented"
+                        TvTotal.setText("Tổng tiền: "+ formatter(room_.Price.toInt()*days.toInt()).toString() + " VND")
+                        var redeemedPoint:Int  = user_.Point
+                        var temp_redeemedPoint:Int = ((Total - 50000)*0.1).toInt()
+                        if (temp_redeemedPoint <= redeemedPoint)
+                        {
+                            tVPoint.text = temp_redeemedPoint.toString() + " điểm"
+                            Point = temp_redeemedPoint * 10
+                        }
+                        else
+                        {
+                            Point = redeemedPoint * 10
+                            tVPoint.text = redeemedPoint.toString() + " điểm"
+                        }
+                        tVNotiPoint.text = "Bạn nhận được "+(LastTotal * 0.008).toInt().toString()+" điểm khi thực hiện thanh toán."
+                        databaseReference.collection("Hotel").document(room_.Hotel_id).get()
+                            .addOnSuccessListener { document ->
+                                hotel_ = document.toObject(Hotel::class.java)!!
+                                var noti_text = "Bạn đã đăng ký phòng "+ room_.Name +" của khách sạn "+hotel_.Name+" từ ngày "+DayStart.toString()+" đến ngày "+DayEnd.toString()+"."
+                                noti_list.add(noti_text)
+                            }
+                    }
+                }
+                .addOnFailureListener{exception ->
+                    Log.e("TAG", "User data not found")
+                }
+            PayBtn.setOnClickListener {
+                val Service_Invoice_Id = tag_[0] + generateRandomString(14)
+                val new_invoice = invoice(Invoice_Id, tag_, user_id.toString(), NumRoom?.get(0).toString(), LastTotal.toString())
+                var new_service_invoice = hotel_invoice(DayStart.toString(),DayEnd.toString(), Service_Invoice_Id, Invoice_Id, RoomID.toString())
+                databaseReference.collection("Room").document(room_.Id).update("State", room_.State)
+                databaseReference.collection("Invoice").document(Invoice_Id).set(new_invoice)
+                user_.Point += ((LastTotal * 0.008).toInt() - (Point * 0.1).toInt())
+                databaseReference.collection("User").document(user_id).update("Point", user_.Point)
+                val dbRef: DatabaseReference = FirebaseDatabase.getInstance().getReference("Notification")
+                for (noti in noti_list)
+                {
+                    val noti_id= generateRandomString(14)
+                    val dateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
+                    val date = dateFormat.format(Date())
+                    var new_noti: Notification = Notification(noti_id, noti, tag_, "Not", user_id,date)
+                    dbRef.child(noti_id).setValue(new_noti)
+                }
+                databaseReference.collection(tag_+"_invoice").document(Service_Invoice_Id).set(new_service_invoice)
+                    .addOnSuccessListener {
+                        Toast.makeText(requireActivity(), "Thanh toán thành công", Toast.LENGTH_LONG).show()
+                    }.addOnFailureListener { e ->
+                        Toast.makeText(requireActivity(), "Thanh toán thất bại", Toast.LENGTH_LONG).show()
+                    }
+                Toast.makeText(requireActivity(), "Thanh toán thành công", Toast.LENGTH_LONG).show()
+                showNotification(noti_list[0],tag_)
+                val intent = Intent(requireActivity(), MainActivity::class.java)
+                val LAUNCH_SECOND_ACTIVITY:Int = 1
+                startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
+
+            }
         }
         return rootView
     }

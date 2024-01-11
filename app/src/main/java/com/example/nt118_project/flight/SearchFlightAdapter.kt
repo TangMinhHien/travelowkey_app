@@ -1,5 +1,6 @@
 package com.example.nt118_project.flight
 
+import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle

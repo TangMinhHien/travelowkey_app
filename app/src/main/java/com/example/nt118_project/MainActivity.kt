@@ -35,7 +35,16 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         replaceFragment(HomeFragment())
+        try{
+        val myIntent = intent
+        val value: Bundle = myIntent.getExtras()!!
+        if (value.getString("previous_intent")=="notification"){
+            replaceFragment(BillFragment())
+            binding.bottomNavigationView.setSelectedItemId(R.id.bill);
+        }}
+        catch (e:Exception){
 
+        }
 
         binding.bottomNavigationView.setOnItemSelectedListener {
 

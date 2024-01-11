@@ -35,9 +35,15 @@
             android:textStyle="bold"
             android:textSize="20dp"
             app:layout_constraintLeft_toRightOf="@id/list_rooms_back"
-            app:layout_constraintTop_toTopOf="@id/list_hotels_back"
+            app:layout_constraintTop_toTopOf="@id/list_rooms_back"
             app:layout_constraintBottom_toBottomOf="@id/list_rooms_back"
-            android:layout_marginLeft="5dp"/>
+            android:layout_marginLeft="5dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:singleLine="true"
+            android:scrollHorizontally="true"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit ="marquee_forever"/>
         <TextView
             android:id="@+id/info_sup_room"
             android:layout_width="wrap_content"
@@ -46,7 +52,13 @@
             android:textSize="14dp"
             android:text="Thắng Tam, Thành phố Vũng Tàu "
             app:layout_constraintTop_toBottomOf="@id/info_room"
-            app:layout_constraintLeft_toRightOf="@id/list_rooms_back"/>
+            app:layout_constraintLeft_toRightOf="@id/list_rooms_back"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:singleLine="true"
+            android:scrollHorizontally="true"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit ="marquee_forever"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
     <ScrollView
@@ -64,6 +76,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/tab_indicator">
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/RecyclerviewRoom"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/tab_indicator_flight"
@@ -72,4 +85,27 @@
                 />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
+    <TextView
+        android:id="@+id/result_not_found"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/button"
+        android:textSize="15dp"
+        android:text="Không tìm thấy khách sạn phù hợp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/action_bar"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="10dp"/>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/sorting_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="28dp"
+        android:layout_marginBottom="40dp"
+        android:src="@drawable/ic_sorting"
+        android:backgroundTint="@color/main_blue"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

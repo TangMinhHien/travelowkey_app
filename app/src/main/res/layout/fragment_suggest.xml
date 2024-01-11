@@ -1,23 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Fragments.SuggestFragment"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:id="@+id/fragment_home">
 
-    <TextView
-        android:id="@+id/tv_suggest"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Suggest "
-        android:textColor="@color/white"/>
-    <ListView
-        android:id="@+id/lv_suggest"
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/RecyclerviewRecentFlightTicket"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-    </ListView>
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        tools:listitem="@layout/recent_flights_search"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/RecyclerviewRecentHotel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        tools:listitem="@layout/recent_hotels_search"/>
 
 
-</RelativeLayout>
+</LinearLayout>

@@ -2,6 +2,7 @@ package com.example.nt118_project.Fragments
 
 import android.app.DatePickerDialog
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -11,14 +12,30 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import com.example.nt118_project.R
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.firestore
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Locale
 
 
 class Flight2Fragment : Fragment() {
-
+    private var datePickerDialog: DatePickerDialog? = null
+    private lateinit var DepartureDaytV: TextView
+    private lateinit var ReturnDaytV: TextView
+    private lateinit var SpinnerStartingPoint: Spinner
+    private lateinit var SpinnerDestination: Spinner
+    private lateinit var SpinnerNumber: Spinner
+    private lateinit var SpinnerSeat: Spinner
+    private lateinit var db: FirebaseFirestore
+    private lateinit var ref_from: CollectionReference
+    private lateinit var ref_to: CollectionReference
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -30,16 +47,16 @@ class Flight2Fragment : Fragment() {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_flight2, container, false)
     }
-
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val DepartureDaytV = view.findViewById<TextView>(R.id.sp_date)
-        val ReturnDaytV = view.findViewById<TextView>(R.id.sp_date_return)
-        val SpinnerStartingPoint = view.findViewById<Spinner>(R.id.sp_from)
-        val SpinnerDestination = view.findViewById<Spinner>(R.id.sp_to)
-        val SpinnerNumber = view.findViewById<Spinner>(R.id.sp_number)
-        val SpinnerSeat = view.findViewById<Spinner>(R.id.sp_chair)
+        DepartureDaytV = view.findViewById<TextView>(R.id.sp_date)
+        ReturnDaytV = view.findViewById<TextView>(R.id.sp_date_return)
+        SpinnerStartingPoint = view.findViewById<Spinner>(R.id.sp_from)
+        SpinnerDestination = view.findViewById<Spinner>(R.id.sp_to)
+        SpinnerNumber = view.findViewById<Spinner>(R.id.sp_number)
+        SpinnerSeat = view.findViewById<Spinner>(R.id.sp_chair)
 
         val c: Calendar = Calendar.getInstance()
         val datepicker_depart = DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
@@ -55,13 +72,24 @@ class Flight2Fragment : Fragment() {
             updateLable(c, ReturnDaytV)
         }
         DepartureDaytV.setOnClickListener {
-            DatePickerDialog(view.context, datepicker_depart, c.get(Calendar.YEAR),c.get(Calendar.MONTH), c.get(
-                Calendar.DAY_OF_MONTH)).show()
+            val DatePickerDialog= DatePickerDialog(view.context, datepicker_depart, c.get(Calendar.YEAR),c.get(Calendar.MONTH), c.get(
+                Calendar.DAY_OF_MONTH))
+            DatePickerDialog.datePicker.minDate = System.currentTimeMillis()
+            DatePickerDialog.show()
         }
         ReturnDaytV.setOnClickListener {
-            DatePickerDialog(view.context, datepicker_return, c.get(Calendar.YEAR),c.get(Calendar.MONTH), c.get(
-                Calendar.DAY_OF_MONTH)).show()
+            val DatePickerDialog= DatePickerDialog(view.context, datepicker_return, c.get(Calendar.YEAR),c.get(Calendar.MONTH), c.get(
+                Calendar.DAY_OF_MONTH))
+            DatePickerDialog.datePicker.minDate = System.currentTimeMillis()
+            DatePickerDialog.show()
         }
+        val  formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+        val currentDate = LocalDate.now().format(formatter)
+        val tomorrow =  LocalDate.now().plusDays(1).format(formatter)
+        val Date = currentDate
+        val nextDate =  tomorrow
+        DepartureDaytV.text = Date
+        ReturnDaytV.text = nextDate
         val listener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 (view as TextView).setTextColor(Color.WHITE)
@@ -70,26 +98,32 @@ class Flight2Fragment : Fragment() {
             override fun onNothingSelected(parent: AdapterView<*>?) {
             }
         }
-
+        db = Firebase.firestore
+        ref_from = db.collection("Flight_starting_point")
         val StartingPointSpinnerData: ArrayList<Any?> = ArrayList()
-        StartingPointSpinnerData.add("TP. HCM")
-        StartingPointSpinnerData.add("TP. Đà Nẵng")
-        StartingPointSpinnerData.add("TP. Hà Nội")
-        StartingPointSpinnerData.add("TP. Bà Rịa - Vũng Tàu")
-        val StartingPointAdapter: ArrayAdapter<Any?> = ArrayAdapter<Any?>(view.context,android.R.layout.simple_spinner_item,StartingPointSpinnerData)
-        StartingPointAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        SpinnerStartingPoint.onItemSelectedListener = listener
-        SpinnerStartingPoint.setAdapter(StartingPointAdapter)
+        ref_from.get().addOnSuccessListener { documents ->
+            for (document in documents){
+                StartingPointSpinnerData.add(document.get("Area"))
+            }
+            val StartingPointAdapter: ArrayAdapter<Any?> = ArrayAdapter<Any?>(view.context,android.R.layout.simple_spinner_item,StartingPointSpinnerData)
+            StartingPointAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            SpinnerStartingPoint.onItemSelectedListener = listener
+            SpinnerStartingPoint.setAdapter(StartingPointAdapter)
+        }
 
+
+        ref_to = db.collection("Flight_destination")
         val DestinationSpinnerData: ArrayList<Any?> = ArrayList()
-        DestinationSpinnerData.add("TP. HCM")
-        DestinationSpinnerData.add("TP. Đà Nẵng")
-        DestinationSpinnerData.add("TP. Hà Nội")
-        DestinationSpinnerData.add("TP. Bà Rịa - Vũng Tàu")
-        val DestinationAdapter: ArrayAdapter<Any?> = ArrayAdapter<Any?>(view.context,android.R.layout.simple_spinner_item,DestinationSpinnerData)
-        DestinationAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        SpinnerDestination.onItemSelectedListener = listener
-        SpinnerDestination.setAdapter(DestinationAdapter)
+        ref_to.get().addOnSuccessListener { documents ->
+            for (document in documents){
+                DestinationSpinnerData.add(document.get("Area"))
+            }
+            val DestinationAdapter: ArrayAdapter<Any?> = ArrayAdapter<Any?>(view.context,android.R.layout.simple_spinner_item,DestinationSpinnerData)
+            DestinationAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            SpinnerDestination.onItemSelectedListener = listener
+            SpinnerDestination.setAdapter(DestinationAdapter)
+        }
+
 
         val NumberSpinnerData: ArrayList<Any?> = ArrayList()
         NumberSpinnerData.add("1")
@@ -115,5 +149,17 @@ class Flight2Fragment : Fragment() {
         val myFormat = "dd-MM-yyyy"
         val sdf = SimpleDateFormat(myFormat, Locale.UK)
         tV.setText(sdf.format(c.time))
+    }
+    fun getValue():Bundle{
+        var value = Bundle()
+        value.putBoolean("return_check",true)
+        value.putBoolean("is_return",false)
+        value.putString("Date",DepartureDaytV.text.toString())
+        value.putString("ReturnDate",ReturnDaytV.text.toString())
+        value.putString("From",SpinnerStartingPoint.selectedItem.toString())
+        value.putString("To",SpinnerDestination.selectedItem.toString())
+        value.putString("NumSeat",SpinnerNumber.selectedItem.toString())
+        value.putString("SeatClass",SpinnerSeat.selectedItem.toString())
+        return value;
     }
 }
