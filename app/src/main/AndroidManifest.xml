@@ -54,6 +54,11 @@
             android:name=".Fragments.BookBusTicketsActivity"
             android:exported="false" />
         <activity
+            android:name=".service_car.Search_ServiceCar_Activity"
+            android:exported="false" />
+        <activity android:name=".service_car.ListOfServiceCarActivity"
+            android:exported="false" />
+        <activity
             android:name=".Fragments.UserDetailFragment"
             android:exported="false" />
         <activity
@@ -75,4 +80,7 @@
             android:theme="@style/Theme.NT118_Project.NoActionBar" />
     </application>
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 </manifest>
