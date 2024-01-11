@@ -160,7 +160,7 @@ class ServiceCar1_Fragment: Fragment() {
     }
 
     private fun updateLable(c: Calendar, tV: TextView) {
-        val myFormat = "dd-MM-yyyy"
+        val myFormat = "d-M-yyyy"
         val sdf = SimpleDateFormat(myFormat, Locale.UK)
         tV.setText (sdf.format(c.time))
     }
