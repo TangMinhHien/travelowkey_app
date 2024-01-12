@@ -78,6 +78,7 @@
             android:layout_marginLeft="10dp"
             android:layout_marginBottom="10dp"/>
         <ImageButton
+            android:id="@+id/ic_detailCard"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:src="@drawable/ic_detail"
@@ -132,6 +133,7 @@
             android:layout_marginLeft="10dp"
             android:layout_marginBottom="10dp"/>
         <ImageButton
+            android:id="@+id/ic_detailCoupon"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:src="@drawable/ic_detail"
@@ -185,6 +187,7 @@
             android:layout_marginLeft="10dp"
             android:layout_marginBottom="10dp"/>
         <ImageButton
+            android:id="@+id/ic_detailPoint"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:src="@drawable/ic_detail"

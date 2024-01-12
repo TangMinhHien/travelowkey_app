@@ -5,11 +5,14 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -17,9 +20,11 @@ import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import com.example.nt118_project.MainActivity
 import com.example.nt118_project.Model.BusTicket
+import com.example.nt118_project.Model.Coupon
 import com.example.nt118_project.Model.FlightTicket
 import com.example.nt118_project.Model.Hotel
 import com.example.nt118_project.Model.Notification
+import com.example.nt118_project.Model.Point
 import com.example.nt118_project.Model.Room
 import com.example.nt118_project.Model.User
 import com.example.nt118_project.R
@@ -30,14 +35,19 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ServerValue
 import com.google.firebase.firestore.firestore
+import com.google.firebase.firestore.toObject
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.WriterException
 import com.google.zxing.qrcode.QRCodeWriter
+import java.text.DateFormat
+import java.text.DateFormat.getDateTimeInstance
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.Period
 import java.time.format.DateTimeFormatter
+import java.util.Date
 import java.util.Locale
 
 
@@ -89,6 +99,18 @@ class PaymentInfoFragment : Fragment() {
         val user_id = currentUser!!.uid
 
         val tag_ = this.arguments?.getString("Tag")
+        class UsedCoupon {
+            public lateinit var id: String
+            public lateinit var user_Id: String
+            public lateinit var coupon_Id: ArrayList<String>
+            constructor(){}
+            constructor(coupon_Id:ArrayList<String>, id:String, user_Id:String)
+            {
+                this.id=id
+                this.user_Id=user_Id
+                this.coupon_Id=coupon_Id
+            }
+        }
         data class service_invoice(
             val Id_ticket_1:String,
             val Id_ticket_2: String,
@@ -113,24 +135,207 @@ class PaymentInfoFragment : Fragment() {
         val usersRef = Firebase.firestore
         var user_ = User()
         var Total_:Double = 0.0
-        var Point:Int = 0
+        var PointValue:Int = 0
+        var CouponValue:Int = 0
         var LastTotal: Int = 0
+        var globalCoupon_:Coupon = Coupon()
+        var globalUsedCoupon_:UsedCoupon = UsedCoupon()
         val tVPoint:TextView = rootView.findViewById(R.id.tVPoint)
         val switchButton: SwitchMaterial = rootView.findViewById(R.id.material_switch)
+        val switchButton_coupon: SwitchMaterial = rootView.findViewById(R.id.material_switch_coupon)
+        val CodeCoupon:EditText = rootView.findViewById(R.id.tVCoupon)
+
+        val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+        val strcurrentDay = LocalDateTime.now().format(formatter)
+        val sdf = SimpleDateFormat("dd/MM/yyyy")
+        val currentDay: Date = sdf.parse(strcurrentDay)
+
         switchButton.setOnCheckedChangeListener { buttonView, isChecked ->
             // Handle the switch state change
             if (isChecked) {
                 // Switch is ON
-                TvTotal.setText("Tổng tiền: "+ formatter((Total_.toInt() - Point)).toString() + " VND")
-                LastTotal = Total_.toInt() - Point
-                tVNotiPoint.text = "Bạn nhận được "+(LastTotal * 0.008).toInt().toString()+" điểm khi thực hiện thanh toán."
+                if(LastTotal <= 50000)
+                {
+                    Toast.makeText(requireActivity(), "Tiền thanh toán tối thiểu là 50.000 VND", Toast.LENGTH_SHORT).show()
+                    PointValue = 0
+                    switchButton.isChecked = false
+                }
+                else{
+                    var redeemedPoint:Int  = user_.Point
+                    var temp_redeemedPoint:Int = ((Total_ - 50000)*0.1).toInt()
+                    if (temp_redeemedPoint <= redeemedPoint)
+                    {
+//                        tVPoint.text = temp_redeemedPoint.toString() + " điểm"
+                        PointValue = temp_redeemedPoint * 10
+                    }
+                    else {
+                        PointValue = redeemedPoint * 10
+//                        tVPoint.text = redeemedPoint.toString() + " điểm"
+                    }
+                    if(LastTotal - PointValue < 50000)
+                    {
+                        Toast.makeText(requireActivity(), "Tiền thanh toán tối thiểu là 50.000 VND", Toast.LENGTH_SHORT).show()
+                        PointValue = 0
+                        switchButton.isChecked = false
+                    }
+                    else
+                    {
+                        LastTotal -= PointValue
+                        TvTotal.setText("Tổng tiền: "+ formatter(LastTotal).toString() + " VND")
+                        tVNotiPoint.text = "Bạn nhận được "+(LastTotal * 0.008).toInt().toString()+" điểm khi thực hiện thanh toán."
+                    }
+                }
             } else {
                 // Switch is OFF
-                TvTotal.setText("Tổng tiền: "+ formatter(Total_.toInt()).toString() + " VND")
-                LastTotal = Total_.toInt()
+                LastTotal += PointValue
+                TvTotal.setText("Tổng tiền: "+ formatter(LastTotal).toString() + " VND")
+//                LastTotal = Total_.toInt()
                 tVNotiPoint.text = "Bạn nhận được "+(LastTotal * 0.008).toInt().toString()+" điểm khi thực hiện thanh toán."
             }
         }
+
+        switchButton_coupon.setOnCheckedChangeListener { buttonView, isChecked ->
+            // Handle the switch state change
+            if (isChecked) {
+                // Switch is ON
+                if(CodeCoupon.text.toString() == "")
+                {
+                    Toast.makeText(requireActivity(), "Vui lòng điền mã giảm giá", Toast.LENGTH_SHORT).show()
+                    CouponValue = 0
+                    switchButton_coupon.isChecked = false
+                }
+                else if(LastTotal == 50000)
+                {
+                    Toast.makeText(requireActivity(), "Tiền thanh toán tối thiểu là 50.000 VND", Toast.LENGTH_SHORT).show()
+                    CouponValue = 0
+                    switchButton_coupon.isChecked = false
+                }
+                else
+                {
+                    usersRef.collection("UsedCoupon").whereEqualTo("user_Id", user_id).get().addOnSuccessListener{documents ->
+                        if(documents.size() == 0)
+                        {
+                            //Toast.makeText(requireActivity(), "Mã giảm giá không tồn tại", Toast.LENGTH_SHORT).show()
+                            switchButton_coupon.isChecked = false
+                        }
+                        else
+                        {
+                            for (document in documents)
+                            {
+                                val usedcoupon_ = document.toObject(UsedCoupon::class.java)
+                                usersRef.collection("Coupon").whereEqualTo("Code",CodeCoupon.text.toString()).get().addOnSuccessListener { documents->
+                                    if(documents.size() == 0)
+                                    {
+                                        Toast.makeText(requireActivity(), "Mã giảm giá không tồn tại", Toast.LENGTH_SHORT).show()
+                                        switchButton_coupon.isChecked = false
+                                    }
+                                    else{
+                                        for(document in documents)
+                                        {
+                                            val coupon_ = document.toObject(Coupon::class.java)
+                                            if(!currentDay.before(sdf.parse(coupon_.ExpiryDate)))
+                                            {
+                                                Toast.makeText(requireActivity(), "Mã giảm giá này đã hết hạn sử dụng", Toast.LENGTH_SHORT).show()
+                                                CouponValue = 0
+                                                switchButton_coupon.isChecked = false
+                                                continue
+                                            }
+                                            if(coupon_.Tag != tag_)
+                                            {
+                                                Toast.makeText(requireActivity(), "Mã giảm giá này không thể áp dụng cho dịch vụ này", Toast.LENGTH_SHORT).show()
+                                                CouponValue = 0
+                                                switchButton_coupon.isChecked = false
+                                                continue
+                                            }
+                                            if(coupon_.Max < 1)
+                                            {
+                                                Toast.makeText(requireActivity(), "Số lượng mã giảm giá này đã hết", Toast.LENGTH_SHORT).show()
+                                                CouponValue = 0
+                                                switchButton_coupon.isChecked = false
+                                                continue
+                                            }
+                                            if(!coupon_.Value.contains("%"))
+                                            {
+                                                if(LastTotal - coupon_.Value.toInt()<50000)
+                                                {
+                                                    Toast.makeText(requireActivity(), "Tiền thanh toán tối thiểu là 50.000 VND", Toast.LENGTH_SHORT).show()
+                                                    CouponValue = 0
+                                                    switchButton_coupon.isChecked = false
+                                                    continue
+                                                }
+                                            }
+                                            else
+                                            {
+                                                val temp:Int = Total_.toInt()
+                                                val temp_value = (coupon_.Value.subSequence(0, coupon_.Value.length - 1)).toString().toDouble() * 0.01
+                                                if(LastTotal - (temp_value  * temp).toInt() < 50000)
+                                                {
+                                                    Toast.makeText(requireActivity(), "Tiền thanh toán tối thiểu là 50.000 VND 1", Toast.LENGTH_SHORT).show()
+                                                    CouponValue = 0
+                                                    switchButton_coupon.isChecked = false
+                                                    continue
+                                                }
+                                            }
+                                            if(coupon_.id in usedcoupon_.coupon_Id)
+                                            {
+                                                Toast.makeText(requireActivity(), "Bạn đã sử dụng mã giảm giá này", Toast.LENGTH_SHORT).show()
+                                                CouponValue = 0
+                                                switchButton_coupon.isChecked = false
+                                                continue
+                                            }
+                                            if(coupon_.Value.contains("%"))
+                                            {
+                                                val temp:Int = Total_.toInt()
+                                                val temp_value = (coupon_.Value.subSequence(0, coupon_.Value.length - 1)).toString().toDouble() * 0.01
+                                                LastTotal -= (temp_value  * temp).toInt()
+                                                CouponValue = (temp_value  * temp).toInt()
+                                            }
+                                            else
+                                            {
+                                                LastTotal -= coupon_.Value.toInt()
+                                                CouponValue = coupon_.Value.toInt()
+                                            }
+                                            globalUsedCoupon_ = usedcoupon_
+                                            globalCoupon_ = coupon_
+                                            TvTotal.setText("Tổng tiền: "+ formatter(LastTotal).toString() + " VND")
+                                            tVNotiPoint.text = "Bạn sẽ nhận được "+(LastTotal * 0.008).toInt().toString()+" điểm khi thực hiện thanh toán."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                // Switch is OFF
+                LastTotal += CouponValue
+                TvTotal.setText("Tổng tiền: "+ formatter(LastTotal).toString() + " VND")
+                tVNotiPoint.text = "Bạn sẽ nhận được "+(LastTotal * 0.008).toInt().toString()+" điểm khi thực hiện thanh toán."
+            }
+        }
+
+        CodeCoupon.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(charSequence: CharSequence?, start: Int, count: Int, after: Int) {
+                // Executed before the text is changed
+            }
+
+            override fun onTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {
+                // Executed as the text is changed
+//                if(switchButton.isChecked == false)
+//                    CouponValue = 0
+//                switchButton_coupon.isChecked = false
+            }
+
+            override fun afterTextChanged(editable: Editable?) {
+                // Executed after the text has changed
+                // val newText = editable.toString()
+                // Do something with the new text
+                if(switchButton_coupon.isChecked == false)
+                    CouponValue = 0
+                switchButton_coupon.isChecked = false
+            }
+        })
+
         usersRef.collection("User").document(user_id).get()
             .addOnSuccessListener { document ->
                 if (document != null)
@@ -198,13 +403,13 @@ class PaymentInfoFragment : Fragment() {
                         if (temp_redeemedPoint <= redeemedPoint)
                         {
                             tVPoint.text = temp_redeemedPoint.toString() + " điểm"
-                            Point = temp_redeemedPoint * 10
+                            PointValue = temp_redeemedPoint * 10
                         }
                         else {
-                            Point = redeemedPoint * 10
+                            PointValue = redeemedPoint * 10
                             tVPoint.text = redeemedPoint.toString() + " điểm"
                         }
-                        tVNotiPoint.text = "Bạn nhận được "+(LastTotal * 0.008).toInt().toString()+" điểm khi thực hiện thanh toán."
+                        tVNotiPoint.text = "Bạn sẽ nhận được "+(LastTotal * 0.008).toInt().toString()+" điểm khi thực hiện thanh toán."
                     }
                     .addOnFailureListener{exception ->
                         Log.w("Error getting documents: ", exception)
@@ -217,11 +422,19 @@ class PaymentInfoFragment : Fragment() {
                 var BusTicketList: ArrayList<BusTicket> = ArrayList()
                 var FlightTicketList: ArrayList<FlightTicket> = ArrayList()
                 val noti_list: ArrayList<String> = ArrayList()
-                user_.Point += ((LastTotal * 0.008).toInt() - (Point * 0.1).toInt())
-                //var noti_text: String = "Bạn đã đăng ký vé {} từ {} đến {} vào ngày {}, chuyến {} mang {}"
-                databaseReference.collection("User").document(user_id).update("Point", user_.Point)
+                var textaccumulatedpoint:String = ""
+                var textredeemedpoint:String = ""
+                if(switchButton.isChecked){
+                    user_.Point += ((LastTotal * 0.008).toInt() - (PointValue * 0.1).toInt())
+                }
+                else
+                    user_.Point += ((LastTotal * 0.008).toInt())
+                val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")
+                val currentDate = LocalDateTime.now().format(formatter)
                 if (tag_ == "Bus")
                 {
+                    textaccumulatedpoint = "Bạn nhận được điểm khi thanh toán hóa đơn vé xe khách (mã hóa đơn "+ Invoice_Id +") ngày " + currentDate +"."
+                    textredeemedpoint = "Bạn đã sử dụng điểm khi thanh toán hóa đơn vé xe khách (mã hóa đơn "+ Invoice_Id +") ngày " + currentDate +"."
                     val outputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
                     val inputFormat = SimpleDateFormat("yyyy-M-d", Locale.getDefault())
                     BusTicketList = ArrayList(dataModelList.filterIsInstance<BusTicket>())
@@ -239,6 +452,8 @@ class PaymentInfoFragment : Fragment() {
                 }
                 else if (tag_ == "Flight")
                 {
+                    textaccumulatedpoint = "Bạn nhận được điểm khi thanh toán hóa đơn vé máy bay (mã hóa đơn "+ Invoice_Id +") ngày " + currentDate +"."
+                    textredeemedpoint = "Bạn đã sử dụng điểm khi thanh toán hóa đơn vé máy bay (mã hóa đơn "+ Invoice_Id +") ngày " + currentDate +"."
                     FlightTicketList = ArrayList(dataModelList.filterIsInstance<FlightTicket>())
                     for ( i in FlightTicketList)
                     {
@@ -248,27 +463,50 @@ class PaymentInfoFragment : Fragment() {
                         noti_list.add(noti_text)
                     }
                 }
-                databaseReference.collection("Invoice").document(Invoice_Id).set(new_invoice)
-                databaseReference.collection(tag_+"_invoice").document(Service_Invoice_Id).set(new_service_invoice)
-                    .addOnSuccessListener {
-                        Toast.makeText(requireActivity(), "Thanh toán thành công", Toast.LENGTH_LONG).show()
-                    }.addOnFailureListener { e ->
-                        Toast.makeText(requireActivity(), "Thanh toán thất bại", Toast.LENGTH_LONG).show()
-                    }
-                Toast.makeText(requireActivity(), "Thanh toán thành công", Toast.LENGTH_LONG).show()
-                val dbRef: DatabaseReference = FirebaseDatabase.getInstance().getReference("Notification")
-                for (noti in noti_list)
-                {
-                    val noti_id= generateRandomString(14)
-                    val map: HashMap<String, Any> = HashMap<String, Any>()
-                    map["timestamp"] = ServerValue.TIMESTAMP
-                    var new_noti: Notification = Notification(noti_id, noti, tag_, "Not", user_id)
-                    dbRef.child(noti_id).setValue(new_noti)
-                    dbRef.child(noti_id).updateChildren(map)
+                databaseReference.collection("Invoice").document(Invoice_Id).set(new_invoice).addOnSuccessListener {
+                    databaseReference.collection(tag_+"_invoice").document(Service_Invoice_Id).set(new_service_invoice)
+                        .addOnSuccessListener {
+                            val dbRef: DatabaseReference = FirebaseDatabase.getInstance().getReference("Notification")
+                            val map: HashMap<String, Any> = HashMap<String, Any>()
+                            map["timestamp"] = ServerValue.TIMESTAMP
+                            for (noti in noti_list)
+                            {
+                                val noti_id= generateRandomString(14)
+                                var new_noti: Notification = Notification(noti_id, noti, tag_, "Not", user_id)
+                                dbRef.child(noti_id).setValue(new_noti)
+                                dbRef.child(noti_id).updateChildren(map)
+                            }
+                            val dbRefPoint: DatabaseReference = FirebaseDatabase.getInstance().getReference("Point")
+                            var new_accumulated_point = Point(Invoice_Id, textaccumulatedpoint,"accumulated", user_id.toString(), "P"+generateRandomString(14), (LastTotal * 0.008).toInt().toString())
+                            dbRefPoint.child(new_accumulated_point.id).setValue(new_accumulated_point)
+                            dbRefPoint.child(new_accumulated_point.id).updateChildren(map)
+                            if(switchButton.isChecked)
+                            {
+                                var new_redeemed_point = Point(Invoice_Id, textredeemedpoint,"redeemed", user_id.toString(), "P"+generateRandomString(14), (PointValue * 0.1).toInt().toString())
+                                dbRefPoint.child(new_redeemed_point.id).setValue(new_redeemed_point)
+                                dbRefPoint.child(new_redeemed_point.id).updateChildren(map)
+                            }
+                            if(switchButton_coupon.isChecked)
+                            {
+                                databaseReference.collection("Coupon").document(globalCoupon_.id).update("Max", globalCoupon_.Max - 1)
+                                val listcoupon: ArrayList<String> = globalUsedCoupon_.coupon_Id
+                                listcoupon.add(globalCoupon_.id)
+                                Log.d("listcoupon", listcoupon.size.toString())
+                                databaseReference.collection("UsedCoupon").document(globalUsedCoupon_.id).update("coupon_Id", listcoupon)
+                            }
+                            databaseReference.collection("User").document(user_id).update("point", user_.Point)
+                                .addOnSuccessListener {
+                                    Toast.makeText(requireActivity(), "Thanh toán thành công", Toast.LENGTH_LONG).show()
+                                    val intent = Intent(requireActivity(), MainActivity::class.java)
+                                    val LAUNCH_SECOND_ACTIVITY:Int = 1
+                                    startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
+                                }
+                        }.addOnFailureListener { e ->
+                            Toast.makeText(requireActivity(), "Thanh toán thất bại", Toast.LENGTH_LONG).show()
+                        }
+                }.addOnFailureListener { e ->
+                    Toast.makeText(requireActivity(), "Thanh toán thất bại", Toast.LENGTH_LONG).show()
                 }
-                val intent = Intent(requireActivity(), MainActivity::class.java)
-                val LAUNCH_SECOND_ACTIVITY:Int = 1
-                startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
             }
         }
         else if (tag_ == "Hotel")
@@ -321,14 +559,14 @@ class PaymentInfoFragment : Fragment() {
                         if (temp_redeemedPoint <= redeemedPoint)
                         {
                             tVPoint.text = temp_redeemedPoint.toString() + " điểm"
-                            Point = temp_redeemedPoint * 10
+                            PointValue = temp_redeemedPoint * 10
                         }
                         else
                         {
-                            Point = redeemedPoint * 10
+                            PointValue = redeemedPoint * 10
                             tVPoint.text = redeemedPoint.toString() + " điểm"
                         }
-                        tVNotiPoint.text = "Bạn nhận được "+(LastTotal * 0.008).toInt().toString()+" điểm khi thực hiện thanh toán."
+                        tVNotiPoint.text = "Bạn sẽ nhận được "+(LastTotal * 0.008).toInt().toString()+" điểm khi thực hiện thanh toán."
                         databaseReference.collection("Hotel").document(room_.Hotel_id).get()
                             .addOnSuccessListener { document ->
                                 hotel_ = document.toObject(Hotel::class.java)!!
@@ -345,29 +583,59 @@ class PaymentInfoFragment : Fragment() {
                 val new_invoice = invoice(Invoice_Id, tag_, user_id.toString(), NumRoom?.get(0).toString(), LastTotal.toString())
                 var new_service_invoice = hotel_invoice(DayStart.toString(),DayEnd.toString(), Service_Invoice_Id, Invoice_Id, RoomID.toString())
                 databaseReference.collection("Room").document(room_.Id).update("State", room_.State)
-                databaseReference.collection("Invoice").document(Invoice_Id).set(new_invoice)
-                user_.Point += ((LastTotal * 0.008).toInt() - (Point * 0.1).toInt())
-                databaseReference.collection("User").document(user_id).update("Point", user_.Point)
-                val dbRef: DatabaseReference = FirebaseDatabase.getInstance().getReference("Notification")
-                for (noti in noti_list)
-                {
-                    val noti_id= generateRandomString(14)
-                    val map: HashMap<String, Any> = HashMap<String, Any>()
-                    map["timestamp"] = ServerValue.TIMESTAMP
-                    var new_noti: Notification = Notification(noti_id, noti, tag_, "Not", user_id)
-                    dbRef.child(noti_id).setValue(new_noti)
-                    dbRef.child(noti_id).updateChildren(map)
+//                databaseReference.collection("Invoice").document(Invoice_Id).set(new_invoice)
+                if(switchButton.isChecked){
+                    user_.Point += ((LastTotal * 0.008).toInt() - (PointValue * 0.1).toInt())
                 }
-                databaseReference.collection(tag_+"_invoice").document(Service_Invoice_Id).set(new_service_invoice)
-                    .addOnSuccessListener {
-                        Toast.makeText(requireActivity(), "Thanh toán thành công", Toast.LENGTH_LONG).show()
-                    }.addOnFailureListener { e ->
-                        Toast.makeText(requireActivity(), "Thanh toán thất bại", Toast.LENGTH_LONG).show()
-                    }
-                Toast.makeText(requireActivity(), "Thanh toán thành công", Toast.LENGTH_LONG).show()
-                val intent = Intent(requireActivity(), MainActivity::class.java)
-                val LAUNCH_SECOND_ACTIVITY:Int = 1
-                startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
+                else
+                    user_.Point += ((LastTotal * 0.008).toInt())
+                databaseReference.collection("Invoice").document(Invoice_Id).set(new_invoice).addOnSuccessListener {
+                    databaseReference.collection(tag_+"_invoice").document(Service_Invoice_Id).set(new_service_invoice)
+                        .addOnSuccessListener {
+                            var textaccumulatedpoint:String = ""
+                            var textredeemedpoint:String = ""
+                            val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")
+                            val currentDate = LocalDateTime.now().format(formatter)
+                            textaccumulatedpoint = "Bạn nhận được điểm khi thanh toán hóa đơn đặt phòng khách sạn (mã hóa đơn "+ Invoice_Id +") ngày " + currentDate +"."
+                            textredeemedpoint = "Bạn đã sử dụng điểm khi thanh toán hóa đơn đặt phòng khách sạn (mã hóa đơn "+ Invoice_Id +") ngày " + currentDate +"."
+                            val dbRef: DatabaseReference = FirebaseDatabase.getInstance().getReference("Notification")
+                            val map: HashMap<String, Any> = HashMap<String, Any>()
+                            map["timestamp"] = ServerValue.TIMESTAMP
+                            for (noti in noti_list)
+                            {
+                                val noti_id= generateRandomString(14)
+                                var new_noti: Notification = Notification(noti_id, noti, tag_, "Not", user_id)
+                                dbRef.child(noti_id).setValue(new_noti)
+                                dbRef.child(noti_id).updateChildren(map)
+                            }
+                            val dbRefPoint: DatabaseReference = FirebaseDatabase.getInstance().getReference("Point")
+                            var new_accumulated_point = Point(Invoice_Id, textaccumulatedpoint,"accumulated", user_id.toString(), "P"+generateRandomString(14), (LastTotal * 0.008).toInt().toString())
+                            dbRefPoint.child(new_accumulated_point.id).setValue(new_accumulated_point)
+                            dbRefPoint.child(new_accumulated_point.id).updateChildren(map)
+                            if(switchButton.isChecked)
+                            {
+                                var new_redeemed_point = Point(Invoice_Id, textredeemedpoint,"redeemed", user_id.toString(), "P"+generateRandomString(14), (PointValue * 0.1).toInt().toString())
+                                dbRefPoint.child(new_redeemed_point.id).setValue(new_redeemed_point)
+                                dbRefPoint.child(new_redeemed_point.id).updateChildren(map)
+                            }
+                            if(switchButton_coupon.isChecked)
+                            {
+                                databaseReference.collection("Coupon").document(globalCoupon_.id).update("Max", globalCoupon_.Max - 1)
+                                val listcoupon: ArrayList<String> = globalUsedCoupon_.coupon_Id
+                                listcoupon.add(globalCoupon_.id)
+                                Log.d("listcoupon", listcoupon.size.toString())
+                                databaseReference.collection("UsedCoupon").document(globalUsedCoupon_.id).update("coupon_Id", listcoupon)
+                            }
+                            databaseReference.collection("User").document(user_id).update("point", user_.Point).addOnSuccessListener {
+                                Toast.makeText(requireActivity(), "Thanh toán thành công", Toast.LENGTH_LONG).show()
+                                val intent = Intent(requireActivity(), MainActivity::class.java)
+                                val LAUNCH_SECOND_ACTIVITY:Int = 1
+                                startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
+                            }
+                        }.addOnFailureListener { e ->
+                            Toast.makeText(requireActivity(), "Thanh toán thất bại", Toast.LENGTH_LONG).show()
+                        }
+                }
 
             }
         }

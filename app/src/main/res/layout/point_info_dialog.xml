@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/rounded_username"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <TextView
+        android:id="@+id/tVTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="10dp"
+        android:textSize="17dp"
+        android:text="Các quy tắc và chính sách về điểm"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        tools:ignore="MissingConstraints" />
+    <TextView
+        android:id="@+id/tVContent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tVTitle"
+        android:layout_marginTop="10dp"
+        android:textColor="#000000"
+        android:text="  Điểm sẽ được tích khi bạn thực hiện thanh toán các dịch vụ.\n\n   Bạn có thể sử dụng trực tiếp điểm để được giảm giá khi thực hiện thanh toán.\n\n  Số tiền được quy đổi từ điểm bằng với số điểm được sử dụng quy đổi nhân với 10.\n\n Khi thanh toán, bạn có thể nhận được điểm thưởng. Số lượng điểm nhận được tỉ lệ thuận với số tiền khách hàng thanh toán."/>
+</androidx.constraintlayout.widget.ConstraintLayout>

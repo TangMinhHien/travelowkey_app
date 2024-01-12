@@ -216,12 +216,10 @@ class BookBusTicketsActivity : AppCompatActivity(), AdapterView.OnItemSelectedLi
         SpinnerStartingPoint.onItemSelectedListener = this
         SpinnerStartingPoint.setAdapter(StartingPointAdapter)
 
-        val currentDate = LocalDate.now()
-        val currentDay = currentDate.dayOfMonth
-        val currentMonth = currentDate.monthValue
-        val currentYear = currentDate.year
-        DepartureDaytV.text = "0" + currentDay.toString()+"-"+"0"+currentMonth.toString()+"-"+currentYear.toString()
-        ReturnDaytV.text = "0" +currentDay.toString()+"-"+"0" +currentMonth.toString()+"-"+currentYear.toString()
+        val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+        val currentDay = LocalDateTime.now().format(formatter)
+        DepartureDaytV.text = currentDay
+        ReturnDaytV.text = currentDay
 
         SearchButton.setOnClickListener {
             val sdf = DateTimeFormatter.ofPattern("dd-MM-yyyy")

@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -101,6 +102,24 @@ class UserFragment : Fragment() {
             val pwStr = this.arguments?.getString("Pw")
             intent.putExtra("Pw", pwStr.toString())
             Log.w("PW", pwStr.toString())
+            val LAUNCH_SECOND_ACTIVITY:Int = 1
+            startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
+        }
+        val icPoint:ImageButton = view.findViewById<ImageButton>(R.id.ic_detailPoint)
+        icPoint.setOnClickListener {
+            val intent = Intent(activity,PointDetailActivity::class.java)
+            val LAUNCH_SECOND_ACTIVITY:Int = 1
+            startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
+        }
+        val icCard:ImageButton = view.findViewById<ImageButton>(R.id.ic_detailCard)
+        icCard.setOnClickListener {
+            val intent = Intent(activity,DebitCardActivity::class.java)
+            val LAUNCH_SECOND_ACTIVITY:Int = 1
+            startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
+        }
+        val icCoupon:ImageButton = view.findViewById<ImageButton>(R.id.ic_detailCoupon)
+        icCoupon.setOnClickListener {
+            val intent = Intent(activity,CouponDetailActivity::class.java)
             val LAUNCH_SECOND_ACTIVITY:Int = 1
             startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
         }

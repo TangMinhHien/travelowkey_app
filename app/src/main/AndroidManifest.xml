@@ -16,6 +16,15 @@
         android:theme="@style/Theme.NT118_Project"
         tools:targetApi="31">
         <activity
+            android:name=".Fragments.CouponDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Fragments.DebitCardActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Fragments.PointDetailActivity"
+            android:exported="false" />
+        <activity
             android:name=".ForgetPwActivity"
             android:exported="false" />
         <activity

@@ -212,18 +212,22 @@ class BillFragment : Fragment() {
                             val invoice_model = doc.toObject(invoice_::class.java)
                             invoice_model_List.add(invoice_model!!)
                         }
+                        //Log.d("CheckBill", invoice_model_List.size.toString())
                         for (inv in invoice_model_List)
                         {
                             databaseReference.collection("Flight_invoice").whereEqualTo("invoice_Id", inv.id).get()
                                 .addOnSuccessListener { documents ->
                                     var temp = ArrayList<String>()
+                                    //var temp_2:service_invoice_ = service_invoice_()
                                     for (document in documents)
                                     {
                                         val bus_invoice_model = document.toObject(service_invoice_::class.java)
+                                        //temp_2 = bus_invoice_model
                                         temp.add(bus_invoice_model.id_ticket_1)
                                         temp.add(bus_invoice_model.id_ticket_2)
                                         break
                                     }
+                                    //Log.d("CheckBill",temp.size.toString() + inv.id+" "+temp_2.id)
                                     val busticketinvoice = BusTicketInvoice(temp[0],temp[1],inv.num_Ticket,inv.total)
                                     dataList.add(busticketinvoice)
                                     flightTicketInvoiceAdapter = FlightTicketInvoiceBillAdapter(dataList, requireActivity())

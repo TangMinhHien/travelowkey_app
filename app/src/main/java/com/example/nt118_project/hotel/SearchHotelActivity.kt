@@ -181,12 +181,18 @@ class SearchHotelActivity : AppCompatActivity() {
             DatePickerDialog.datePicker.minDate = System.currentTimeMillis()
             DatePickerDialog.show()
         }
-        val currentDate = LocalDate.now()
-        val currentDay = currentDate.dayOfMonth
-        val currentMonth = currentDate.monthValue
-        val currentYear = currentDate.year
-        DayStart.text = "0" + currentDay.toString()+"-"+"0" + currentMonth.toString()+"-"+currentYear.toString()
-        DayEnd.text = "0" + currentDay.toString()+"-"+"0" + currentMonth.toString()+"-"+currentYear.toString()
+//        val currentDate = LocalDate.now()
+//        val currentDay = currentDate.dayOfMonth
+//        val currentMonth = currentDate.monthValue
+//        val currentYear = currentDate.year
+//        DayStart.text = "0" + currentDay.toString()+"-"+"0" + currentMonth.toString()+"-"+currentYear.toString()
+//        DayEnd.text = "0" + currentDay.toString()+"-"+"0" + currentMonth.toString()+"-"+currentYear.toString()
+
+        val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+        val currentDay = LocalDateTime.now().format(formatter)
+        DayStart.text = currentDay
+        DayEnd.text = currentDay
+
         val listener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 (view as TextView).setTextColor(Color.WHITE)

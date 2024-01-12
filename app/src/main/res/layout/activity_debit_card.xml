@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bot_nav"
+    tools:context=".Fragments.DebitCardActivity">
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:id="@+id/app_bar_layout_search"
+        android:background="@color/main_blue"
+        android:layout_alignParentStart="true"
+        tools:ignore="MissingConstraints">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/frame_app_bar_layout_search"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/iVBack"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_back"
+                android:layout_marginLeft="16dp"
+                app:layout_constraintStart_toStartOf="@+id/frame_app_bar_layout_search"
+                app:layout_constraintTop_toTopOf="@+id/frame_app_bar_layout_search"
+                app:layout_constraintBottom_toBottomOf="@+id/frame_app_bar_layout_search"/>
+
+            <TextView
+                android:id="@+id/tv_search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/frame_app_bar_layout_search"
+                app:layout_constraintBottom_toBottomOf="@+id/frame_app_bar_layout_search"
+                android:layout_marginRight="10dp"
+                android:text="Thông tin thẻ"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <TextView
+        android:id="@+id/tVCardNumber"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:text="Số thẻ tín dụng/ ghi nợ"
+        android:textColor="@color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/app_bar_layout_search" />
+    <EditText
+        android:id="@+id/eTCardNumber"
+        android:layout_width="360dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginEnd="10dp"
+        android:ems="10"
+        android:gravity="center"
+        android:background="@drawable/flight_from_spinner"
+        android:hint="Số thẻ"
+        android:textColorHint="#c0baba"
+        android:inputType="number"
+        android:minHeight="48dp"
+        android:textColor="@color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tVCardNumber" />
+    <TextView
+        android:id="@+id/tVNoteCardNumber"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:text="Độ dài tối thiểu là 12 kí tự"
+        android:textColor="#FF0000"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/eTCardNumber" />
+
+    <TextView
+        android:id="@+id/tVDate"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:text="Hợp lệ đến"
+        android:textColor="@color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tVNoteCardNumber" />
+    <LinearLayout
+        android:id="@+id/LayoutDate"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        android:background="@drawable/flight_from_spinner"
+        app:layout_constraintTop_toBottomOf="@+id/tVDate"
+        android:orientation="horizontal">
+        <EditText
+            android:id="@+id/eTDay"
+            android:layout_width="53dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:gravity="center"
+            android:hint="MM"
+            android:maxLength="2"
+            android:textColorHint="#c0baba"
+            android:inputType="date"
+            android:minHeight="48dp"
+            android:textColor="@color/white" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="30dp"
+            android:text="/"/>
+        <EditText
+            android:id="@+id/eTYear"
+            android:layout_width="53dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:gravity="center"
+            android:hint="YY"
+            android:maxLength="2"
+            android:textColorHint="#c0baba"
+            android:layout_marginRight="2dp"
+            android:inputType="date"
+            android:minHeight="48dp"
+            android:textColor="@color/white" />
+    </LinearLayout>
+    <TextView
+        android:id="@+id/tVNoteDate"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:text="Mục bắt buộc"
+        android:textColor="#FF0000"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/LayoutDate" />
+
+    <TextView
+        android:id="@+id/tVCVV"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="158dp"
+        android:text="CVV/CVN"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tVNoteCardNumber" />
+    <ImageView
+        android:id="@+id/ic_info"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        app:layout_constraintStart_toEndOf="@+id/tVCVV"
+        app:layout_constraintBottom_toBottomOf="@+id/tVCVV"
+        android:scaleType="fitCenter"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="5dp"
+        android:src="@drawable/ic_info"/>
+    <EditText
+        android:id="@+id/eTCVV"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="20dp"
+        android:ems="10"
+        android:gravity="center"
+        android:maxLength="4"
+        android:background="@drawable/flight_from_spinner"
+        android:hint="Mã 3-4 chữ số"
+        android:textColorHint="#c0baba"
+        android:inputType="number"
+        android:minHeight="48dp"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tVCVV" />
+    <TextView
+        android:id="@+id/tVNoteCVV"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="100dp"
+        android:text="CVV chứa 3 chữ số"
+        android:textColor="#FF0000"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/LayoutDate" />
+
+
+    <TextView
+        android:id="@+id/tVName"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:text="Tên trên thẻ"
+        android:textColor="@color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tVNoteDate" />
+    <EditText
+        android:id="@+id/eTName"
+        android:layout_width="360dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginEnd="10dp"
+        android:ems="10"
+        android:gravity="center"
+        android:background="@drawable/flight_from_spinner"
+        android:hint="Tên ghi trên thẻ"
+        android:textColorHint="#c0baba"
+        android:inputType="text"
+        android:minHeight="48dp"
+        android:textColor="@color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tVName" />
+    <TextView
+        android:id="@+id/tVNoteName"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:text="Mục bắt bược"
+        android:textColor="#FF0000"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/eTName" />
+    <Button
+        android:id="@+id/SaveBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Lưu thông tin"
+        android:textColor="@color/white"
+        android:background="@color/main_blue"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
