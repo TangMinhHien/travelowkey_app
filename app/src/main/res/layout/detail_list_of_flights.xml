@@ -102,7 +102,7 @@
         android:textColor="@color/white"
         app:layout_constraintTop_toBottomOf="@id/arrivalTime"
         app:layout_constraintLeft_toLeftOf="@id/arrivalTime"
-      android:layout_marginTop="8dp"/>
+        android:layout_marginTop="8dp"/>
 
     <TextView
         android:id="@+id/price"

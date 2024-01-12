@@ -93,7 +93,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/RecyclerviewFlightTicket"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="680dp"
                 android:background="@drawable/tab_indicator_flight"
                 android:backgroundTint="@color/black2"
                 tools:layout_editor_absoluteX="0dp"

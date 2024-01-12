@@ -33,7 +33,7 @@
         android:textColor="@color/white"
         app:layout_constraintTop_toBottomOf="@id/date"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginLeft="30dp"
+        android:layout_marginLeft="20dp"
         android:layout_marginTop="10dp"/>
     <TextView
         android:id="@+id/from"
@@ -112,6 +112,6 @@
         android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@id/airplane"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginLeft="30dp"/>
+        android:layout_marginLeft="20dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

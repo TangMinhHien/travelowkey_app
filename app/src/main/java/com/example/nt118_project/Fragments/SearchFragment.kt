@@ -36,6 +36,7 @@ import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
 import org.checkerframework.common.value.qual.StringVal
 import java.time.LocalDate
+import java.time.OffsetTime
 import java.time.format.DateTimeFormatter
 
 
@@ -143,9 +144,14 @@ class SearchFragment : Fragment() {
 
         val  formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
         val currentDate = LocalDate.now().format(formatter)
-        val tomorrow =  LocalDate.now().plusDays(1).format(formatter)
         val Date = currentDate
-        val nextDate =  tomorrow
+        val currentTime = OffsetTime.now()
+        val nextDate =  ArrayList<String>()
+        nextDate.add(Date.toString())
+        for (i in 1..5){
+            val tomorrow = LocalDate.now().plusDays(i.toLong()).format(formatter)
+            nextDate.add(tomorrow.toString())
+        }
 
         btn_search.setOnClickListener {
             var null_result = 0
@@ -192,14 +198,19 @@ class SearchFragment : Fragment() {
                         dataList_flight_result = ArrayList<FlightTicket>()
                         listOff_availableDate = ArrayList<String>()
                         ref_flight.whereEqualTo("From", from).whereEqualTo("To", to)
-                            .whereEqualTo("SeatClass", "Phổ thông").limit(3)
+                            .whereEqualTo("SeatClass", "Phổ thông").whereIn("Date",nextDate)
                             .get()
                             .addOnSuccessListener { documents ->
                                 for (document in documents) {
                                     val data = document.toObject<FlightTicket>()
                                     if (data.NumSeat >= 1 && Compare(data.Date, Date)) {
+                                        if (data.Date!=Date||(data.Date==Date&&((data.DepartureTime.substring(0,2).toInt()-currentTime.hour.toInt()).toInt()>=1))){
                                         dataList_flight_result.add(data)
-                                        listOff_availableDate.add(data.Date)
+                                        listOff_availableDate.add(data.Date)}
+                                    }
+                                    if (dataList_flight_result.size>=3)
+                                    {
+                                        break
                                     }
                                 }
                                 if (dataList_flight_result.size == 0) {
@@ -258,19 +269,25 @@ class SearchFragment : Fragment() {
                             }
                     } else if (check_locate.size == 1) {
                             from = mapcheck_locate[check_locate[0].Locate]!!
-                        dataList_flight_result = ArrayList<FlightTicket>()
-                        listOff_availableTo = ArrayList<String>()
-                        listOff_availableDate = ArrayList<String>()
+                            dataList_flight_result = ArrayList<FlightTicket>()
+                            listOff_availableTo = ArrayList<String>()
+                            listOff_availableDate = ArrayList<String>()
                             ref_flight.whereEqualTo("From", from)
-                            .whereEqualTo("SeatClass", "Phổ thông").limit(3)
+                            .whereEqualTo("SeatClass", "Phổ thông")
+                            .whereIn("Date",nextDate)
                             .get()
                             .addOnSuccessListener { documents ->
                                 for (document in documents) {
                                     val data = document.toObject<FlightTicket>()
                                     if (data.NumSeat >= 1 && Compare(data.Date, Date)) {
+                                        if (data.Date!=Date||(data.Date==Date&&((data.DepartureTime.substring(0,2).toInt()-currentTime.hour.toInt()).toInt()>=1))){
                                         dataList_flight_result.add(data)
                                         listOff_availableTo.add(data.To)
-                                        listOff_availableDate.add(data.Date)
+                                        listOff_availableDate.add(data.Date)}
+                                    }
+                                    if (dataList_flight_result.size>=3)
+                                    {
+                                        break
                                     }
 
                                 }
@@ -351,11 +368,15 @@ class SearchFragment : Fragment() {
                     if (check_locate.size >0) {
                         locate = mapcheck_locate_hotel[check_locate[0].Locate]!!
                         dataList_hotel_result = ArrayList<Hotel>()
-                        ref_hotel.whereEqualTo("Area",locate).limit(3).get().addOnSuccessListener { documents ->
+                        ref_hotel.whereEqualTo("Area",locate).get().addOnSuccessListener { documents ->
                             for (document in documents) {
                                 try{
                                     val data = document.toObject<Hotel>()
-                                    dataList_hotel_result.add(data)}
+                                    dataList_hotel_result.add(data)
+                                    if (dataList_hotel_result.size>=3) {
+                                        break
+                                    }
+                                }
                                 catch (e:Exception){
                                 }
                             }
@@ -381,7 +402,7 @@ class SearchFragment : Fragment() {
                                     val intent = Intent(view.context, ListofRoomsActivity::class.java)
                                     intent.putExtra("SelectedID", selectedID)
                                     intent.putExtra("DayStart",Date);
-                                    intent.putExtra("DayEnd",nextDate);
+                                    intent.putExtra("DayEnd",nextDate[1]);
                                     intent.putExtra("NumRoom", "1 người");
                                     val LAUNCH_SECOND_ACTIVITY: Int = 1
                                     startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)}
@@ -389,7 +410,7 @@ class SearchFragment : Fragment() {
                                     val intent = Intent(view.context, ListofHotelsActivity::class.java)
                                     intent.putExtra("Area",locate);
                                     intent.putExtra("DayStart", Date);
-                                    intent.putExtra("DayEnd", nextDate);
+                                    intent.putExtra("DayEnd", nextDate[1]);
                                     intent.putExtra("NumRoom", "1 người");
                                     val LAUNCH_SECOND_ACTIVITY:Int = 1
                                     startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
