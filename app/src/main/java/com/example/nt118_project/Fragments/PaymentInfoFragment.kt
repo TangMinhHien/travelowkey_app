@@ -494,6 +494,7 @@ class PaymentInfoFragment : Fragment() {
                     databaseReference.collection(tag_+"_invoice").document(Service_Invoice_Id).set(new_service_invoice)
                         .addOnSuccessListener {
                             val dbRef: DatabaseReference = FirebaseDatabase.getInstance().getReference("Notification")
+                            val dbRefPoint: DatabaseReference = FirebaseDatabase.getInstance().getReference("Point")
 //                            val map: HashMap<String, Any> = HashMap<String, Any>()
 //                            map["timestamp"] = ServerValue.TIMESTAMP
                             for (noti in noti_list)
@@ -504,28 +505,29 @@ class PaymentInfoFragment : Fragment() {
                                 var new_noti: Notification = Notification(noti_id, noti, tag_, "Not", user_id,date)
                                 dbRef.child(noti_id).setValue(new_noti)
                             }
-                            val dateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
-                            val date = dateFormat.format(Date())
-                            val dbRefPoint: DatabaseReference = FirebaseDatabase.getInstance().getReference("Point")
-                            var new_accumulated_point = Point(Invoice_Id, textaccumulatedpoint,"accumulated", user_id.toString(), "P"+generateRandomString(14), (LastTotal * 0.008).toInt().toString(),date)
-                            dbRefPoint.child(new_accumulated_point.id).setValue(new_accumulated_point)
-//                            dbRefPoint.child(new_accumulated_point.id).updateChildren(map)
-                            if(switchButton.isChecked)
-                            {
-                                var new_redeemed_point = Point(Invoice_Id, textredeemedpoint,"redeemed", user_id.toString(), "P"+generateRandomString(14), (PointValue * 0.1).toInt().toString(),date)
-                                dbRefPoint.child(new_redeemed_point.id).setValue(new_redeemed_point)
-//                                dbRefPoint.child(new_redeemed_point.id).updateChildren(map)
-                            }
-                            if(switchButton_coupon.isChecked)
-                            {
-                                databaseReference.collection("Coupon").document(globalCoupon_.id).update("Max", globalCoupon_.Max - 1)
-                                val listcoupon: ArrayList<String> = globalUsedCoupon_.coupon_Id
-                                listcoupon.add(globalCoupon_.id)
-                                Log.d("listcoupon", listcoupon.size.toString())
-                                databaseReference.collection("UsedCoupon").document(globalUsedCoupon_.id).update("coupon_Id", listcoupon)
-                            }
+
                             databaseReference.collection("User").document(user_id).update("point", user_.Point)
                                 .addOnSuccessListener {
+                                    val dateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
+                                    val date = dateFormat.format(Date())
+
+                                    var new_accumulated_point = Point(Invoice_Id, textaccumulatedpoint,"accumulated", user_id.toString(), "P"+generateRandomString(14), (LastTotal * 0.008).toInt().toString(),date)
+                                    dbRefPoint.child(new_accumulated_point.id).setValue(new_accumulated_point)
+//                            dbRefPoint.child(new_accumulated_point.id).updateChildren(map)
+                                    if(switchButton.isChecked)
+                                    {
+                                        var new_redeemed_point = Point(Invoice_Id, textredeemedpoint,"redeemed", user_id.toString(), "P"+generateRandomString(14), (PointValue * 0.1).toInt().toString(),date)
+                                        dbRefPoint.child(new_redeemed_point.id).setValue(new_redeemed_point)
+//                                dbRefPoint.child(new_redeemed_point.id).updateChildren(map)
+                                    }
+                                    if(switchButton_coupon.isChecked)
+                                    {
+                                        databaseReference.collection("Coupon").document(globalCoupon_.id).update("Max", globalCoupon_.Max - 1)
+                                        val listcoupon: ArrayList<String> = globalUsedCoupon_.coupon_Id
+                                        listcoupon.add(globalCoupon_.id)
+                                        Log.d("listcoupon", listcoupon.size.toString())
+                                        databaseReference.collection("UsedCoupon").document(globalUsedCoupon_.id).update("coupon_Id", listcoupon)
+                                    }
                                     Toast.makeText(requireActivity(), "Thanh toán thành công", Toast.LENGTH_LONG).show()
                                     showNotification(noti_list[0],tag_)
                                     val intent = Intent(requireActivity(), MainActivity::class.java)
