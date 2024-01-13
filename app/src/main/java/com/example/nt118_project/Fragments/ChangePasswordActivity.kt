@@ -67,7 +67,8 @@ class ChangePasswordActivity : AppCompatActivity() {
                                         "Thay đổi thành công. Mật khẩu mới: " + tVNewPw_1.text.toString(),
                                         Toast.LENGTH_LONG
                                     ).show()
-                                    //firebaseAuth.signOut()
+                                    firebaseAuth.signOut()
+                                    startActivity(Intent(this, LoginFragment::class.java))
                                 } else {
                                     Toast.makeText(
                                         this,
