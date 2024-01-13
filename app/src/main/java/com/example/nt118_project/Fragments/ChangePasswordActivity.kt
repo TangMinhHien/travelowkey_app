@@ -38,7 +38,7 @@ class ChangePasswordActivity : AppCompatActivity() {
             {
                 Toast.makeText(this,"Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_LONG).show()
             }
-            else if(currUser!!.email.toString() != tVEmail.text.toString())
+            else if(currUser!!.email.toString() != tVEmail.text.toString().toLowerCase())
             {
                 Toast.makeText(this,"Bạn nhập sai Email", Toast.LENGTH_LONG).show()
             }
@@ -55,7 +55,7 @@ class ChangePasswordActivity : AppCompatActivity() {
                 val curr: FirebaseUser? = firebaseAuth.currentUser
                 if (curr != null && curr.email != null) {
                     val credential = EmailAuthProvider.getCredential(
-                        tVEmail.text.toString(),
+                        tVEmail.text.toString().toLowerCase(),
                         tVOlePw.text.toString()
                     )
                     curr.reauthenticate(credential).addOnCompleteListener {
