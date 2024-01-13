@@ -32,6 +32,184 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tVServiceInfo"
             android:layout_marginTop="10dp">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/FrameCarService"
+                android:layout_width="match_parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_height="match_parent"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:background="@drawable/tab_indicator_flight"
+                android:layout_marginBottom="10dp">
+                <TextView
+                    android:id="@id/service_car"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="City Car (2 Hours)"
+                    android:textColor="@color/white"
+                    android:textSize="16dp"
+                    android:textStyle="bold"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintLeft_toRightOf="@+id/logo_car"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="10dp"
+                    />
+                <ImageView
+                    android:id="@+id/logo_car"
+                    android:layout_width="150dp"
+                    android:layout_height="125dp"
+                    android:src="@drawable/logo_servicecar"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"/>
+
+                <ImageView
+                    android:id="@+id/icon_luggage"
+                    android:layout_width="30dp"
+                    android:layout_height="25dp"
+                    android:src="@drawable/ic_luggage"
+                    app:layout_constraintTop_toBottomOf="@id/service_car"
+                    app:layout_constraintLeft_toRightOf="@+id/seat_amount"
+                    android:layout_marginLeft="50dp"
+                    android:layout_marginTop="12dp"/>
+
+                <TextView
+                    android:id="@+id/luggage_amount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2"
+                    android:textColor="@color/white"
+                    android:textSize="16dp"
+                    app:layout_constraintLeft_toRightOf="@id/icon_luggage"
+                    app:layout_constraintTop_toBottomOf="@id/service_car"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="35dp"
+                    android:layout_marginTop="14dp"
+                    />
+
+                <ImageView
+                    android:id="@+id/icon_seat"
+                    android:layout_width="20dp"
+                    android:layout_height="25dp"
+                    android:src="@drawable/ic_seat_count"
+                    app:layout_constraintTop_toBottomOf="@+id/service_car"
+                    app:layout_constraintLeft_toRightOf="@id/logo_car"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="12dp"/>
+
+                <TextView
+                    android:id="@+id/seat_amount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="4"
+                    android:textColor="@color/white"
+                    android:textSize="16dp"
+                    app:layout_constraintLeft_toRightOf="@id/icon_seat"
+                    app:layout_constraintTop_toBottomOf="@id/service_car"
+                    android:layout_marginTop="14dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="50dp"
+                    />
+
+                <TextView
+                    android:id="@+id/supplier"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nhà cung cấp: MIOTO Hồ Chí Minh"
+                    android:textColor="@color/white"
+                    android:textSize="14dp"
+
+                    app:layout_constraintLeft_toRightOf="@+id/logo_car"
+                    app:layout_constraintTop_toBottomOf="@+id/seat_amount"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="5dp"
+
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:singleLine="true"
+                    android:scrollHorizontally="true"
+                    android:ellipsize="marquee"
+                    android:marqueeRepeatLimit ="marquee_forever"
+                    />
+
+                <TextView
+                    android:id="@+id/price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="508.000 VND/ngày"
+                    android:textColor="@color/button"
+                    android:textSize="16dp"
+                    android:textStyle="bold"
+                    app:layout_constraintTop_toBottomOf="@id/supplier"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="5dp"
+                    />
+                <View
+                    android:id="@+id/line"
+                    android:layout_width="match_parent"
+                    app:layout_constraintTop_toBottomOf="@+id/logo_car"
+                    android:layout_height="1dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="1dp"
+                    android:background="@color/white" />
+                <TextView
+                    android:id="@+id/tVPlace"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Địa điểm: "
+                    android:textColor="@color/white"
+                    android:textSize="14dp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/line"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="5dp"
+                    android:singleLine="true"
+                    android:scrollHorizontally="true"
+                    />
+                <TextView
+                    android:id="@+id/DayStart"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Thời điểm bắt đầu: "
+                    android:textColor="@color/white"
+                    android:textSize="14dp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tVPlace"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="5dp"
+                    android:singleLine="true"
+                    android:scrollHorizontally="true"
+                    />
+                <TextView
+                    android:id="@+id/DayEnd"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Thời điểm kết thúc: "
+                    android:textColor="@color/white"
+                    android:textSize="14dp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/DayStart"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="5dp"
+                    android:singleLine="true"
+                    android:scrollHorizontally="true"
+                    />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
             <RelativeLayout
                 android:id="@+id/FrameViewTicket"
                 android:layout_width="match_parent"
@@ -39,7 +217,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent">
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/hotel"
                     android:layout_width="match_parent"

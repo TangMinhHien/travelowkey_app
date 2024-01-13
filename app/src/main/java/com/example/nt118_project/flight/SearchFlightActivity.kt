@@ -120,9 +120,9 @@ open class SearchFlightActivity : AppCompatActivity() {
                                             }
                                         }
                                 }
-                        else{
-                            progresssDialog.dismiss()
-                        }
+//                        else{
+//                            progresssDialog.dismiss()
+//                        }
                         }
         } else {
         }

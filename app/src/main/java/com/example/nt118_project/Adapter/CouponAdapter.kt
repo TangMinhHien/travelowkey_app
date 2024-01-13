@@ -2,6 +2,7 @@ package com.example.nt118_project.Adapter
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -44,11 +45,19 @@ class CouponAdapter (private var dataList: ArrayList<Coupon>, private var contex
             holder.nameCoupon.setText("Khuyến mãi dành cho đặt vé máy bay")
         if(currItem.Tag == "Hotel")
             holder.nameCoupon.setText("Khuyến mãi dành cho đặt phòng khách sạn")
-        if(currItem.Tag == "Bus")
+        if(currItem.Tag == "ServiceCar")
             holder.nameCoupon.setText("Khuyến mãi dành cho đặt xe dịch vụ")
         if(isUsed == true)
         {
-            holder.layout.backgroundTintList = null
+            holder.layout.setBackgroundColor(Color.WHITE)
+            val temp_colors = intArrayOf(
+                Color.WHITE,
+            )
+            val states = arrayOf(
+                intArrayOf(android.R.attr.state_enabled), // enabled
+            )
+            val colors = ColorStateList(states,temp_colors)
+            holder.layout.backgroundTintList = colors
         }
         val myColor = ContextCompat.getColor(context, R.color.black)
         holder.itemView.setOnClickListener {

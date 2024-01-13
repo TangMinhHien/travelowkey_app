@@ -9,13 +9,13 @@
     android:paddingTop="5dp"
     android:paddingBottom="5dp"
     android:paddingLeft="20dp"
-    android:backgroundTint="#ebca09">
+    android:backgroundTint="#ffd400">
     <TextView
         android:id="@+id/tVNameCoupon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Khuyến mãi dành cho đặt vé xe khách"
-        android:textColor="#FFFFFF"
+        android:textColor="#000000"
         android:textSize="12dp"
         android:textStyle="bold"
         android:layout_marginLeft="10dp"
@@ -26,7 +26,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Giảm 50.000 VND cho vé xe khách"
-        android:textColor="@color/white"
+        android:textColor="#000000"
         android:textSize="12dp"
         android:textStyle="bold"
         android:layout_marginTop="8dp"
@@ -39,7 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="Code: GIAMXEKHACH"
-        android:textColor="@color/white"
+        android:textColor="#000000"
         android:textSize="12dp"
         android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@id/tVContent"
@@ -50,7 +50,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Ngày hết hạn: 20/02/2024"
-        android:textColor="@color/white"
+        android:textColor="#000000"
         android:layout_marginTop="8dp"
         android:textSize="12dp"
 

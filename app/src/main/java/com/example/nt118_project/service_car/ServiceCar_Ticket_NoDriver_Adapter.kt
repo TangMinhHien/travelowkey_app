@@ -9,18 +9,19 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.nt118_project.Model.ServiceCar_Ticket
+import com.example.nt118_project.Model.ServiceCar_Ticket_NoDriver
 import com.example.nt118_project.R
 import java.text.DecimalFormat
 
-class ServiceCar_Ticket_Adapter(private var dataList: ArrayList<ServiceCar_Ticket>, private var context: Context): RecyclerView.Adapter<ServiceCar_Ticket_Adapter.ServiceCar_ViewHolder>() {
-//    val Id: String
-    public var onItemClick: ((ServiceCar_Ticket) -> Unit)? = null
+class ServiceCar_Ticket_NoDriver_Adapter (private var dataList: ArrayList<ServiceCar_Ticket_NoDriver>, private var context: Context): RecyclerView.Adapter<ServiceCar_Ticket_NoDriver_Adapter.ServiceCar_ViewHolder>() {
+    //    val Id: String
+    public var onItemClick: ((ServiceCar_Ticket_NoDriver) -> Unit)? = null
     inner class ServiceCar_ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var tVName: TextView = itemView.findViewById<TextView>(R.id.service_car)
         var tVPrice: TextView = itemView.findViewById<TextView>(R.id.price)
         var tVNumSupplier: TextView = itemView.findViewById<TextView>(R.id.supplier)
-        var tVNumLuggage:TextView = itemView.findViewById<TextView>(R.id.luggage_amount)
-        var tVNumSeat:TextView = itemView.findViewById<TextView>(R.id.seat_amount)
+        var tVNumLuggage: TextView = itemView.findViewById<TextView>(R.id.luggage_amount)
+        var tVNumSeat: TextView = itemView.findViewById<TextView>(R.id.seat_amount)
         var image: ImageView = itemView.findViewById<ImageView>(R.id.logo_car)
 //        val dictionary = hashMapOf("Hyundai Grand i10" to "https://ik.imagekit.io/tvlk/image/imageResource/2021/11/18/1637208296447-606cf4459b8f5abcde719a333e019725.jpeg?tr=q-75,w-140"
 //            , "VinFast Fadil" to "https://ik.imagekit.io/tvlk/image/imageResource/2021/11/18/1637208308735-14c75db4b125d8cc4a19d7b6f6906e96.jpeg?tr=q-75,w-140"
@@ -39,7 +40,7 @@ class ServiceCar_Ticket_Adapter(private var dataList: ArrayList<ServiceCar_Ticke
     }
 
     override fun onBindViewHolder(holder: ServiceCar_ViewHolder, position: Int) {
-        val currItem: ServiceCar_Ticket = dataList [position]
+        val currItem: ServiceCar_Ticket_NoDriver = dataList [position]
         holder.tVName.setText(currItem.Name)
         holder.tVNumLuggage.setText(currItem.NumLuggage.toString())
         holder.tVNumSeat.setText(currItem.NumSeat.toString())

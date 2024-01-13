@@ -12,6 +12,7 @@ import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.nt118_project.Adapter.BusTicketAdapter
@@ -31,8 +32,11 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.firestore
 import com.bumptech.glide.Glide
 import com.example.nt118_project.Adapter.BusTicketPayAdapter
+import com.example.nt118_project.Model.ServiceCar_Ticket
+import com.example.nt118_project.Model.ServiceCar_Ticket_NoDriver
 import com.example.nt118_project.Model.User
 import com.google.firebase.auth.FirebaseAuth
+import java.text.DecimalFormat
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -56,7 +60,10 @@ class ReviewUserInfoFragmentFragment : Fragment() {
             param2 = it.getString(ARG_PARAM2)
         }
     }
-
+    fun formatter(n: Int) =
+        DecimalFormat("#,###")
+            .format(n)
+            .replace(",", ".")
     @SuppressLint("MissingInflatedId")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -189,6 +196,84 @@ class ReviewUserInfoFragmentFragment : Fragment() {
                 .addOnFailureListener{exception ->
                     Log.e("TAG", "User data not found")
                 }
+        }
+        else{
+            val CarServiceFrame: ConstraintLayout = rootView.findViewById<ConstraintLayout>(R.id.FrameCarService)
+            var recyclerViewTicket: RecyclerView = rootView.findViewById<RecyclerView>(R.id.RecyclerViewTicket)
+
+            val NameCar = rootView.findViewById<TextView>(R.id.service_car)
+            val SeatAmount = rootView.findViewById<TextView>(R.id.seat_amount)
+            val LuggageAmount = rootView.findViewById<TextView>(R.id.luggage_amount)
+            val Supplier = rootView.findViewById<TextView>(R.id.supplier)
+            val tVDayStart = rootView.findViewById<TextView>(R.id.DayStart)
+            val tVDayEnd = rootView.findViewById<TextView>(R.id.DayEnd)
+            val tVPlace = rootView.findViewById<TextView>(R.id.tVPlace)
+            val Price = rootView.findViewById<TextView>(R.id.price)
+            var image: ImageView = rootView.findViewById<ImageView>(R.id.logo_car)
+
+            recyclerViewTicket.setVisibility(View.GONE)
+            CarServiceFrame.setVisibility(View.VISIBLE)
+
+            val SelectedID = this.arguments?.getString("SelectedID")
+            val DayStart = this.arguments?.getString("DayStart")
+            val DayEnd = this.arguments?.getString("DayEnd")
+            val TimeStart = this.arguments?.getString("TimeStart")
+            val TimeEnd = this.arguments?.getString("TimeEnd")
+            val PlacePick = this.arguments?.getString("PlacePick")
+            val Duration = this.arguments?.getString("Duration")
+            val isDriver = this.arguments?.getString("isDriver")
+            var car_driver = ServiceCar_Ticket()
+            var car_noDriver = ServiceCar_Ticket_NoDriver()
+            val context: Context = requireActivity()
+            if(isDriver == "true")
+            {
+                databaseReference.collection("ServiceCar_Driver").whereEqualTo("id", SelectedID).get()
+                    .addOnSuccessListener { documents ->
+                        for(document in documents)
+                        {
+                            car_driver = document.toObject(ServiceCar_Ticket::class.java)!!
+                            NameCar.text = car_driver.Name.toString()
+                            SeatAmount.text = car_driver.NumSeat.toString()
+                            LuggageAmount.text = car_driver.NumLuggage.toString()
+                            Supplier.text = car_driver.Company
+                            tVDayStart.text = "Ngày bắt đầu: "+DayStart+" "+TimeStart
+                            tVDayEnd.text = "Ngày kết thúc: "+DayEnd+" "+TimeEnd
+                            tVPlace.text = "Địa điểm: "+PlacePick
+                            Price.text = formatter(car_driver.Price).toString() + " VND/ngày"
+                            Glide.with(requireActivity()).load(car_driver.image)
+                                .placeholder(R.drawable.ic_launcher_background)
+                                .error(R.drawable.ic_launcher_background)
+                                .into(image);
+                        }
+                    }
+                    .addOnFailureListener{exception ->
+                        Log.e("TAG", "User data not found")
+                    }
+            }
+            else{
+                databaseReference.collection("ServiceCar_NoDriver").whereEqualTo("Id", SelectedID).get()
+                    .addOnSuccessListener { documents ->
+                        for(document in documents)
+                        {
+                            car_noDriver = document.toObject(ServiceCar_Ticket_NoDriver::class.java)!!
+                            NameCar.text = car_noDriver.Name.toString()
+                            SeatAmount.text = car_noDriver.NumSeat.toString()
+                            LuggageAmount.text = car_noDriver.NumLuggage.toString()
+                            Supplier.text = car_noDriver.Company
+                            tVDayStart.text = "Ngày bắt đầu: "+DayStart+" "+TimeStart
+                            tVDayEnd.text = "Ngày kết thúc: "+DayEnd+" "+TimeEnd
+                            tVPlace.text = "Địa điểm: "+PlacePick
+                            Price.text = formatter(car_noDriver.Price).toString() + " VND/ngày"
+                            Glide.with(requireActivity()).load(car_noDriver.image)
+                                .placeholder(R.drawable.ic_launcher_background)
+                                .error(R.drawable.ic_launcher_background)
+                                .into(image);
+                        }
+                    }
+                    .addOnFailureListener{exception ->
+                        Log.e("TAG", "User data not found")
+                    }
+            }
         }
 
         return rootView

@@ -6,6 +6,7 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,6 +23,7 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 import java.text.SimpleDateFormat
+import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -77,19 +79,33 @@ class ServiceCar2_Fragment: Fragment() {
         }
 
         DepartureDay.setOnClickListener {
-            DatePickerDialog(view.context, datepicker_depart, c.get(Calendar.YEAR),c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)).show()
+            val DatePickerDialog= DatePickerDialog(view.context, datepicker_depart, c.get(Calendar.YEAR),c.get(Calendar.MONTH), c.get(
+                Calendar.DAY_OF_MONTH))
+            DatePickerDialog.datePicker.minDate = System.currentTimeMillis()
+            DatePickerDialog.show()
         }
 
         EndDay.setOnClickListener {
-            DatePickerDialog(view.context, datepicker_end, c.get(Calendar.YEAR),c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)).show()
+            val DatePickerDialog= DatePickerDialog(view.context, datepicker_end, c.get(Calendar.YEAR),c.get(Calendar.MONTH), c.get(
+                Calendar.DAY_OF_MONTH))
+            DatePickerDialog.datePicker.minDate = System.currentTimeMillis()
+            DatePickerDialog.show()
         }
 
-        val currentDate = LocalDate.now()
-        val currentDay = currentDate.dayOfMonth
-        val currentMonth = currentDate.monthValue
-        val currentYear = currentDate.year
-        DepartureDay.text = currentDay.toString()+"-"+currentMonth.toString()+"-"+currentYear.toString()
-        EndDay.text = currentDay.toString() + "-" + currentMonth.toString() + "-" + currentYear.toString()
+        val  formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+        val currentDate = LocalDate.now().format(formatter)
+        val Date = currentDate
+        DepartureDay.text = Date
+
+        val sdf_ = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+        val dateDepart = LocalDate.parse(Date, sdf_)
+        val dateEnd = dateDepart.plusDays(1)
+
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        val date = inputFormat.parse(dateEnd.toString())
+        val EndDate= outputFormat.format(date!!)
+        EndDay.text = EndDate
 
         val timeSetListener_DepatureTime = TimePickerDialog.OnTimeSetListener { view, hour, minute ->
             c.set(Calendar.HOUR_OF_DAY, hour)
@@ -107,11 +123,17 @@ class ServiceCar2_Fragment: Fragment() {
             TimePickerDialog(view.context, timeSetListener_DepatureTime, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), true).show()
         }
 
-        val currentTime = LocalTime.now ()
-        val currentHour = currentTime.hour
-        val currentMinute = currentTime.minute
-        DepartureTime.text = currentHour.toString() + ":" + currentMinute.toString()
-        EndTime.text = currentHour.toString() + ":" + currentMinute.toString()
+
+//        val currentTime = LocalTime.now ()
+//        val currentHour = currentTime.hour
+//        val currentMinute = currentTime.minute
+        val rightNow = Calendar.getInstance()
+        val currentHour: Int = rightNow.get(Calendar.HOUR_OF_DAY) // return the hour in 12 hrs format (ranging from 0-11)
+        val currentMinute: Int = rightNow.get(Calendar.MINUTE)
+        val time = LocalTime.parse(currentHour.toString() + ":" + currentMinute.toString(), DateTimeFormatter.ofPattern("H:m"))
+        DepartureTime.text = time.format(DateTimeFormatter.ofPattern("HH:mm")).toString()
+        EndTime.text = time.format(DateTimeFormatter.ofPattern("HH:mm")).toString()
+        Log.d("DepartureTime", DepartureTime.text.toString())
 
         var condition:Boolean = true
         EndTime.setOnClickListener {

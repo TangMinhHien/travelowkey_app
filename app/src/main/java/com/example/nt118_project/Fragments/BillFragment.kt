@@ -13,12 +13,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.nt118_project.Adapter.BusTicketAdapter
 import com.example.nt118_project.Adapter.BusTicketInvoiceAdapter
+import com.example.nt118_project.Adapter.CarServiceBillAdapter
 import com.example.nt118_project.Adapter.FlightTicketInvoiceBillAdapter
 import com.example.nt118_project.Adapter.RoomTicketInvoiceBillAdapter
 import com.example.nt118_project.Model.BusTicket
 import com.example.nt118_project.Model.BusTicketInvoice
 import com.example.nt118_project.Model.HotelTicketInvoice
 import com.example.nt118_project.Model.Room
+import com.example.nt118_project.Model.ServiceCar_Ticket
+import com.example.nt118_project.Model.ServiceCar_Ticket_NoDriver
 import com.example.nt118_project.R
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks.await
@@ -113,6 +116,50 @@ class BillFragment : Fragment() {
             this.roomId = roomId
         }
     }
+    class CarService_invoice {
+        var Car_Id: String = ""
+        var DayEnd: String = ""
+        var DayStart: String = ""
+        var Place: String  = ""
+        var Type: String = ""
+        var id: String = ""
+        var invoice_Id: String = ""
+        constructor(){}
+        constructor(Car_Id: String, DayEnd:String, DayStart:String, Place:String, Type:String, id:String, invoice_Id:String){
+            this.Car_Id = Car_Id
+            this.DayEnd = DayEnd
+            this.DayStart = DayStart
+            this.Place = Place
+            this.Type = Type
+            this.id = id
+            this.invoice_Id = invoice_Id
+        }
+    }
+    class CarSerVice_Bill{
+        var Name:String = ""
+        var NumSeat: Int = 0
+        var Luggage: Int = 0
+        var Company: String = ""
+        var Price: Int = 0
+        var Place: String = ""
+        var DayStart:String = ""
+        var DayEnd: String = ""
+        var Img:String = ""
+        var Type:String = ""
+        constructor(){}
+        constructor(Name:String, NumSeat:Int,Luggage:Int, Company:String, Price:Int, Place:String, DayStart:String, DayEnd:String, Img:String, Type:String){
+            this.Name = Name
+            this.NumSeat = NumSeat
+            this.Luggage = Luggage
+            this.Company = Company
+            this.Price = Price
+            this.Place = Place
+            this.DayStart = DayStart
+            this.DayEnd = DayEnd
+            this.Img = Img
+            this.Type = Type
+        }
+    }
     class invoice_ {
         var id: String = ""
         var tag: String = ""
@@ -189,13 +236,63 @@ class BillFragment : Fragment() {
                     NotiChoosetext.setVisibility(View.GONE)
                     var RecyclerViewTicket: RecyclerView
                     RecyclerViewTicket = view.findViewById(R.id.RecyclerViewTicket)
-                    val invoice_model_List = ArrayList<invoice_>()
-                    var busTicketInvoiceAdapter: BusTicketInvoiceAdapter
-                    var dataList:ArrayList<BusTicketInvoice> = ArrayList<BusTicketInvoice>()
-                    dataList.add(BusTicketInvoice("HN080020241313419","","1 ghế ngồi","200000.0"))
-                    busTicketInvoiceAdapter = BusTicketInvoiceAdapter(dataList, requireActivity())
-                    RecyclerViewTicket.adapter = busTicketInvoiceAdapter
-                    RecyclerViewTicket.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL,false)
+                    //val invoice_model_List = ArrayList<invoice_>()
+                    val invoice_model_List = ArrayList<String>()
+                    var roomTicketInvoiceAdapter:CarServiceBillAdapter
+                    var dataList:ArrayList<CarSerVice_Bill> = ArrayList<CarSerVice_Bill>()
+                    Thread(Runnable(){
+                        var test = databaseReference.collection("Invoice").whereEqualTo("user_Id", user_id.toString()).whereEqualTo("tag", "ServiceCar")
+                        var testSnapshot = await(test.get())
+                        for (doc in testSnapshot.documents)
+                        {
+                            val invoice_model = doc.toObject(invoice_::class.java)
+                            //invoice_model_List.add(invoice_model!!)
+                            invoice_model_List.add(invoice_model!!.id)
+                        }
+                        if(invoice_model_List.size > 0)
+                        {
+                            databaseReference.collection("CarService_invoice").whereIn("invoice_Id", invoice_model_List).get()
+                                .addOnSuccessListener { documents ->
+                                    for (document in documents)
+                                    {
+                                        var CarSerVice_invoice_model:CarService_invoice = CarService_invoice()
+                                        CarSerVice_invoice_model = document.toObject(CarService_invoice::class.java)
+                                        var temp_price:String = ""
+                                        databaseReference.collection("Invoice").document(CarSerVice_invoice_model.invoice_Id).get().addOnSuccessListener { document ->
+                                            val temp_invoice = document.toObject(invoice_::class.java)
+                                            temp_price = temp_invoice!!.total
+                                            if(CarSerVice_invoice_model.Type == "Có tài xế")
+                                            {
+                                                databaseReference.collection("ServiceCar_Driver").whereEqualTo("id",CarSerVice_invoice_model.Car_Id).get().addOnSuccessListener {documents ->
+                                                    for(document in documents)
+                                                    {
+                                                        val temp:ServiceCar_Ticket = document.toObject(ServiceCar_Ticket::class.java)
+                                                        val newCarSerVice_Bill = CarSerVice_Bill(temp.Name, temp.NumSeat,temp.NumLuggage, temp.Company, temp_price.toInt(), CarSerVice_invoice_model.Place, CarSerVice_invoice_model.DayStart, CarSerVice_invoice_model.DayEnd, temp.image,CarSerVice_invoice_model.Type)
+                                                        dataList.add(newCarSerVice_Bill)
+                                                    }
+                                                    roomTicketInvoiceAdapter = CarServiceBillAdapter(dataList, requireActivity())
+                                                    RecyclerViewTicket.adapter = roomTicketInvoiceAdapter
+                                                    RecyclerViewTicket.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL,false)
+                                                }
+                                            }
+                                            else{
+                                                databaseReference.collection("ServiceCar_NoDriver").whereEqualTo("Id",CarSerVice_invoice_model.Car_Id).get().addOnSuccessListener {documents ->
+                                                    for(document in documents)
+                                                    {
+                                                        val temp:ServiceCar_Ticket_NoDriver = document.toObject(ServiceCar_Ticket_NoDriver::class.java)
+                                                        val newCarSerVice_Bill = CarSerVice_Bill(temp.Name, temp.NumSeat,temp.NumLuggage, temp.Company, temp_price.toInt(), CarSerVice_invoice_model.Place, CarSerVice_invoice_model.DayStart, CarSerVice_invoice_model.DayEnd, temp.image,CarSerVice_invoice_model.Type)
+                                                        dataList.add(newCarSerVice_Bill)
+                                                    }
+                                                    roomTicketInvoiceAdapter = CarServiceBillAdapter(dataList, requireActivity())
+                                                    RecyclerViewTicket.adapter = roomTicketInvoiceAdapter
+                                                    RecyclerViewTicket.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL,false)
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                        }
+                    }).start()
                 }
                 R.id.radio_button3 -> {
                     NotiChoosetext.setVisibility(View.GONE)

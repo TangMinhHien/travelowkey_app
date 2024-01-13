@@ -44,6 +44,14 @@ class PayActivity : AppCompatActivity() {
         var DayEnd:String = ""
         var NumRoom:String = ""
 
+        var isDriver:String = ""
+
+        var CarID:String = ""
+        var TimeStart:String = ""
+        var TimeEnd:String = ""
+        var PlacePick:String = ""
+        var Duration:String = ""
+
         val myIntent = intent // this is just for example purpose
         val tag_ = myIntent.getStringExtra("Tag").toString()
         if(tag_ == "Bus" || tag_ == "Flight")
@@ -58,6 +66,30 @@ class PayActivity : AppCompatActivity() {
             DayStart = myIntent.getStringExtra("DayStart").toString()
             DayEnd = myIntent.getStringExtra("DayEnd").toString()
             NumRoom = myIntent.getStringExtra("NumRoom").toString()
+        }
+        else
+        {
+            isDriver = myIntent.getStringExtra("driver").toString()
+            if(isDriver == "true")
+            {
+                CarID = myIntent.getStringExtra("SelectedID").toString()
+                TimeStart = myIntent.getStringExtra("TimeStart").toString()
+                TimeEnd = myIntent.getStringExtra("TimeEnd").toString()
+                PlacePick = myIntent.getStringExtra("Place").toString()
+                Duration = myIntent.getStringExtra("Duration").toString()
+                DayStart = myIntent.getStringExtra("DateStart").toString()
+                DayEnd = myIntent.getStringExtra("DateEnd").toString()
+            }
+            else
+            {
+                CarID = myIntent.getStringExtra("CarSelectedID").toString()
+                TimeStart = myIntent.getStringExtra("TimeStart").toString()
+                PlacePick = myIntent.getStringExtra("Place").toString()
+                DayStart = myIntent.getStringExtra("DateStart").toString()
+                DayEnd = myIntent.getStringExtra("DateEnd").toString()
+                TimeEnd = myIntent.getStringExtra("TimeEnd").toString()
+                Duration = ""
+            }
         }
 
 
@@ -92,6 +124,18 @@ class PayActivity : AppCompatActivity() {
                         bundle.putString("DayEnd", DayEnd)
                         bundle.putString("Tag", tag_)
                     }
+                    else
+                    {
+                        bundle.putString("SelectedID", CarID)
+                        bundle.putString("DayStart", DayStart)
+                        bundle.putString("DayEnd", DayEnd)
+                        bundle.putString("TimeStart", TimeStart)
+                        bundle.putString("PlacePick",PlacePick)
+                        bundle.putString("TimeEnd",TimeEnd)
+                        bundle.putString("Duration",Duration)
+                        bundle.putString("isDriver",isDriver)
+                        bundle.putString("Tag", tag_)
+                    }
                     fragobj.setArguments(bundle)
                     replaceFragment(fragobj)
                     NextBtn.text = "Tiếp tục"
@@ -116,6 +160,18 @@ class PayActivity : AppCompatActivity() {
                         bundle.putString("DayEnd", DayEnd)
                         bundle.putString("Tag", tag_)
                     }
+                    else
+                    {
+                        bundle.putString("SelectedID", CarID)
+                        bundle.putString("DayStart", DayStart)
+                        bundle.putString("DayEnd", DayEnd)
+                        bundle.putString("TimeStart", TimeStart)
+                        bundle.putString("PlacePick",PlacePick)
+                        bundle.putString("TimeEnd",TimeEnd)
+                        bundle.putString("Duration",Duration)
+                        bundle.putString("isDriver",isDriver)
+                        bundle.putString("Tag", tag_)
+                    }
                     fragobj.setArguments(bundle)
                     replaceFragment(fragobj)
                     NextBtn.text = "Hoàn tất"
@@ -136,6 +192,18 @@ class PayActivity : AppCompatActivity() {
                         bundle.putString("DayStart", DayStart)
                         bundle.putString("NumRoom", NumRoom)
                         bundle.putString("DayEnd", DayEnd)
+                        bundle.putString("Tag", tag_)
+                    }
+                    else
+                    {
+                        bundle.putString("SelectedID", CarID)
+                        bundle.putString("DayStart", DayStart)
+                        bundle.putString("DayEnd", DayEnd)
+                        bundle.putString("TimeStart", TimeStart)
+                        bundle.putString("PlacePick",PlacePick)
+                        bundle.putString("TimeEnd",TimeEnd)
+                        bundle.putString("Duration",Duration)
+                        bundle.putString("isDriver",isDriver)
                         bundle.putString("Tag", tag_)
                     }
                     fragobj.setArguments(bundle)

@@ -153,10 +153,10 @@
         android:background="@drawable/flight_from_spinner" />
 
     <TextView
-        android:id="@+id/tv_date_end"
+        android:id="@+id/tv_dateend"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Ngày kết thúc: Th 4, 1/11/2023"
+        android:text="Ngày kết thúc:"
         android:textColor="@color/white"
         android:textSize="16dp"
         android:textStyle="bold"
@@ -165,6 +165,22 @@
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginTop="25dp"
         android:layout_marginLeft="8dp"
+        android:layout_marginBottom="10dp"
+        />
+
+    <TextView
+        android:id="@+id/tv_date_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Th 4, 1/11/2023"
+        android:textColor="@color/white"
+        android:textSize="16dp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/iv_time"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/tv_dateend"
+        android:layout_marginTop="25dp"
+        android:layout_marginLeft="20dp"
         android:layout_marginBottom="10dp"
         />
 </androidx.constraintlayout.widget.ConstraintLayout>

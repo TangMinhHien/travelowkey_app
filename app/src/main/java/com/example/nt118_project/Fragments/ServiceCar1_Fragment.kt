@@ -5,6 +5,7 @@ import android.app.TimePickerDialog
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,10 +21,12 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Locale
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+
 
 class ServiceCar1_Fragment: Fragment() {
 
@@ -67,15 +70,17 @@ class ServiceCar1_Fragment: Fragment() {
         }
 
         DepartureDay.setOnClickListener {
-            DatePickerDialog(view.context, datepicker_depart, c.get(Calendar.YEAR),c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)).show()
+            val DatePickerDialog= DatePickerDialog(view.context, datepicker_depart, c.get(Calendar.YEAR),c.get(Calendar.MONTH), c.get(
+                Calendar.DAY_OF_MONTH))
+            DatePickerDialog.datePicker.minDate = System.currentTimeMillis()
+            DatePickerDialog.show()
         }
 
-        val currentDate = LocalDate.now()
-        val currentDay = currentDate.dayOfMonth
-        val currentMonth = currentDate.monthValue
-        val currentYear = currentDate.year
-        DepartureDay.text = currentDay.toString()+"-"+currentMonth.toString()+"-"+currentYear.toString()
-        EndDay.text = "Thời gian kết thúc: "+ currentDay.toString() + "-" + currentMonth.toString() + "-" + currentYear.toString()
+        val  formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+        val currentDate = LocalDate.now().format(formatter)
+        val Date = currentDate
+        DepartureDay.text = Date
+        //EndDay.text = "Thời gian kết thúc: "+ currentDay.toString() + "-" + currentMonth.toString() + "-" + currentYear.toString()
 
         // EditText Time
         val timeSetListener = TimePickerDialog.OnTimeSetListener { view, hour, minute ->
@@ -87,6 +92,13 @@ class ServiceCar1_Fragment: Fragment() {
         TimeDeparture.setOnClickListener {
             TimePickerDialog(view.context, timeSetListener, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), true).show()
         }
+        val rightNow = Calendar.getInstance()
+        val currentHour: Int = rightNow.get(Calendar.HOUR) // return the hour in 12 hrs format (ranging from 0-11)
+        val currentMinute: Int = rightNow.get(Calendar.MINUTE)
+
+        val time = LocalTime.parse(currentHour.toString() + ":" + currentMinute.toString(), DateTimeFormatter.ofPattern("H:m"))
+        TimeDeparture.text  = time.format(DateTimeFormatter.ofPattern("HH:mm")).toString()
+        Log.d("DepartureTime", TimeDeparture.text.toString())
 
         val listener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -151,18 +163,34 @@ class ServiceCar1_Fragment: Fragment() {
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 (view as TextView).setTextColor(Color.WHITE)
-                val sdf = DateTimeFormatter.ofPattern("d-M-yyyy")
+                val sdf = DateTimeFormatter.ofPattern("dd-MM-yyyy")
                 val dateDepart = LocalDate.parse(DepartureDay.text, sdf)
                 val dateEnd = dateDepart.plusDays(Duration.selectedItem.toString().toLong()-1)
-                EndDay.text = "Thời gian kết thúc: "+dateEnd.dayOfMonth.toString() + "-" + dateEnd.monthValue.toString() + "-" + dateEnd.year.toString()
+
+                val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                val outputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                val date = inputFormat.parse(dateEnd.toString())
+                val Date= outputFormat.format(date!!)
+                EndDay.text = Date
             }
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun updateLable(c: Calendar, tV: TextView) {
-        val myFormat = "d-M-yyyy"
+        val myFormat = "dd-MM-yyyy"
         val sdf = SimpleDateFormat(myFormat, Locale.UK)
         tV.setText (sdf.format(c.time))
+
+        val sdf_ = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+        val dateDepart = LocalDate.parse(tV.text, sdf_)
+        val dateEnd = dateDepart.plusDays(Duration.selectedItem.toString().toLong()-1)
+
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        val date = inputFormat.parse(dateEnd.toString())
+        val Date= outputFormat.format(date!!)
+        EndDay.text = Date
     }
 
     private fun updateText (c: Calendar, et: TextView) {
@@ -174,17 +202,17 @@ class ServiceCar1_Fragment: Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     fun getValue(): Bundle {
         var value = Bundle()
-        val sdf = DateTimeFormatter.ofPattern("d-M-yyyy")
-        val dateDepart = LocalDate.parse(DepartureDay.text, sdf)
-        var dateEnd = dateDepart.plusDays(Duration.selectedItem.toString().toLong()-1)
-        dateEnd = LocalDate.parse(dateEnd.toString(), sdf)
+//        val sdf = DateTimeFormatter.ofPattern("d-M-yyyy")
+//        val dateDepart = LocalDate.parse(DepartureDay.text, sdf)
+//        var dateEnd = dateDepart.plusDays(Duration.selectedItem.toString().toLong()-1)
+//        dateEnd = LocalDate.parse(dateEnd.toString(), sdf)
         value.putBoolean("return_check",false)
         value.putBoolean("is_return",false)
         value.putString("DateDepature",DepartureDay.text.toString())
         value.putString("Place",DeparturePlace.selectedItem.toString())
         value.putString("Duration",Duration.selectedItem.toString())
         value.putString("Time",TimeDeparture.text.toString())
-        value.putString("DateEnd", dateEnd.toString())
+        value.putString("DateEnd", EndDay.text.toString())
         return value;
     }
 }

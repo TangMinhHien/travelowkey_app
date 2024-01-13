@@ -65,6 +65,12 @@ class SignupFragment : AppCompatActivity() {
 
     }
 
+    fun generateRandomString(length: Int): String {
+        val allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+        return (1..length)
+            .map { allowedChars.random() }
+            .joinToString("")
+    }
     private fun saveInfoUser(email: String, phone: String, username: String, fullname:String, progressDialog: ProgressDialog) {
         val currUserID = FirebaseAuth.getInstance().currentUser!!.uid
         val usersRef = Firebase.firestore
@@ -121,12 +127,27 @@ class SignupFragment : AppCompatActivity() {
             usersRef.collection("User").document(currUserID).set(new_user).addOnCompleteListener {task ->
                 if(task.isSuccessful)
                 {
-                    progressDialog.dismiss()
-                    Toast.makeText(this, "Tạo tài khoản thành công", Toast.LENGTH_SHORT).show()
-                    val intent = Intent(this@SignupFragment, MainActivity::class.java)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                    startActivity(intent)
-                    finish()
+                    val ListIdCoupon = ArrayList<String>()
+                    ListIdCoupon.add("")
+                    val newUsedCouponId = "UsedCoupon"+generateRandomString(14)
+                    val new_usedcoupon: UsedCoupon = UsedCoupon(ListIdCoupon,newUsedCouponId, currUserID)
+                    usersRef.collection("UsedCoupon").document(newUsedCouponId).set(new_usedcoupon).addOnCompleteListener{task ->
+                        if (task.isSuccessful)
+                        {
+                            progressDialog.dismiss()
+                            Toast.makeText(this, "Tạo tài khoản thành công", Toast.LENGTH_SHORT).show()
+                            val intent = Intent(this@SignupFragment, MainActivity::class.java)
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                            startActivity(intent)
+                            finish()
+                        }
+                        else{
+                            val mess = task.exception!!.toString()
+                            Toast.makeText(this, "Lỗi: $mess", Toast.LENGTH_LONG).show()
+                            FirebaseAuth.getInstance().signOut()
+                            progressDialog.dismiss()
+                        }
+                    }
                 }
                 else{
                     val mess = task.exception!!.toString()

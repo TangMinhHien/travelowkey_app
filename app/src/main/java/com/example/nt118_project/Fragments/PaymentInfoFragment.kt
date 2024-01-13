@@ -1,5 +1,7 @@
 package com.example.nt118_project.Fragments
 
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -17,6 +19,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.core.app.NotificationCompat
 import androidx.fragment.app.Fragment
 import com.example.nt118_project.MainActivity
 import com.example.nt118_project.Model.BusTicket
@@ -26,6 +29,8 @@ import com.example.nt118_project.Model.Hotel
 import com.example.nt118_project.Model.Notification
 import com.example.nt118_project.Model.Point
 import com.example.nt118_project.Model.Room
+import com.example.nt118_project.Model.ServiceCar_Ticket
+import com.example.nt118_project.Model.ServiceCar_Ticket_NoDriver
 import com.example.nt118_project.Model.User
 import com.example.nt118_project.R
 import com.google.android.material.switchmaterial.SwitchMaterial
@@ -72,6 +77,19 @@ class PaymentInfoFragment : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
+    }
+    fun showNotification(text:String,tag:String){
+        val intent = Intent(requireActivity(), MainActivity::class.java)
+        intent.putExtra("previous_intent","notification")
+        val pendingIntent = PendingIntent.getActivity(context,0,intent,PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        val notificationManager = requireActivity().getSystemService(Context.NOTIFICATION_SERVICE) as android.app.NotificationManager
+        val notification = NotificationCompat.Builder(requireActivity().applicationContext,"channel_id")
+            .setContentTitle("Travelowkey ${tag} Notification")
+            .setContentText(text)
+            .setContentIntent(pendingIntent)
+            .setSmallIcon(R.drawable.ic_notification)
+            .build()
+        notificationManager.notify(1,notification)
     }
     fun generateRandomString(length: Int): String {
         val allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
@@ -124,6 +142,15 @@ class PaymentInfoFragment : Fragment() {
             val Id: String,
             val Invoice_Id:String,
             val RoomId: String
+        )
+        data class CarService_invoice(
+            val Car_Id:String,
+            val DayEnd: String,
+            val DayStart: String,
+            val Place:String,
+            val Type: String,
+            val id:String,
+            val invoice_Id:String
         )
         data class invoice(
             val Id: String,
@@ -467,24 +494,27 @@ class PaymentInfoFragment : Fragment() {
                     databaseReference.collection(tag_+"_invoice").document(Service_Invoice_Id).set(new_service_invoice)
                         .addOnSuccessListener {
                             val dbRef: DatabaseReference = FirebaseDatabase.getInstance().getReference("Notification")
-                            val map: HashMap<String, Any> = HashMap<String, Any>()
-                            map["timestamp"] = ServerValue.TIMESTAMP
+//                            val map: HashMap<String, Any> = HashMap<String, Any>()
+//                            map["timestamp"] = ServerValue.TIMESTAMP
                             for (noti in noti_list)
                             {
                                 val noti_id= generateRandomString(14)
-                                var new_noti: Notification = Notification(noti_id, noti, tag_, "Not", user_id)
+                                val dateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
+                                val date = dateFormat.format(Date())
+                                var new_noti: Notification = Notification(noti_id, noti, tag_, "Not", user_id,date)
                                 dbRef.child(noti_id).setValue(new_noti)
-                                dbRef.child(noti_id).updateChildren(map)
                             }
+                            val dateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
+                            val date = dateFormat.format(Date())
                             val dbRefPoint: DatabaseReference = FirebaseDatabase.getInstance().getReference("Point")
-                            var new_accumulated_point = Point(Invoice_Id, textaccumulatedpoint,"accumulated", user_id.toString(), "P"+generateRandomString(14), (LastTotal * 0.008).toInt().toString())
+                            var new_accumulated_point = Point(Invoice_Id, textaccumulatedpoint,"accumulated", user_id.toString(), "P"+generateRandomString(14), (LastTotal * 0.008).toInt().toString(),date)
                             dbRefPoint.child(new_accumulated_point.id).setValue(new_accumulated_point)
-                            dbRefPoint.child(new_accumulated_point.id).updateChildren(map)
+//                            dbRefPoint.child(new_accumulated_point.id).updateChildren(map)
                             if(switchButton.isChecked)
                             {
-                                var new_redeemed_point = Point(Invoice_Id, textredeemedpoint,"redeemed", user_id.toString(), "P"+generateRandomString(14), (PointValue * 0.1).toInt().toString())
+                                var new_redeemed_point = Point(Invoice_Id, textredeemedpoint,"redeemed", user_id.toString(), "P"+generateRandomString(14), (PointValue * 0.1).toInt().toString(),date)
                                 dbRefPoint.child(new_redeemed_point.id).setValue(new_redeemed_point)
-                                dbRefPoint.child(new_redeemed_point.id).updateChildren(map)
+//                                dbRefPoint.child(new_redeemed_point.id).updateChildren(map)
                             }
                             if(switchButton_coupon.isChecked)
                             {
@@ -497,6 +527,7 @@ class PaymentInfoFragment : Fragment() {
                             databaseReference.collection("User").document(user_id).update("point", user_.Point)
                                 .addOnSuccessListener {
                                     Toast.makeText(requireActivity(), "Thanh toán thành công", Toast.LENGTH_LONG).show()
+                                    showNotification(noti_list[0],tag_)
                                     val intent = Intent(requireActivity(), MainActivity::class.java)
                                     val LAUNCH_SECOND_ACTIVITY:Int = 1
                                     startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
@@ -599,24 +630,25 @@ class PaymentInfoFragment : Fragment() {
                             textaccumulatedpoint = "Bạn nhận được điểm khi thanh toán hóa đơn đặt phòng khách sạn (mã hóa đơn "+ Invoice_Id +") ngày " + currentDate +"."
                             textredeemedpoint = "Bạn đã sử dụng điểm khi thanh toán hóa đơn đặt phòng khách sạn (mã hóa đơn "+ Invoice_Id +") ngày " + currentDate +"."
                             val dbRef: DatabaseReference = FirebaseDatabase.getInstance().getReference("Notification")
-                            val map: HashMap<String, Any> = HashMap<String, Any>()
-                            map["timestamp"] = ServerValue.TIMESTAMP
+//                            val map: HashMap<String, Any> = HashMap<String, Any>()
+//                            map["timestamp"] = ServerValue.TIMESTAMP
                             for (noti in noti_list)
                             {
                                 val noti_id= generateRandomString(14)
-                                var new_noti: Notification = Notification(noti_id, noti, tag_, "Not", user_id)
+                                val dateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
+                                val date = dateFormat.format(Date())
+                                var new_noti: Notification = Notification(noti_id, noti, tag_, "Not", user_id,date)
                                 dbRef.child(noti_id).setValue(new_noti)
-                                dbRef.child(noti_id).updateChildren(map)
                             }
                             val dbRefPoint: DatabaseReference = FirebaseDatabase.getInstance().getReference("Point")
-                            var new_accumulated_point = Point(Invoice_Id, textaccumulatedpoint,"accumulated", user_id.toString(), "P"+generateRandomString(14), (LastTotal * 0.008).toInt().toString())
+                            val dateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
+                            val date = dateFormat.format(Date())
+                            var new_accumulated_point = Point(Invoice_Id, textaccumulatedpoint,"accumulated", user_id.toString(), "P"+generateRandomString(14), (LastTotal * 0.008).toInt().toString(),date)
                             dbRefPoint.child(new_accumulated_point.id).setValue(new_accumulated_point)
-                            dbRefPoint.child(new_accumulated_point.id).updateChildren(map)
                             if(switchButton.isChecked)
                             {
-                                var new_redeemed_point = Point(Invoice_Id, textredeemedpoint,"redeemed", user_id.toString(), "P"+generateRandomString(14), (PointValue * 0.1).toInt().toString())
+                                var new_redeemed_point = Point(Invoice_Id, textredeemedpoint,"redeemed", user_id.toString(), "P"+generateRandomString(14), (PointValue * 0.1).toInt().toString(),date)
                                 dbRefPoint.child(new_redeemed_point.id).setValue(new_redeemed_point)
-                                dbRefPoint.child(new_redeemed_point.id).updateChildren(map)
                             }
                             if(switchButton_coupon.isChecked)
                             {
@@ -628,6 +660,183 @@ class PaymentInfoFragment : Fragment() {
                             }
                             databaseReference.collection("User").document(user_id).update("point", user_.Point).addOnSuccessListener {
                                 Toast.makeText(requireActivity(), "Thanh toán thành công", Toast.LENGTH_LONG).show()
+                                showNotification(noti_list[0],tag_)
+                                val intent = Intent(requireActivity(), MainActivity::class.java)
+                                val LAUNCH_SECOND_ACTIVITY:Int = 1
+                                startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
+                            }
+                        }.addOnFailureListener { e ->
+                            Toast.makeText(requireActivity(), "Thanh toán thất bại", Toast.LENGTH_LONG).show()
+                        }
+                }
+
+            }
+        }
+        else if(tag_ == "ServiceCar")
+        {
+            val CarID = this.arguments?.getString("SelectedID")
+            val DayStart = this.arguments?.getString("DayStart")
+            var PayBtn: Button = rootView.findViewById<Button>(R.id.PayBtn)
+            val DayEnd = this.arguments?.getString("DayEnd")
+            val PlacePick = this.arguments?.getString("PlacePick")
+            val TimeStart = this.arguments?.getString("TimeStart")
+            val TimeEnd = this.arguments?.getString("TimeEnd")
+            val Duration = this.arguments?.getString("Duration")
+            val isDriver = this.arguments?.getString("isDriver")
+
+            val noti_list: ArrayList<String> = ArrayList()
+            var car_driver = ServiceCar_Ticket()
+            var car_noDriver = ServiceCar_Ticket_NoDriver()
+            var Total: Double = 0.0
+            val Invoice_Id = generateRandomString(14)
+            var Car_document_Id:String = ""
+            var Car_type:String = ""
+            val writer = QRCodeWriter()
+            try{
+                val bitMatrix = writer.encode(Invoice_Id, BarcodeFormat.QR_CODE, 512, 512)
+                val width = bitMatrix.width
+                val height = bitMatrix.height
+                val bmp = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565)
+                for (x in 0 until width)
+                {
+                    for(y in 0 until height)
+                    {
+                        bmp.setPixel(x,y, if(bitMatrix[x, y]) Color.BLACK else Color.WHITE)
+                    }
+                }
+                iVQRcode.setImageBitmap(bmp)
+            }catch(e: WriterException){
+                e.printStackTrace()
+            }
+
+            if(isDriver == "true")
+            {
+                databaseReference.collection("ServiceCar_Driver").whereEqualTo("id", CarID).get()
+                    .addOnSuccessListener { documents ->
+                        for(document in documents)
+                        {
+                            Car_document_Id = document.id
+                            car_driver = document.toObject(ServiceCar_Ticket::class.java)!!
+                            val dateFormatter: DateTimeFormatter =  DateTimeFormatter.ofPattern("dd-MM-yyyy")
+                            val from = LocalDate.parse(DayStart.toString(), dateFormatter)
+                            val to = LocalDate.parse(DayEnd.toString(), dateFormatter)
+                            val period = Period.between(from, to)
+                            val days = period.days + 1
+                            Total = (car_driver.Price.toInt()*days.toInt()).toDouble()
+                            Total_ = Total
+                            LastTotal = Total_.toInt()
+                            car_driver.Status = "Rented"
+                            Car_type = car_driver.type
+                            TvTotal.setText("Tổng tiền: "+ formatter(car_driver.Price.toInt()*days.toInt()).toString() + " VND")
+                            var redeemedPoint:Int  = user_.Point
+                            var temp_redeemedPoint:Int = ((Total - 50000)*0.1).toInt()
+                            if (temp_redeemedPoint <= redeemedPoint)
+                            {
+                                tVPoint.text = temp_redeemedPoint.toString() + " điểm"
+                                PointValue = temp_redeemedPoint * 10
+                            }
+                            else
+                            {
+                                PointValue = redeemedPoint * 10
+                                tVPoint.text = redeemedPoint.toString() + " điểm"
+                            }
+                            tVNotiPoint.text = "Bạn sẽ nhận được "+(LastTotal * 0.008).toInt().toString()+" điểm khi thực hiện thanh toán."
+                            var noti_text = "Bạn đã đặt xe "+ car_driver.Name +" của nhà cung cấp "+car_driver.Company+" từ ngày "+DayStart.toString()+" đến ngày "+DayEnd.toString()+"."
+                            noti_list.add(noti_text)
+                        }
+                    }
+                    .addOnFailureListener{exception ->
+                        Log.e("TAG", "User data not found")
+                    }
+            }
+            else if(isDriver == "false"){
+                databaseReference.collection("ServiceCar_NoDriver").whereEqualTo("Id", CarID).get()
+                    .addOnSuccessListener { documents ->
+                        for(document in documents)
+                        {
+                            Car_document_Id = document.id
+                            car_noDriver = document.toObject(ServiceCar_Ticket_NoDriver::class.java)!!
+                            val dateFormatter: DateTimeFormatter =  DateTimeFormatter.ofPattern("dd-MM-yyyy")
+                            val from = LocalDate.parse(DayStart.toString(), dateFormatter)
+                            val to = LocalDate.parse(DayEnd.toString(), dateFormatter)
+                            val period = Period.between(from, to)
+                            val days = period.days + 1
+                            Total = (car_noDriver.Price.toInt()*days.toInt()).toDouble()
+                            Total_ = Total
+                            LastTotal = Total_.toInt()
+                            Car_type = car_noDriver.type
+                            TvTotal.setText("Tổng tiền: "+ formatter(car_noDriver.Price.toInt()*days.toInt()).toString() + " VND")
+                            var redeemedPoint:Int  = user_.Point
+                            var temp_redeemedPoint:Int = ((Total - 50000)*0.1).toInt()
+                            if (temp_redeemedPoint <= redeemedPoint)
+                            {
+                                tVPoint.text = temp_redeemedPoint.toString() + " điểm"
+                                PointValue = temp_redeemedPoint * 10
+                            }
+                            else
+                            {
+                                PointValue = redeemedPoint * 10
+                                tVPoint.text = redeemedPoint.toString() + " điểm"
+                            }
+                            tVNotiPoint.text = "Bạn sẽ nhận được "+(LastTotal * 0.008).toInt().toString()+" điểm khi thực hiện thanh toán."
+                            var noti_text = "Bạn đã đặt xe "+ car_noDriver.Name +" của nhà cung cấp "+car_noDriver.Company+" từ ngày "+DayStart.toString()+" đến ngày "+DayEnd.toString()+"."
+                            noti_list.add(noti_text)
+                        }
+                    }
+                    .addOnFailureListener{exception ->
+                        Log.e("TAG", "User data not found")
+                    }
+            }
+            PayBtn.setOnClickListener {
+                val Service_Invoice_Id = tag_[0] + generateRandomString(14)
+                val new_invoice = invoice(Invoice_Id, tag_, user_id.toString(), "", LastTotal.toString())
+                var new_service_invoice = CarService_invoice(CarID.toString(),DayEnd.toString()+" "+TimeEnd.toString(),DayStart.toString()+" "+TimeStart.toString(),PlacePick.toString(),Car_type, Service_Invoice_Id, Invoice_Id)
+                if(isDriver == "true")
+                    databaseReference.collection("ServiceCar_Driver").document(Car_document_Id).update("Status", car_driver.Status)
+
+                if(switchButton.isChecked){
+                    user_.Point += ((LastTotal * 0.008).toInt() - (PointValue * 0.1).toInt())
+                }
+                else
+                    user_.Point += ((LastTotal * 0.008).toInt())
+                databaseReference.collection("Invoice").document(Invoice_Id).set(new_invoice).addOnSuccessListener {
+                    databaseReference.collection("CarService_invoice").document(Service_Invoice_Id).set(new_service_invoice)
+                        .addOnSuccessListener {
+                            var textaccumulatedpoint:String = ""
+                            var textredeemedpoint:String = ""
+                            val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")
+                            val currentDate = LocalDateTime.now().format(formatter)
+                            textaccumulatedpoint = "Bạn nhận được điểm khi thanh toán hóa đơn đặt xe dịch vụ (mã hóa đơn "+ Invoice_Id +") ngày " + currentDate +"."
+                            textredeemedpoint = "Bạn đã sử dụng điểm khi thanh toán hóa đơn đặt xe dịch vụ (mã hóa đơn "+ Invoice_Id +") ngày " + currentDate +"."
+                            val dbRef: DatabaseReference = FirebaseDatabase.getInstance().getReference("Notification")
+                            for (noti in noti_list)
+                            {
+                                val noti_id= generateRandomString(14)
+                                val dateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
+                                val date = dateFormat.format(Date())
+                                var new_noti: Notification = Notification(noti_id, noti, tag_, "Not", user_id,date)
+                                dbRef.child(noti_id).setValue(new_noti)
+                            }
+                            val dbRefPoint: DatabaseReference = FirebaseDatabase.getInstance().getReference("Point")
+                            val dateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
+                            val date = dateFormat.format(Date())
+                            var new_accumulated_point = Point(Invoice_Id, textaccumulatedpoint,"accumulated", user_id.toString(), "P"+generateRandomString(14), (LastTotal * 0.008).toInt().toString(),date)
+                            dbRefPoint.child(new_accumulated_point.id).setValue(new_accumulated_point)
+                            if(switchButton.isChecked)
+                            {
+                                var new_redeemed_point = Point(Invoice_Id, textredeemedpoint,"redeemed", user_id.toString(), "P"+generateRandomString(14), (PointValue * 0.1).toInt().toString(),date)
+                                dbRefPoint.child(new_redeemed_point.id).setValue(new_redeemed_point)
+                            }
+                            if(switchButton_coupon.isChecked)
+                            {
+                                databaseReference.collection("Coupon").document(globalCoupon_.id).update("Max", globalCoupon_.Max - 1)
+                                val listcoupon: ArrayList<String> = globalUsedCoupon_.coupon_Id
+                                listcoupon.add(globalCoupon_.id)
+                                databaseReference.collection("UsedCoupon").document(globalUsedCoupon_.id).update("coupon_Id", listcoupon)
+                            }
+                            databaseReference.collection("User").document(user_id).update("point", user_.Point).addOnSuccessListener {
+                                Toast.makeText(requireActivity(), "Thanh toán thành công", Toast.LENGTH_LONG).show()
+                                showNotification(noti_list[0],tag_)
                                 val intent = Intent(requireActivity(), MainActivity::class.java)
                                 val LAUNCH_SECOND_ACTIVITY:Int = 1
                                 startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
