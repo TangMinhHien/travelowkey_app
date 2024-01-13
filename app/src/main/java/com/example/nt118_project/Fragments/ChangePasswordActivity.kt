@@ -67,14 +67,14 @@ class ChangePasswordActivity : AppCompatActivity() {
                                         "Thay đổi thành công. Mật khẩu mới: " + tVNewPw_1.text.toString(),
                                         Toast.LENGTH_LONG
                                     ).show()
-                                    firebaseAuth.signOut()
+                                    //firebaseAuth.signOut()
                                 } else {
                                     Toast.makeText(
                                         this,
                                         "Thay đổi mật khẩu thất bại",
                                         Toast.LENGTH_LONG
                                     ).show()
-                                    firebaseAuth.signOut()
+                                    //firebaseAuth.signOut()
                                 }
                             }
                         }

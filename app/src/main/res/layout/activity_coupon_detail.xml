@@ -64,7 +64,7 @@
         android:id="@+id/tVUsedCoupon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Các khuyến mãi"
+        android:text="Các khuyến mãi đã được sử dụng"
         android:textColor="@color/white"
         app:layout_constraintTop_toBottomOf="@+id/RecyclerviewCoupon"
         app:layout_constraintStart_toStartOf="parent"

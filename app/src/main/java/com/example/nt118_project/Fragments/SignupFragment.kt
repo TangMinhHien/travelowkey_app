@@ -138,6 +138,9 @@ class SignupFragment : AppCompatActivity() {
                             Toast.makeText(this, "Tạo tài khoản thành công", Toast.LENGTH_SHORT).show()
                             val intent = Intent(this@SignupFragment, MainActivity::class.java)
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                            val pw_  = findViewById<EditText>(R.id.pw_signup)
+                            val pw = pw_.text.toString()
+                            intent.putExtra("Pw", pw)
                             startActivity(intent)
                             finish()
                         }
